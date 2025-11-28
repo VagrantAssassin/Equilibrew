@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Sky
+    uniqueID: 641325125
+    locked: 0
+  - name: Cloud
+    uniqueID: 1094844055
+    locked: 0
+  - name: Building
+    uniqueID: 2333270319
+    locked: 0
+  - name: Road
+    uniqueID: 171918953
+    locked: 0
+  - name: Cone
+    uniqueID: 3089876669
+    locked: 0
+  - name: Player
+    uniqueID: 2146498309
+    locked: 0
+  m_RenderingLayers:
+  - Default
