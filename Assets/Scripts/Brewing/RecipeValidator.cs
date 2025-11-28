@@ -13,26 +13,41 @@ public class RecipeValidator : MonoBehaviour
 {
     public List<Recipe> recipes;
 
-    // Mengembalikan Recipe jika cocok, null jika tidak
-    public Recipe Validate(List<string> addedIngredients, bool hasWater)
+    // Validasi resep dan return sprite jika cocok, null jika tidak
+    public Sprite Validate(List<string> addedIngredients, bool hasWater)
     {
-        if (!hasWater) return null;
+        if (!hasWater) return null; // Air panas wajib
 
         foreach (var recipe in recipes)
         {
             if (recipe.ingredients.Count != addedIngredients.Count) continue;
 
             bool match = true;
+
             foreach (var ing in recipe.ingredients)
             {
-                if (!addedIngredients.Contains(ing))
+                // exact match case-insensitive
+                bool found = false;
+                foreach (var added in addedIngredients)
+                {
+                    if (string.Equals(ing.Trim(), added.Trim(), System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
                 {
                     match = false;
                     break;
                 }
             }
 
-            if (match) return recipe;
+            if (match)
+            {
+                Debug.Log("[RecipeValidator] Recipe matched: " + recipe.recipeName);
+                return recipe.resultSprite; // return sprite unik resep
+            }
         }
 
         return null;
