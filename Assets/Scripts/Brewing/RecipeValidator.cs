@@ -16,8 +16,15 @@ public class RecipeValidator : MonoBehaviour
     [Header("Debug")]
     public bool enableDebugLogs = true;
 
-    // Mengembalikan Sprite hasil jika cocok, null jika tidak
+    // Existing API: return Sprite jika cocok (dipertahankan untuk kompatibilitas)
     public Sprite Validate(List<string> addedIngredients, bool hasWater)
+    {
+        var recipe = FindMatchingRecipe(addedIngredients, hasWater);
+        return recipe != null ? recipe.resultSprite : null;
+    }
+
+    // New: kembalikan Recipe yang cocok (lebih berguna untuk penyimpanan nama/objek)
+    public Recipe FindMatchingRecipe(List<string> addedIngredients, bool hasWater)
     {
         if (!hasWater)
         {
@@ -25,7 +32,6 @@ public class RecipeValidator : MonoBehaviour
             return null;
         }
 
-        // Normalize incoming ingredients (case-insensitive, trimmed)
         var normalizedAdded = addedIngredients
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(s => s.Trim().ToLowerInvariant())
@@ -37,21 +43,19 @@ public class RecipeValidator : MonoBehaviour
         {
             if (recipe == null) continue;
 
-            // Normalize recipe ingredients and ignore any "hot water" entries in the recipe
             var normalizedRecipe = recipe.ingredients
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s.Trim().ToLowerInvariant())
+                // ignore hot water entry in recipe lists (our system tracks water separately)
                 .Where(s => !IsHotWaterLabel(s))
                 .ToList();
 
-            // Quick count check (recipe without hot water vs addedIngredients)
             if (normalizedRecipe.Count != normalizedAdded.Count)
             {
                 if (enableDebugLogs) Debug.Log($"[RecipeValidator] Skip '{recipe.recipeName}' (count mismatch {normalizedRecipe.Count} != {normalizedAdded.Count})");
                 continue;
             }
 
-            // Multiset comparison using grouping (handles duplicates and order-independence)
             bool equal = AreMultisetsEqual(normalizedRecipe, normalizedAdded);
 
             if (enableDebugLogs)
@@ -64,7 +68,7 @@ public class RecipeValidator : MonoBehaviour
                 if (recipe.resultSprite == null && enableDebugLogs)
                     Debug.LogWarning($"[RecipeValidator] Recipe '{recipe.recipeName}' matched but resultSprite is null!");
 
-                return recipe.resultSprite;
+                return recipe;
             }
         }
 
@@ -92,7 +96,6 @@ public class RecipeValidator : MonoBehaviour
     private static bool IsHotWaterLabel(string key)
     {
         if (string.IsNullOrWhiteSpace(key)) return false;
-        // cek kata kunci hot water / air panas (case-insensitive karena sudah lower)
         return key == "hot water" || key == "air panas" || key.Contains("hot water") || key.Contains("air panas");
     }
 }
