@@ -671,7 +671,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -169, y: -136}
-  m_SizeDelta: {x: 37, y: 36}
+  m_SizeDelta: {x: 36, y: 59}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &149684664
 MonoBehaviour:
@@ -693,9 +693,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -887,12 +887,23 @@ MonoBehaviour:
     - Black Tea Leaf
     - Hot Water
     resultSprite: {fileID: -4702345873526484290, guid: e8f65d7e6ff5196438fef12b800be000, type: 3}
+  - recipeName: Mint Tea
+    ingredients:
+    - Mint Tea Leaf
+    - Hot Water
+    resultSprite: {fileID: -127263220608820711, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - recipeName: Lavender Tea
     ingredients:
     - Lavender
     - Honey
     - Hot Water
     resultSprite: {fileID: 1084848881713377208, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - recipeName: Jasmine Tea
+    ingredients:
+    - Black Tea Leaf
+    - Jasmine
+    - Hot Water
+    resultSprite: {fileID: 1899291111530188939, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - recipeName: Golden Jasmine Tea
     ingredients:
     - Jasmine
@@ -900,42 +911,13 @@ MonoBehaviour:
     - Hot Water
     - Milk
     resultSprite: {fileID: -8800435968063583012, guid: e8f65d7e6ff5196438fef12b800be000, type: 3}
-  - recipeName: Matcha Latte
-    ingredients:
-    - Green Tea Leaf
-    - Milk
-    - Hot Water
-    resultSprite: {fileID: 8125771052407529038, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
-  - recipeName: Mint Tea
-    ingredients:
-    - Mint Tea Leaf
-    - Hot Water
-    resultSprite: {fileID: -127263220608820711, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
-  - recipeName: Apple Tea
-    ingredients:
-    - Apple
-    - Black Tea Leaf
-    - Hot Water
-    - Honey
-    resultSprite: {fileID: -2351221190195066713, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
-  - recipeName: Honey Tea
-    ingredients:
-    - Black Tea Leaf
-    - Honey
-    - Hot Water
-    resultSprite: {fileID: 8105157844666432273, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - recipeName: Milk Tea
     ingredients:
     - Black Tea Leaf
     - Milk
     - Hot Water
+    - Honey
     resultSprite: {fileID: -5775591276721348390, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
-  - recipeName: Jasmine Tea
-    ingredients:
-    - Black Tea Leaf
-    - Jasmine
-    - Hot Water
-    resultSprite: {fileID: 1899291111530188939, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - recipeName: Mint Milk Tea
     ingredients:
     - Mint Tea Leaf
@@ -943,6 +925,25 @@ MonoBehaviour:
     - Hot Water
     - Honey
     resultSprite: {fileID: 8513637521006076684, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - recipeName: Matcha Latte
+    ingredients:
+    - Green Tea Leaf
+    - Milk
+    - Hot Water
+    resultSprite: {fileID: 8125771052407529038, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - recipeName: Honey Tea
+    ingredients:
+    - Black Tea Leaf
+    - Honey
+    - Hot Water
+    resultSprite: {fileID: 8105157844666432273, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - recipeName: Apple Tea
+    ingredients:
+    - Apple
+    - Black Tea Leaf
+    - Hot Water
+    - Honey
+    resultSprite: {fileID: -2351221190195066713, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - recipeName: Apple Green Tea
     ingredients:
     - Green Tea Leaf
@@ -1900,9 +1901,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3215368511949867723, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2025,6 +2026,14 @@ MonoBehaviour:
   prevButton: {fileID: 49671862}
   nextButton: {fileID: 671234032}
   pages:
+  - pageTitle: Black Tea
+    pageBody: Black tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 5963031585757680770, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   - pageTitle: Green Tea
     pageBody: Green tea adalah minuman yang bla bla bla bla bla
     pageImages:
@@ -2032,17 +2041,93 @@ MonoBehaviour:
     - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
     - {fileID: 0}
     - {fileID: 0}
-    - {fileID: -8262945119466895974, guid: e8f65d7e6ff5196438fef12b800be000, type: 3}
-  - pageTitle: tea
-    pageBody: Green tea adalah minuman yang bla bla bla bla bla
+    - {fileID: 2164005239856940093, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Mint Tea
+    pageBody: Mint tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -1309907903237024509, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: -127263220608820711, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Lavender Tea
+    pageBody: Lavender tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -3778123832131887522, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 1084848881713377208, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Jasmine Tea
+    pageBody: Jasmine tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 3498656201556846251, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 1899291111530188939, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Milk Tea
+    pageBody: Milk tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 3971726053639722521, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5775591276721348390, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Mint Milk Tea
+    pageBody: Mint Milk tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -1309907903237024509, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 3971726053639722521, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 8513637521006076684, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Matcha Latte
+    pageBody: Matcha Latte adalah minuman yang bla bla bla bla bla
     pageImages:
     - {fileID: 3215368511949867723, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
     - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 3971726053639722521, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 8125771052407529038, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Honey Tea
+    pageBody: Honey Tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 0}
+    - {fileID: 8105157844666432273, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Golden Jasmine Tea
+    pageBody: Golden Jasmine Tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: 3498656201556846251, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: 3971726053639722521, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -8800435968063583012, guid: e8f65d7e6ff5196438fef12b800be000, type: 3}
+  - pageTitle: Apple Tea
+    pageBody: Apple Tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2674071360961565222, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2351221190195066713, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
+  - pageTitle: Apple Green Tea
+    pageBody: Apple Green Tea adalah minuman yang bla bla bla bla bla
+    pageImages:
+    - {fileID: 3215368511949867723, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2605465404012986238, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -5585285266584728635, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2674071360961565222, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
+    - {fileID: -2351221190195066713, guid: 0e92a9e2cf19ac34c9858a5479cc53c0, type: 3}
   startClosed: 1
-  loopPages: 0
-  pauseOnOpen: 0
+  loopPages: 1
+  pauseOnOpen: 1
   enablePreviewOnClick: 1
   emptySlotPlaceholder: {fileID: 0}
+  behavioursToDisableOnOpen: []
 --- !u!1 &781582741
 GameObject:
   m_ObjectHideFlags: 0
@@ -2100,9 +2185,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3215368511949867723, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -3935,9 +4020,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -392656414440647134, guid: 4a10f4efa41c8ba40a2c9178646fc703, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

@@ -41,8 +41,14 @@ public class RecipeBookController : MonoBehaviour
     [Tooltip("Optional placeholder sprite to show in empty slots. If null, empty slots will be hidden.")]
     public Sprite emptySlotPlaceholder;
 
+    [Header("Pause: Components to disable while recipe book open")]
+    [Tooltip("If empty, controller will attempt to auto-detect DragItem components and disable them. Prefer to assign concrete components here.")]
+    public List<Behaviour> behavioursToDisableOnOpen = new List<Behaviour>();
+
+    // internal
     private int currentIndex = 0;
     private float prevTimeScale = 1f;
+    private Dictionary<Behaviour, bool> behaviourPrevState = new Dictionary<Behaviour, bool>();
 
     private void Awake()
     {
@@ -51,7 +57,16 @@ public class RecipeBookController : MonoBehaviour
         if (prevButton != null) prevButton.onClick.AddListener(PrevPage);
         if (nextButton != null) nextButton.onClick.AddListener(NextPage);
 
+        // set panel active state according to startClosed
         if (panelRecipeBook != null) panelRecipeBook.SetActive(!startClosed);
+
+        // initialize openButton.interactable: disable if panel already open and openButton != closeButton
+        if (openButton != null && panelRecipeBook != null)
+        {
+            bool panelIsOpen = panelRecipeBook.activeInHierarchy;
+            if (openButton != closeButton)
+                openButton.interactable = !panelIsOpen;
+        }
     }
 
     private void Start()
@@ -63,12 +78,6 @@ public class RecipeBookController : MonoBehaviour
             currentIndex = Mathf.Clamp(currentIndex, 0, pages.Count - 1);
             ShowPage(currentIndex);
         }
-
-        // Warn in editor if slots not set to expected count (optional)
-#if UNITY_EDITOR
-        if (imageSlots == null || imageSlots.Count == 0)
-            Debug.LogWarning("[RecipeBookController] imageSlots not assigned. Add up to 4 Image UI slots in Inspector.");
-#endif
     }
 
     private void Update()
@@ -81,26 +90,58 @@ public class RecipeBookController : MonoBehaviour
         }
     }
 
+    // Open recipe book. Guard to prevent re-entrance.
     public void Open()
     {
         if (panelRecipeBook == null) return;
-        panelRecipeBook.SetActive(true);
 
+        // Guard: if already open, do nothing (prevents Time.timeScale overwrite bug)
+        if (panelRecipeBook.activeInHierarchy)
+        {
+            if (openButton != null && openButton.interactable)
+                openButton.interactable = false; // ensure it's disabled
+            return;
+        }
+
+        // Open panel
+        panelRecipeBook.SetActive(true);
         if (pages != null && pages.Count > 0) ShowPage(currentIndex);
         else UpdateEmptyView();
 
+        // Disable the openButton while panel is open (but don't disable if it's the same as closeButton)
+        if (openButton != null && openButton != closeButton)
+            openButton.interactable = false;
+
+        // Pause logic
         if (pauseOnOpen)
         {
             prevTimeScale = Time.timeScale;
             Time.timeScale = 0f;
+            DisableBehavioursForPause();
         }
     }
 
+    // Close recipe book and restore
     public void Close()
     {
         if (panelRecipeBook == null) return;
+
+        // Guard: if already closed, nothing to do
+        if (!panelRecipeBook.activeInHierarchy) return;
+
+        // Close panel
         panelRecipeBook.SetActive(false);
-        if (pauseOnOpen) Time.timeScale = prevTimeScale;
+
+        // Re-enable openButton if it was disabled (and not same as close)
+        if (openButton != null && openButton != closeButton)
+            openButton.interactable = true;
+
+        // Restore from pause
+        if (pauseOnOpen)
+        {
+            RestoreBehavioursAfterPause();
+            Time.timeScale = prevTimeScale;
+        }
     }
 
     public void ShowPage(int index)
@@ -158,13 +199,10 @@ public class RecipeBookController : MonoBehaviour
     }
 
     // Map up to N sprites into the fixed imageSlots list.
-    // If sprites.Count < imageSlots.Count, remaining slots will show emptySlotPlaceholder (if set) or be hidden.
     private void PopulateFixedImageSlots(List<Sprite> sprites)
     {
-        // safety
         if (imageSlots == null || imageSlots.Count == 0)
         {
-            // fallback: set preview to first sprite if any
             if (pageImagePreview != null && sprites != null && sprites.Count > 0)
                 pageImagePreview.sprite = sprites[0];
             return;
@@ -194,13 +232,11 @@ public class RecipeBookController : MonoBehaviour
             }
             else
             {
-                // hide empty slot if no placeholder
                 slot.sprite = null;
-                slot.color = Color.clear;
-                slot.gameObject.SetActive(true); // keep active so layout stays consistent; transparent image
+                slot.color = Color.clear; // transparent but keeps layout
+                slot.gameObject.SetActive(true);
             }
 
-            // wire click to preview if Button exists and preview enabled
             var btn = slot.GetComponent<Button>();
             if (btn != null)
             {
@@ -216,7 +252,6 @@ public class RecipeBookController : MonoBehaviour
             }
         }
 
-        // set preview to first available sprite (prefer real sprite over placeholder)
         Sprite firstPreview = null;
         if (sprites != null && sprites.Count > 0) firstPreview = sprites[0];
         else if (emptySlotPlaceholder != null) firstPreview = emptySlotPlaceholder;
@@ -232,12 +267,53 @@ public class RecipeBookController : MonoBehaviour
             if (slot == null) continue;
             slot.sprite = null;
             slot.color = Color.clear;
-            // preserve active state so layout doesn't jump; using transparent image keeps layout stable
             var btn = slot.GetComponent<Button>();
             if (btn != null) btn.onClick.RemoveAllListeners();
         }
 
         if (pageImagePreview != null) pageImagePreview.sprite = null;
+    }
+
+    // ----- Pause helpers -----
+    private void DisableBehavioursForPause()
+    {
+        behaviourPrevState.Clear();
+
+        // if user didn't assign any behaviours, try auto-detect DragItem scripts
+        if (behavioursToDisableOnOpen == null || behavioursToDisableOnOpen.Count == 0)
+        {
+            // try find any component named "DragItem" in scene
+            var found = FindObjectsOfType<Behaviour>();
+            foreach (var b in found)
+            {
+                if (b == null) continue;
+                if (b.GetType().Name == "DragItem")
+                {
+                    behaviourPrevState[b] = b.enabled;
+                    b.enabled = false;
+                }
+            }
+        }
+        else
+        {
+            foreach (var b in behavioursToDisableOnOpen)
+            {
+                if (b == null) continue;
+                behaviourPrevState[b] = b.enabled;
+                b.enabled = false;
+            }
+        }
+    }
+
+    private void RestoreBehavioursAfterPause()
+    {
+        foreach (var kv in behaviourPrevState)
+        {
+            var b = kv.Key;
+            if (b == null) continue;
+            try { b.enabled = kv.Value; } catch { /* ignore */ }
+        }
+        behaviourPrevState.Clear();
     }
 
     // Inspector helpers
