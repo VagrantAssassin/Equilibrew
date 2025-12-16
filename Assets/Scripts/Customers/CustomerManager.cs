@@ -1,15 +1,14 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// CustomerManager (reverted): 
+/// CustomerManager (text-only dialog):
 /// - spawn one customer at a time (random recipe from RecipeValidator)
 /// - instantiate dialogPrefab as child of dialogAnchor (empty RectTransform in Canvas)
-/// - dialog prefab is authoritative for visual dialog (Image + TMP inside prefab)
-/// - on serve success: destroy dialog prefab and customer, then spawn next
-/// - on serve failure: show temporary failure text inside the instantiated dialog prefab (if TMP exists)
+/// - dialog prefab is used only for text (no icon handling)
+/// - on serve success: dialog text -> "Terima kasih", then next customer spawns
+/// - on serve failure: dialog text -> "Apa ini, tidak enak" for a short duration, then restore
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -22,17 +21,18 @@ public class CustomerManager : MonoBehaviour
     [Header("Dialog (UI prefab)")]
     [Tooltip("Empty RectTransform under Canvas where dialog prefab will be instantiated.")]
     public RectTransform dialogAnchor;
-    [Tooltip("Dialog UI prefab (RectTransform root). Must contain Image/TextMeshProUGUI if you want sprite+text set.")]
+    [Tooltip("Dialog UI prefab (RectTransform root). Should contain a TextMeshProUGUI for dialog text.")]
     public GameObject dialogPrefab;
 
     [Header("Options")]
-    public int maxCustomersPerDay = 10;     // reserved for future use
-    public float failureMessageDuration = 1.5f; // seconds to show failure message (optional)
+    public int maxCustomersPerDay = 10;         // reserved for future use
+    public float failureMessageDuration = 1.5f; // seconds to show failure message
+    public float successMessageDuration = 1.0f; // seconds to show success message before next spawn
 
     // internal
     private Customer currentCustomer;
     private GameObject activeDialogInstance;
-    private Coroutine failureCoroutine;
+    private Coroutine messageCoroutine;
 
     private void Start()
     {
@@ -53,6 +53,7 @@ public class CustomerManager : MonoBehaviour
 
     /// <summary>
     /// Pick a random recipe, spawn a Customer GameObject, and instantiate dialogPrefab as child of dialogAnchor.
+    /// Dialog prefab is used only for text (we don't touch any Image).
     /// </summary>
     public void SpawnNextCustomer()
     {
@@ -84,7 +85,7 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log($"[CustomerManager] Spawned customer requesting '{chosen.recipeName}'");
 
-        // spawn dialog prefab under dialogAnchor
+        // spawn dialog prefab under dialogAnchor and set its text only
         CreateDialogInstanceForRecipe(chosen);
     }
 
@@ -108,31 +109,14 @@ public class CustomerManager : MonoBehaviour
             activeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
         }
 
-        // attempt to find Image and TMP inside the instantiated prefab and set them
-        if (activeDialogInstance != null)
+        if (activeDialogInstance == null) return;
+
+        // Only set text (do NOT touch any Image in prefab)
+        var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (txt != null)
         {
-            var img = activeDialogInstance.GetComponentInChildren<Image>();
-            var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>();
-
-            if (img != null)
-            {
-                if (recipe != null && recipe.resultSprite != null)
-                {
-                    img.sprite = recipe.resultSprite;
-                    img.color = Color.white;
-                    img.gameObject.SetActive(true);
-                }
-                else
-                {
-                    img.gameObject.SetActive(false);
-                }
-            }
-
-            if (txt != null)
-            {
-                txt.text = recipe != null ? recipe.recipeName : "";
-                txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
-            }
+            txt.text = recipe != null ? recipe.recipeName : "";
+            txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
         }
     }
 
@@ -142,6 +126,12 @@ public class CustomerManager : MonoBehaviour
         {
             Destroy(activeDialogInstance);
             activeDialogInstance = null;
+        }
+
+        if (messageCoroutine != null)
+        {
+            StopCoroutine(messageCoroutine);
+            messageCoroutine = null;
         }
     }
 
@@ -157,39 +147,67 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Customer satisfied -> berhasil!");
-            // cleanup dialog and customer, then spawn next
-            ClearDialogInstance();
-            Destroy(currentCustomer.gameObject, 0.05f);
-            currentCustomer = null;
-            if (failureCoroutine != null) { StopCoroutine(failureCoroutine); failureCoroutine = null; }
-            SpawnNextCustomer();
+            // show success message then spawn next
+            if (activeDialogInstance != null)
+            {
+                var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (txt != null)
+                {
+                    if (messageCoroutine != null) StopCoroutine(messageCoroutine);
+                    messageCoroutine = StartCoroutine(ShowSuccessThenNext(txt));
+                    return;
+                }
+            }
+
+            // fallback if no TMP present: cleanup immediately and spawn next
+            CleanupAndSpawnNext();
         }
         else
         {
             Debug.Log("[CustomerManager] Customer not satisfied -> gagal.");
-            // show temporary failure message if prefab has TMP; otherwise just log
+            // show failure message temporarily
             if (activeDialogInstance != null)
             {
-                var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>();
+                var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
                 if (txt != null)
                 {
-                    if (failureCoroutine != null) StopCoroutine(failureCoroutine);
-                    failureCoroutine = StartCoroutine(ShowTemporaryFailureMessage(txt));
+                    if (messageCoroutine != null) StopCoroutine(messageCoroutine);
+                    messageCoroutine = StartCoroutine(ShowFailureMessage(txt));
                 }
             }
         }
     }
 
-    private IEnumerator ShowTemporaryFailureMessage(TextMeshProUGUI txt)
+    private IEnumerator ShowFailureMessage(TextMeshProUGUI txt)
     {
         string prev = txt.text;
-        txt.text = "That is not what I ordered!";
+        txt.text = "Apa ini, tidak enak";
         yield return new WaitForSeconds(failureMessageDuration);
-        // restore original if still have customer
+        // restore requested name if customer still exists
         if (currentCustomer != null && currentCustomer.requestedRecipe != null)
             txt.text = currentCustomer.requestedRecipe.recipeName;
         else
             txt.text = prev;
-        failureCoroutine = null;
+        messageCoroutine = null;
+    }
+
+    private IEnumerator ShowSuccessThenNext(TextMeshProUGUI txt)
+    {
+        string prev = txt.text;
+        txt.text = "Terima kasih";
+        yield return new WaitForSeconds(successMessageDuration);
+
+        // cleanup and spawn next
+        CleanupAndSpawnNext();
+        messageCoroutine = null;
+    }
+
+    private void CleanupAndSpawnNext()
+    {
+        ClearDialogInstance();
+        if (currentCustomer != null)
+            Destroy(currentCustomer.gameObject, 0.05f);
+        currentCustomer = null;
+        SpawnNextCustomer();
     }
 }

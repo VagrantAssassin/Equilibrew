@@ -11,6 +11,14 @@ public class SlidingPanelController : MonoBehaviour
     public Button toggleButton;          // tombol yang memicu show/hide (child atau sibling)
     public Canvas parentCanvas;          // optional, untuk canvas scale reference
 
+    [Header("Toggle Button Label (optional)")]
+    public TextMeshProUGUI toggleButtonTMPText; // assign jika label menggunakan TextMeshPro
+    public Text toggleButtonUIText;              // fallback jika label pakai legacy UI Text
+    [Tooltip("Symbol to show when panel is open (example: \"<\")")]
+    public string openSymbol = "<";
+    [Tooltip("Symbol to show when panel is closed (example: \">\")")]
+    public string closedSymbol = ">";
+
     [Header("Behaviour")]
     [Tooltip("Lebar area yang tetap terlihat ketika panel 'tertutup' (px). Biasanya lebar tombol.")]
     public float visibleWidthWhenClosed = 64f;
@@ -43,41 +51,30 @@ public class SlidingPanelController : MonoBehaviour
 
     void Start()
     {
-        // compute positions in anchored space
+        // compute positions and initial state
         ComputePositions();
 
-        // initialize state
         isOpen = !startClosed;
         if (startClosed)
             SetAnchoredPosition(hiddenAnchoredPos);
         else
             SetAnchoredPosition(shownAnchoredPos);
+
+        UpdateToggleLabel(); // set initial symbol
     }
 
     // Call this if panel size / canvas changes at runtime (e.g. resolution change)
     public void ComputePositions()
     {
-        // Ensure panelRect set
         if (panelRect == null) panelRect = GetComponent<RectTransform>();
 
-        // Get width in pixels relative to canvas scale
         float panelWidth = panelRect.rect.width;
         float scale = 1f;
-        if (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-        {
-            // approximate scale for camera/overlay variants
+        if (parentCanvas != null)
             scale = parentCanvas.scaleFactor;
-        }
-        else if (parentCanvas != null)
-        {
-            scale = parentCanvas.scaleFactor;
-        }
 
-        // hiddenX shifts panel left so that only visibleWidthWhenClosed remains visible
-        // anchoredPosition.x is local to anchor; we use negative X to move left
         float hiddenOffset = -(panelWidth - visibleWidthWhenClosed);
 
-        // Keep the same Y as current anchoredPosition
         shownAnchoredPos = panelRect.anchoredPosition;
         hiddenAnchoredPos = new Vector2(hiddenOffset, shownAnchoredPos.y);
     }
@@ -86,7 +83,7 @@ public class SlidingPanelController : MonoBehaviour
     public void Toggle()
     {
         if (panelRect == null) return;
-        if (animCoroutine != null) return; // prevent re-entrance by default
+        if (animCoroutine != null) return; // prevent re-entrance
 
         if (isOpen) Hide();
         else Show();
@@ -97,7 +94,8 @@ public class SlidingPanelController : MonoBehaviour
         if (animCoroutine != null) StopCoroutine(animCoroutine);
         animCoroutine = StartCoroutine(AnimateTo(shownAnchoredPos));
         isOpen = true;
-        if (toggleButton != null) toggleButton.interactable = false; // optional: disable during animation
+        UpdateToggleLabel();
+        if (toggleButton != null) toggleButton.interactable = false;
     }
 
     public void Hide()
@@ -105,6 +103,7 @@ public class SlidingPanelController : MonoBehaviour
         if (animCoroutine != null) StopCoroutine(animCoroutine);
         animCoroutine = StartCoroutine(AnimateTo(hiddenAnchoredPos));
         isOpen = false;
+        UpdateToggleLabel();
         if (toggleButton != null) toggleButton.interactable = false;
     }
 
@@ -113,13 +112,12 @@ public class SlidingPanelController : MonoBehaviour
         Vector2 start = panelRect.anchoredPosition;
         float t = 0f;
 
-        // optionally disable raycast graphics while animating
         if (!interactableWhileAnimating)
             SetGraphicsRaycast(false);
 
         while (t < animationDuration)
         {
-            t += Time.unscaledDeltaTime; // use unscaled so works when Time.timeScale == 0 (pause)
+            t += Time.unscaledDeltaTime; // so animation works even when game paused
             float k = Mathf.SmoothStep(0f, 1f, t / animationDuration);
             panelRect.anchoredPosition = Vector2.Lerp(start, target, k);
             yield return null;
@@ -130,7 +128,6 @@ public class SlidingPanelController : MonoBehaviour
         if (!interactableWhileAnimating)
             SetGraphicsRaycast(true);
 
-        // re-enable toggleButton after animation (so player cannot spam)
         if (toggleButton != null)
             toggleButton.interactable = true;
 
@@ -144,17 +141,50 @@ public class SlidingPanelController : MonoBehaviour
 
     private void SetGraphicsRaycast(bool enabled)
     {
-        // enable/disable raycastTarget on all Graphic children so UI interactions stop while animating
         if (panelGraphics == null) panelGraphics = GetComponentsInChildren<Graphic>(true);
         foreach (var g in panelGraphics)
         {
             if (g == null) continue;
-            // do not touch the toggleButton itself (it must remain interactable)
             if (toggleButton != null && g.gameObject == toggleButton.gameObject) continue;
             g.raycastTarget = enabled;
         }
     }
 
-    // Optional helper for editor / external calls
+    // Update the toggle button label based on isOpen
+    private void UpdateToggleLabel()
+    {
+        string symbol = isOpen ? openSymbol : closedSymbol;
+
+        if (toggleButtonTMPText != null)
+        {
+            toggleButtonTMPText.text = symbol;
+            return;
+        }
+
+        if (toggleButtonUIText != null)
+        {
+            toggleButtonUIText.text = symbol;
+            return;
+        }
+
+        // Try to auto-find text component under the toggleButton if fields not assigned
+        if (toggleButton != null)
+        {
+            var tmp = toggleButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp != null)
+            {
+                tmp.text = symbol;
+                return;
+            }
+
+            var txt = toggleButton.GetComponentInChildren<Text>(true);
+            if (txt != null)
+            {
+                txt.text = symbol;
+                return;
+            }
+        }
+    }
+
     public bool IsOpen() => isOpen;
 }
