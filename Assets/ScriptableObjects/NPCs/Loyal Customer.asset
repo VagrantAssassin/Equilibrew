@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
+  m_Name: Loyal Customer
+  m_EditorClassIdentifier: 
+  profileName: Diana
+  portrait: {fileID: 4919402153586549462, guid: c89ecdbcf70eeda418b864a88ccdf2b5, type: 3}
+  preferredRecipeNames:
+  - Black Tea
+  - Green Tea
+  - Mint Tea
+  personality: 1

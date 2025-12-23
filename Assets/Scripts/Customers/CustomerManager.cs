@@ -1,213 +1,326 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// CustomerManager (text-only dialog):
-/// - spawn one customer at a time (random recipe from RecipeValidator)
-/// - instantiate dialogPrefab as child of dialogAnchor (empty RectTransform in Canvas)
-/// - dialog prefab is used only for text (no icon handling)
-/// - on serve success: dialog text -> "Terima kasih", then next customer spawns
-/// - on serve failure: dialog text -> "Apa ini, tidak enak" for a short duration, then restore
+/// CustomerManager (clean: no serve debounce, no endDay policy toggle)
+/// - Daily loop: sample N profiles without replacement
+/// - Wrong serve: increment failCount; if failCount < maxFails -> show message and KEEP customer
+///              if failCount >= maxFails -> show leaving message then ADVANCE to next customer
+/// - Deterministic coroutine/state handling to avoid stuck
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
     [Header("References (assign in Inspector)")]
-    public RecipeValidator recipeValidator; // source of recipes
-    public CupController cupController;     // subscribe OnServe
-    public Transform spawnParent;           // parent transform for customer GameObject (optional)
-    public GameObject customerPrefab;       // optional visual prefab for customers (can be null)
+    public RecipeValidator recipeValidator;
+    public CupController cupController;
+    public Transform spawnParent;
+    public GameObject customerPrefab;
+
+    [Header("Profiles (customers pool)")]
+    public List<CustomerProfile> profiles = new List<CustomerProfile>();
 
     [Header("Dialog (UI prefab)")]
-    [Tooltip("Empty RectTransform under Canvas where dialog prefab will be instantiated.")]
     public RectTransform dialogAnchor;
-    [Tooltip("Dialog UI prefab (RectTransform root). Should contain a TextMeshProUGUI for dialog text.")]
     public GameObject dialogPrefab;
 
-    [Header("Options")]
-    public int maxCustomersPerDay = 10;         // reserved for future use
-    public float failureMessageDuration = 1.5f; // seconds to show failure message
-    public float successMessageDuration = 1.0f; // seconds to show success message before next spawn
+    [Header("Daily options")]
+    public int minCustomersPerDay = 1;
+    public float delayBeforeNextDay = 1.0f;
 
-    // internal
-    private Customer currentCustomer;
-    private GameObject activeDialogInstance;
-    private Coroutine messageCoroutine;
+    [Header("Delays")]
+    public float delayBetweenCustomers = 1.0f;
+
+    [Header("Message durations")]
+    public float failureMessageDuration = 1.5f;
+    public float successMessageDuration = 1.0f;
+    public float leaveMessageDuration = 1.5f;
+
+    // runtime
+    private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
+    private int todaysIndex = 0;
+    private Customer currentCustomer = null;
+    private GameObject activeDialogInstance = null;
+    private Coroutine messageCoroutine = null;
+
+    private int dayNumber = 0;
+
+    private enum ManagerState { Idle, ShowingMessage, WaitingBetweenCustomers, DayEnding }
+    private ManagerState state = ManagerState.Idle;
+
+    // token to avoid coroutine race
+    private int messageToken = 0;
 
     private void Start()
     {
+        // Defensive subscription: remove then add
         if (cupController != null)
+        {
+            cupController.OnServe -= OnServeReceived;
             cupController.OnServe += OnServeReceived;
-        else
-            Debug.LogWarning("[CustomerManager] cupController not assigned.");
+            Debug.Log("[CustomerManager] Subscribed to CupController.OnServe (defensive).");
+        }
+        else Debug.LogWarning("[CustomerManager] cupController not assigned.");
 
-        ClearDialogInstance();
-        SpawnNextCustomer();
+        StartNewDay();
     }
 
     private void OnDestroy()
     {
-        if (cupController != null)
-            cupController.OnServe -= OnServeReceived;
+        if (cupController != null) cupController.OnServe -= OnServeReceived;
     }
 
-    /// <summary>
-    /// Pick a random recipe, spawn a Customer GameObject, and instantiate dialogPrefab as child of dialogAnchor.
-    /// Dialog prefab is used only for text (we don't touch any Image).
-    /// </summary>
-    public void SpawnNextCustomer()
+    #region Daily flow
+    private void StartNewDay()
     {
-        if (recipeValidator == null || recipeValidator.recipes == null || recipeValidator.recipes.Count == 0)
+        if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+        state = ManagerState.Idle;
+
+        dayNumber++;
+        Debug.Log($"[CustomerManager] Starting day {dayNumber}");
+
+        if (profiles == null || profiles.Count == 0)
         {
-            Debug.LogWarning("[CustomerManager] No recipes available in RecipeValidator.");
-            ClearDialogInstance();
+            Debug.LogWarning("[CustomerManager] No customer profiles assigned.");
+            todaysProfiles.Clear();
+            todaysIndex = 0;
             return;
         }
 
-        int idx = Random.Range(0, recipeValidator.recipes.Count);
-        Recipe chosen = recipeValidator.recipes[idx];
+        int maxAvailable = profiles.Count;
+        int count = Mathf.Clamp(UnityEngine.Random.Range(minCustomersPerDay, maxAvailable + 1), 1, maxAvailable);
 
-        // instantiate customer GameObject
-        GameObject go;
-        if (customerPrefab != null)
-        {
-            go = Instantiate(customerPrefab, spawnParent ? spawnParent : transform);
-        }
-        else
-        {
-            go = new GameObject("Customer");
-            if (spawnParent != null) go.transform.SetParent(spawnParent, false);
-            else go.transform.SetParent(transform, false);
-        }
+        var pool = new List<CustomerProfile>(profiles);
+        Shuffle(pool);
+        todaysProfiles = pool.GetRange(0, count);
+        todaysIndex = 0;
 
-        currentCustomer = go.GetComponent<Customer>() ?? go.AddComponent<Customer>();
-        currentCustomer.SetRequest(chosen);
-
-        Debug.Log($"[CustomerManager] Spawned customer requesting '{chosen.recipeName}'");
-
-        // spawn dialog prefab under dialogAnchor and set its text only
-        CreateDialogInstanceForRecipe(chosen);
+        Debug.Log($"[CustomerManager] Day {dayNumber} will have {todaysProfiles.Count} customers.");
+        SpawnNextFromToday();
     }
 
+    private void Shuffle<T>(List<T> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int j = UnityEngine.Random.Range(i, list.Count);
+            T tmp = list[i];
+            list[i] = list[j];
+            list[j] = tmp;
+        }
+    }
+
+    private void SpawnNextFromToday()
+    {
+        ClearDialogInstance();
+
+        if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
+        {
+            StartCoroutine(NextDayDelayed());
+            return;
+        }
+
+        if (state != ManagerState.Idle)
+        {
+            StartCoroutine(SpawnNextWhenIdleCoroutine());
+            return;
+        }
+
+        var profile = todaysProfiles[todaysIndex++];
+
+        if (customerPrefab == null || spawnParent == null)
+        {
+            Debug.LogError("[CustomerManager] customerPrefab or spawnParent not assigned.");
+            return;
+        }
+
+        GameObject go = Instantiate(customerPrefab, spawnParent);
+        go.name = $"Customer_{profile.profileName}";
+        var cust = go.GetComponent<Customer>() ?? go.AddComponent<Customer>();
+
+        // set maxFails for tracking (policy: advance on max by default)
+        cust.maxFails = Mathf.Max(1, profile.maxFails);
+        cust.failCount = 0;
+
+        var img = go.GetComponentInChildren<UnityEngine.UI.Image>(true);
+        if (img != null)
+        {
+            if (profile.portrait != null) { img.sprite = profile.portrait; img.color = Color.white; }
+            else { img.sprite = null; img.color = new Color(1,1,1,0f); }
+        }
+
+        Recipe requested = null;
+        if (profile.preferredRecipeNames != null && recipeValidator != null && recipeValidator.recipes != null)
+        {
+            var names = new List<string>(profile.preferredRecipeNames); Shuffle(names);
+            foreach (var n in names)
+            {
+                if (string.IsNullOrWhiteSpace(n)) continue;
+                requested = recipeValidator.recipes.Find(r => string.Equals(r.recipeName, n.Trim(), StringComparison.OrdinalIgnoreCase));
+                if (requested != null) break;
+            }
+        }
+        if (requested == null && recipeValidator != null && recipeValidator.recipes != null && recipeValidator.recipes.Count > 0)
+            requested = recipeValidator.recipes[UnityEngine.Random.Range(0, recipeValidator.recipes.Count)];
+
+        cust.SetRequest(requested);
+        currentCustomer = cust;
+
+        Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' requesting '{requested?.recipeName ?? "NONE"}' (maxFails={cust.maxFails})");
+        CreateDialogInstanceForRecipe(requested);
+    }
+
+    private IEnumerator SpawnNextWhenIdleCoroutine()
+    {
+        yield return new WaitForSecondsRealtime(0.05f);
+        SpawnNextFromToday();
+    }
+
+    private IEnumerator NextDayDelayed()
+    {
+        yield return new WaitForSecondsRealtime(delayBeforeNextDay);
+        StartNewDay();
+    }
+    #endregion
+
+    #region Dialog helper
     private void CreateDialogInstanceForRecipe(Recipe recipe)
     {
         ClearDialogInstance();
 
-        if (dialogPrefab == null)
-        {
-            Debug.LogWarning("[CustomerManager] dialogPrefab not assigned. No visual dialog will be shown.");
-            return;
-        }
+        if (dialogPrefab == null) { Debug.LogWarning("[CustomerManager] dialogPrefab not assigned."); return; }
 
-        if (dialogAnchor == null)
-        {
-            Debug.LogWarning("[CustomerManager] dialogAnchor not assigned. Instantiating dialog prefab at root instead.");
-            activeDialogInstance = Instantiate(dialogPrefab);
-        }
-        else
-        {
-            activeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
-        }
+        activeDialogInstance = (dialogAnchor == null) ? Instantiate(dialogPrefab) : Instantiate(dialogPrefab, dialogAnchor, false);
 
         if (activeDialogInstance == null) return;
 
-        // Only set text (do NOT touch any Image in prefab)
         var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (txt != null)
-        {
-            txt.text = recipe != null ? recipe.recipeName : "";
-            txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
-        }
+        if (txt != null) { txt.text = recipe != null ? recipe.recipeName : "Saya ingin sesuatu..."; txt.gameObject.SetActive(true); }
     }
 
     private void ClearDialogInstance()
     {
-        if (activeDialogInstance != null)
-        {
-            Destroy(activeDialogInstance);
-            activeDialogInstance = null;
-        }
-
-        if (messageCoroutine != null)
-        {
-            StopCoroutine(messageCoroutine);
-            messageCoroutine = null;
-        }
+        if (activeDialogInstance != null) { Destroy(activeDialogInstance); activeDialogInstance = null; }
+        if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+        if (state == ManagerState.ShowingMessage) state = ManagerState.Idle;
     }
+    #endregion
 
+    #region Serve handling
     private void OnServeReceived(Recipe served)
     {
-        if (currentCustomer == null)
-        {
-            Debug.Log("[CustomerManager] No active customer to serve.");
-            return;
-        }
+        Debug.Log($"[CustomerManager] OnServeReceived. state={state} current={(currentCustomer!=null?currentCustomer.name:"null")}");
+        if (state != ManagerState.Idle) { Debug.Log("[CustomerManager] Serve ignored - not idle."); return; }
+        if (currentCustomer == null) { Debug.Log("[CustomerManager] No active customer."); return; }
 
         bool ok = currentCustomer.CheckServed(served);
         if (ok)
         {
-            Debug.Log("[CustomerManager] Customer satisfied -> berhasil!");
-            // show success message then spawn next
-            if (activeDialogInstance != null)
+            var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (txt != null)
             {
-                var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
-                if (txt != null)
-                {
-                    if (messageCoroutine != null) StopCoroutine(messageCoroutine);
-                    messageCoroutine = StartCoroutine(ShowSuccessThenNext(txt));
-                    return;
-                }
+                // show thanks then advance
+                StartShowMessageAndThen(txt, "Terima kasih", successMessageDuration, AdvanceToNextCustomerCoroutine);
+                return;
             }
+            AdvanceToNextCustomer();
+            return;
+        }
 
-            // fallback if no TMP present: cleanup immediately and spawn next
-            CleanupAndSpawnNext();
+        // WRONG serve: increment failCount, but DO NOT auto-advance unless max reached
+        Debug.Log($"[CustomerManager] Wrong serve. fail(before)={currentCustomer.failCount}, max={currentCustomer.maxFails}");
+        bool reached = currentCustomer.RegisterFail();
+        Debug.Log($"[CustomerManager] fail(after)={currentCustomer.failCount}, reachedMax={reached}");
+
+        var dialogText = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (dialogText != null)
+        {
+            if (reached)
+            {
+                // reached max -> show leaving message then advance to next customer
+                StartShowMessageAndThen(dialogText, "Kamu gimana sih kerjanya, saya mau pergi saja", leaveMessageDuration, AdvanceToNextCustomerCoroutine);
+            }
+            else
+            {
+                // not yet max: show "Ini bukan pesanan saya" then return to Idle (customer stays)
+                StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, null);
+            }
         }
         else
         {
-            Debug.Log("[CustomerManager] Customer not satisfied -> gagal.");
-            // show failure message temporarily
-            if (activeDialogInstance != null)
-            {
-                var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
-                if (txt != null)
-                {
-                    if (messageCoroutine != null) StopCoroutine(messageCoroutine);
-                    messageCoroutine = StartCoroutine(ShowFailureMessage(txt));
-                }
-            }
+            // no dialog UI: if reached max advance, else just keep customer
+            if (reached) AdvanceToNextCustomer();
+            else Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
         }
     }
+    #endregion
 
-    private IEnumerator ShowFailureMessage(TextMeshProUGUI txt)
+    #region Actions (Advance) - coroutine factories
+    public void AdvanceToNextCustomer()
     {
-        string prev = txt.text;
-        txt.text = "Apa ini, tidak enak";
-        yield return new WaitForSeconds(failureMessageDuration);
-        // restore requested name if customer still exists
-        if (currentCustomer != null && currentCustomer.requestedRecipe != null)
-            txt.text = currentCustomer.requestedRecipe.recipeName;
-        else
-            txt.text = prev;
-        messageCoroutine = null;
+        if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+        messageCoroutine = StartCoroutine(AdvanceToNextCustomerCoroutine());
     }
 
-    private IEnumerator ShowSuccessThenNext(TextMeshProUGUI txt)
+    private IEnumerator AdvanceToNextCustomerCoroutine()
     {
-        string prev = txt.text;
-        txt.text = "Terima kasih";
-        yield return new WaitForSeconds(successMessageDuration);
+        state = ManagerState.WaitingBetweenCustomers;
 
-        // cleanup and spawn next
-        CleanupAndSpawnNext();
-        messageCoroutine = null;
-    }
-
-    private void CleanupAndSpawnNext()
-    {
-        ClearDialogInstance();
         if (currentCustomer != null)
+        {
+            currentCustomer.gameObject.SetActive(false);
             Destroy(currentCustomer.gameObject, 0.05f);
-        currentCustomer = null;
-        SpawnNextCustomer();
+            currentCustomer = null;
+        }
+
+        ClearDialogInstance();
+
+        yield return new WaitForSecondsRealtime(delayBetweenCustomers);
+
+        state = ManagerState.Idle;
+        messageCoroutine = null;
+        SpawnNextFromToday();
     }
+    #endregion
+
+    #region Message helper (robust)
+    private void StartShowMessageAndThen(TextMeshProUGUI txt, string message, float duration, Func<IEnumerator> followupFactory)
+    {
+        if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+        messageCoroutine = StartCoroutine(ShowMessageAndThenCoroutine(txt, message, duration, followupFactory));
+    }
+
+    private IEnumerator ShowMessageAndThenCoroutine(TextMeshProUGUI txt, string message, float duration, Func<IEnumerator> followupFactory)
+    {
+        int token = ++messageToken;
+        state = ManagerState.ShowingMessage;
+
+        string prev = txt.text;
+        txt.text = message;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        if (followupFactory != null)
+        {
+            if (messageCoroutine != null)
+            {
+                try { StopCoroutine(messageCoroutine); } catch { }
+                messageCoroutine = null;
+            }
+            messageCoroutine = StartCoroutine(followupFactory());
+        }
+        else
+        {
+            if (currentCustomer != null && currentCustomer.requestedRecipe != null)
+                txt.text = currentCustomer.requestedRecipe.recipeName;
+            else
+                txt.text = prev;
+
+            state = ManagerState.Idle;
+            messageCoroutine = null;
+        }
+    }
+    #endregion
 }

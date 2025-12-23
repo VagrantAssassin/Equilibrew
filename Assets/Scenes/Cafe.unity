@@ -2119,12 +2119,18 @@ MonoBehaviour:
   recipeValidator: {fileID: 233877801}
   cupController: {fileID: 1014406653}
   spawnParent: {fileID: 1037050768}
-  customerPrefab: {fileID: 0}
+  customerPrefab: {fileID: 2044435669375680158, guid: 49f0c1486533a8b4ba54ca5123e30c2f, type: 3}
+  profiles:
+  - {fileID: 11400000, guid: 67d209d988b365d419a7370bd1d9c41b, type: 2}
+  - {fileID: 11400000, guid: 529b667244b3835419b1ac8539b564f5, type: 2}
   dialogAnchor: {fileID: 1272186779}
   dialogPrefab: {fileID: 3281566745362165758, guid: df24e216159753340b0b66a3fca0be98, type: 3}
-  maxCustomersPerDay: 10
-  failureMessageDuration: 3
-  successMessageDuration: 3
+  minCustomersPerDay: 1
+  delayBeforeNextDay: 3
+  delayBetweenCustomers: 3
+  failureMessageDuration: 2
+  successMessageDuration: 2
+  leaveMessageDuration: 2
 --- !u!4 &739586004
 Transform:
   m_ObjectHideFlags: 0
@@ -2158,7 +2164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &742902160
 RectTransform:
   m_ObjectHideFlags: 0
