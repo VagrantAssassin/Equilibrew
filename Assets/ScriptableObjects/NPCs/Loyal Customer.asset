@@ -18,6 +18,7 @@ MonoBehaviour:
   - Black Tea
   - Green Tea
   - Mint Tea
-  curhatStories: []
+  curhatStories:
+  - {fileID: 4900000, guid: 9ab0acd9cf6b6ef49a1807f4fcc50310, type: 3}
   maxFails: 3
   personality: 1

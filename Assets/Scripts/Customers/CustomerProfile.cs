@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// CustomerProfile: ScriptableObject untuk data pelanggan.
+/// - curhatStories: list of compiled Ink JSON TextAsset.
+/// </summary>
 [CreateAssetMenu(menuName = "Equilibrew/Customer Profile", fileName = "CustomerProfile")]
 public class CustomerProfile : ScriptableObject
 {

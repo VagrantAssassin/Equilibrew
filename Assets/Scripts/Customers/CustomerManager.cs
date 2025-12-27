@@ -5,8 +5,12 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// CustomerManager (cleaned) with Ink curhat integration and reaction handling.
-/// Replaced risky interpolations with safe concatenation for stability.
+/// CustomerManager (final) - flow:
+/// - spawn customer
+/// - show request small dialog
+/// - on correct serve -> show thankyou then run curhat (InkDialogController)
+/// - on curhat done -> apply reaction -> advance
+/// - on wrong serve -> increment fail; if max -> customer leaves
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -16,21 +20,19 @@ public class CustomerManager : MonoBehaviour
     public Transform spawnParent;
     public GameObject customerPrefab;
 
-    [Header("Dialog (UI prefabs)")]
+    [Header("Dialog (request small prefab)")]
     public RectTransform dialogAnchor;
-    public GameObject dialogPrefab; // recipe request
+    public GameObject dialogPrefab; // small request box
 
-    [Header("Ink Dialog (scene controller)")]
+    [Header("Ink Dialog (controller)")]
     public InkDialogController inkDialogController;
 
     [Header("Profiles (customers pool)")]
     public List<CustomerProfile> profiles = new List<CustomerProfile>();
 
-    [Header("Daily options")]
+    [Header("Daily & delays")]
     public int minCustomersPerDay = 1;
     public float delayBeforeNextDay = 1.0f;
-
-    [Header("Delays")]
     public float delayBetweenCustomers = 1.0f;
 
     [Header("Message durations")]
@@ -38,14 +40,11 @@ public class CustomerManager : MonoBehaviour
     public float successMessageDuration = 1.0f;
     public float leaveMessageDuration = 1.5f;
 
-    [Header("Effects (curhat reactions)")]
-    public float tipMultiplierOnAgree = 1.2f;
-    public float satisfactionPenaltyOnDisagree = 0.2f;
-
     // runtime
     private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
     private int todaysIndex = 0;
     private Customer currentCustomer = null;
+    private CustomerProfile currentProfile = null;
     private GameObject activeDialogInstance = null;
     private Coroutine messageCoroutine = null;
 
@@ -53,6 +52,9 @@ public class CustomerManager : MonoBehaviour
 
     private enum ManagerState { Idle, ShowingMessage, WaitingBetweenCustomers, DayEnding }
     private ManagerState state = ManagerState.Idle;
+
+    // prevent double-serve race
+    private bool serveLocked = false;
 
     private void Start()
     {
@@ -78,13 +80,8 @@ public class CustomerManager : MonoBehaviour
     #region Daily flow
     private void StartNewDay()
     {
-        if (messageCoroutine != null)
-        {
-            StopCoroutine(messageCoroutine);
-            messageCoroutine = null;
-        }
+        if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
         state = ManagerState.Idle;
-
         dayNumber++;
         Debug.Log("[CustomerManager] Starting day " + dayNumber);
 
@@ -104,7 +101,6 @@ public class CustomerManager : MonoBehaviour
         todaysProfiles = pool.GetRange(0, count);
         todaysIndex = 0;
 
-        Debug.Log("[CustomerManager] Day " + dayNumber + " will have " + todaysProfiles.Count + " customers.");
         SpawnNextFromToday();
     }
 
@@ -147,6 +143,7 @@ public class CustomerManager : MonoBehaviour
         go.name = "Customer_" + profile.profileName;
         var cust = go.GetComponent<Customer>() ?? go.AddComponent<Customer>();
 
+        // set profile-related fields
         cust.maxFails = Mathf.Max(1, profile.maxFails);
         cust.failCount = 0;
 
@@ -165,6 +162,7 @@ public class CustomerManager : MonoBehaviour
             }
         }
 
+        // Choose requested recipe
         Recipe requested = null;
         if (profile.preferredRecipeNames != null && recipeValidator != null && recipeValidator.recipes != null)
         {
@@ -177,22 +175,18 @@ public class CustomerManager : MonoBehaviour
                 if (requested != null) break;
             }
         }
-
         if (requested == null && recipeValidator != null && recipeValidator.recipes != null && recipeValidator.recipes.Count > 0)
             requested = recipeValidator.recipes[UnityEngine.Random.Range(0, recipeValidator.recipes.Count)];
 
+        // set current
         cust.SetRequest(requested);
         currentCustomer = cust;
+        currentProfile = profile;
 
-        string requestedName = (requested != null) ? requested.recipeName : "NONE";
-        Debug.Log("[CustomerManager] Spawned '" + profile.profileName + "' requesting '" + requestedName + "' (maxFails=" + cust.maxFails + ")");
+        Debug.Log("[CustomerManager] Spawned '" + profile.profileName + "' requesting '" + (requested != null ? requested.recipeName : "NONE") + "' (maxFails=" + cust.maxFails + ")");
 
+        // show request text in small dialog (Jasmine Tea)
         CreateDialogInstanceForRecipe(requested);
-
-        if (profile.curhatStories != null && profile.curhatStories.Count > 0 && inkDialogController != null)
-        {
-            StartCoroutine(RunCurhatForProfile(profile));
-        }
     }
 
     private IEnumerator SpawnNextWhenIdleCoroutine()
@@ -208,51 +202,67 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
-    #region Curhat handling
-    private IEnumerator RunCurhatForProfile(CustomerProfile profile)
+    #region Curhat handling (after successful serve)
+    private IEnumerator RunCurhatIfAnyAndThenAdvance()
     {
-        if (profile.curhatStories == null || profile.curhatStories.Count == 0 || inkDialogController == null)
-            yield break;
-
-        var t = profile.curhatStories[UnityEngine.Random.Range(0, profile.curhatStories.Count)];
-        bool done = false;
-        DialogueReaction reaction = DialogueReaction.Neutral;
-        List<string> tags = null;
-
-        inkDialogController.PlayCurhat(t, (r, choiceTags) =>
+        // show a small thank-you first (update request dialog text)
+        var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (txt != null)
         {
-            reaction = r;
-            tags = choiceTags;
-            done = true;
-        });
+            StartShowMessageAndThen(txt, "Terima kasih", successMessageDuration, null);
+            yield return new WaitForSecondsRealtime(successMessageDuration);
+        }
 
-        yield return new WaitUntil(() => done);
+        // run curhat if profile has any stories
+        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0 && inkDialogController != null)
+        {
+            // safety: jika controller sedang bermain, tunggu sampai selesai
+            while (inkDialogController.IsPlaying)
+                yield return null;
 
-        HandleCurhatReaction(currentCustomer, reaction, tags);
+            bool done = false;
+            DialogueReaction reaction = DialogueReaction.Neutral;
+            List<string> tags = null;
+
+            // play story (dialog panel right)
+            inkDialogController.PlayCurhat(currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)], (r, tgs) =>
+            {
+                reaction = r;
+                tags = tgs;
+                done = true;
+            });
+
+            // wait until done
+            yield return new WaitUntil(() => done);
+
+            // apply reaction effects
+            HandleCurhatReaction(currentCustomer, reaction, tags);
+        }
+
+        // proceed to next customer after a short delay
+        yield return new WaitForSecondsRealtime(delayBetweenCustomers);
+        AdvanceToNextCustomer();
     }
 
     private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags)
     {
         if (cust == null) return;
 
-        if (reaction == DialogueReaction.Agree)
+        switch (reaction)
         {
-            Debug.Log("[CustomerManager] Curhat: AGREE for " + cust.name + " => increase tip chance by x" + tipMultiplierOnAgree);
-        }
-        else if (reaction == DialogueReaction.Neutral)
-        {
-            Debug.Log("[CustomerManager] Curhat: NEUTRAL for " + cust.name);
-        }
-        else if (reaction == DialogueReaction.Disagree)
-        {
-            Debug.Log("[CustomerManager] Curhat: DISAGREE for " + cust.name + " => satisfaction penalty " + satisfactionPenaltyOnDisagree);
+            case DialogueReaction.Agree:
+                Debug.Log("[CustomerManager] Curhat Reaction: AGREE for " + cust.name);
+                break;
+            case DialogueReaction.Neutral:
+                Debug.Log("[CustomerManager] Curhat Reaction: NEUTRAL for " + cust.name);
+                break;
+            case DialogueReaction.Disagree:
+                Debug.Log("[CustomerManager] Curhat Reaction: DISAGREE for " + cust.name);
+                break;
         }
 
         if (tags != null && tags.Count > 0)
-        {
-            string joined = string.Join(",", tags);
-            Debug.Log("[CustomerManager] Curhat tags: " + joined);
-        }
+            Debug.Log("[CustomerManager] Curhat tags: " + string.Join(",", tags));
     }
     #endregion
 
@@ -300,26 +310,32 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
-    #region Serve handling (unchanged)
+    #region Serve handling
     private void OnServeReceived(Recipe served)
     {
         Debug.Log("[CustomerManager] OnServeReceived. state=" + state + " current=" + (currentCustomer != null ? currentCustomer.name : "null"));
+
+        if (serveLocked)
+        {
+            Debug.Log("[CustomerManager] Serve ignored - locked to prevent double processing.");
+            return;
+        }
+
         if (state != ManagerState.Idle) { Debug.Log("[CustomerManager] Serve ignored - not idle."); return; }
         if (currentCustomer == null) { Debug.Log("[CustomerManager] No active customer."); return; }
+
+        // lock briefly to avoid re-entrancy
+        serveLocked = true;
+        StartCoroutine(ReleaseServeLockNextFrame());
 
         bool ok = currentCustomer.CheckServed(served);
         if (ok)
         {
-            var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (txt != null)
-            {
-                StartShowMessageAndThen(txt, "Terima kasih", successMessageDuration, AdvanceToNextCustomerCoroutine);
-                return;
-            }
-            AdvanceToNextCustomer();
+            StartCoroutine(RunCurhatIfAnyAndThenAdvance());
             return;
         }
 
+        // WRONG serve handling
         Debug.Log("[CustomerManager] Wrong serve. fail(before)=" + currentCustomer.failCount + ", max=" + currentCustomer.maxFails);
         bool reached = currentCustomer.RegisterFail();
         Debug.Log("[CustomerManager] fail(after)=" + currentCustomer.failCount + ", reachedMax=" + reached);
@@ -329,7 +345,8 @@ public class CustomerManager : MonoBehaviour
         {
             if (reached)
             {
-                StartShowMessageAndThen(dialogText, "Kamu gimana sih kerjanya, saya mau pergi saja", leaveMessageDuration, AdvanceToNextCustomerCoroutine);
+                StartShowMessageAndThen(dialogText, "Kamu gimana sih kerjanya, saya mau pergi saja", leaveMessageDuration, null);
+                StartCoroutine(AdvanceAfterDelay(leaveMessageDuration));
             }
             else
             {
@@ -338,9 +355,21 @@ public class CustomerManager : MonoBehaviour
         }
         else
         {
-            if (reached) AdvanceToNextCustomer();
+            if (reached) StartCoroutine(AdvanceAfterDelay(0f));
             else Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
         }
+    }
+
+    private IEnumerator ReleaseServeLockNextFrame()
+    {
+        yield return null;
+        serveLocked = false;
+    }
+
+    private IEnumerator AdvanceAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        AdvanceToNextCustomer();
     }
     #endregion
 
@@ -360,6 +389,7 @@ public class CustomerManager : MonoBehaviour
             currentCustomer.gameObject.SetActive(false);
             Destroy(currentCustomer.gameObject, 0.05f);
             currentCustomer = null;
+            currentProfile = null;
         }
 
         ClearDialogInstance();
