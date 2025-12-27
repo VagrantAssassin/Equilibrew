@@ -18,4 +18,6 @@ MonoBehaviour:
   - Black Tea
   - Green Tea
   - Mint Tea
+  curhatStories: []
+  maxFails: 3
   personality: 1

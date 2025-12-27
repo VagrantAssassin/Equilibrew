@@ -1,14 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// CustomerProfile:
-/// - profileName: label
-/// - portrait: sprite shown in customer UI prefab
-/// - preferredRecipeNames: list nama resep (string) -> dicocokkan ke Recipe.recipeName di runtime
-/// - personality: enum (placeholder)
-/// - maxFails: berapa kali pelanggan akan menerima salah sebelum pergi
-/// </summary>
 [CreateAssetMenu(menuName = "Equilibrew/Customer Profile", fileName = "CustomerProfile")]
 public class CustomerProfile : ScriptableObject
 {
@@ -17,11 +9,15 @@ public class CustomerProfile : ScriptableObject
     [Tooltip("List of recipe names (string) that this profile prefers. Matched against Recipe.recipeName at runtime.")]
     public List<string> preferredRecipeNames = new List<string>();
 
-    public Personality personality = Personality.Neutral;
+    [Header("Curhat (compiled Ink JSON TextAsset)")]
+    [Tooltip("Compiled Ink story (TextAsset JSON). Add 0..N stories; one will be picked randomly for 'curhat'.")]
+    public List<TextAsset> curhatStories = new List<TextAsset>();
 
     [Header("Behaviour")]
-    [Tooltip("How many times the customer tolerates a wrong serve before leaving (>=1).")]
+    [Tooltip("How many wrong serves the customer tolerates before leaving (>=1).")]
     public int maxFails = 3;
+
+    public Personality personality = Personality.Neutral;
 
     public enum Personality
     {

@@ -92,3 +92,5 @@ MonoBehaviour:
     recipeName: 
     ingredients: []
     resultSprite: {fileID: 0}
+  failCount: 0
+  maxFails: 3
