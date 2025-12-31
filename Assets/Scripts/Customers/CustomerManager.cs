@@ -5,12 +5,12 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// CustomerManager (final) - flow:
-/// - spawn customer
-/// - show request small dialog
-/// - on correct serve -> show thankyou then run curhat (InkDialogController)
-/// - on curhat done -> apply reaction -> advance
-/// - on wrong serve -> increment fail; if max -> customer leaves
+/// CustomerManager - full stable version (fade-out visible fix)
+/// - Compatible with CustomerVisualController OR CustomerVisualFade (tries both)
+/// - Picks index from preferredRecipeNames and plays orderStories[index] if present
+/// - Plays curhat after correct serve, clears placeholder before playing Ink
+/// - Non-blocking visual fade-out that runs while object is still active, then destroyed after duration
+/// - Debug logs added to help trace flow
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -20,25 +20,36 @@ public class CustomerManager : MonoBehaviour
     public Transform spawnParent;
     public GameObject customerPrefab;
 
-    [Header("Dialog (request small prefab)")]
+    [Header("Legacy small dialog prefab (optional)")]
     public RectTransform dialogAnchor;
-    public GameObject dialogPrefab; // small request box
+    public GameObject dialogPrefab; // optional fallback: small text box with TMP inside
 
-    [Header("Ink Dialog (controller)")]
+    [Header("Ink Dialog Controller (scene)")]
     public InkDialogController inkDialogController;
 
     [Header("Profiles (customers pool)")]
     public List<CustomerProfile> profiles = new List<CustomerProfile>();
 
     [Header("Daily & delays")]
+    [Tooltip("Minimum customers per day when not using spawnAllPerDay")]
     public int minCustomersPerDay = 1;
-    public float delayBeforeNextDay = 1.0f;
-    public float delayBetweenCustomers = 1.0f;
+    [Tooltip("Delay before next day starts (seconds)")]
+    public float delayBeforeNextDay = 1f;
+    [Tooltip("Delay between customers when advancing (seconds)")]
+    public float delayBetweenCustomers = 1f;
+    [Tooltip("If true, spawn all profiles for the day (ignores random count). Useful for testing.")]
+    public bool spawnAllPerDay = false;
+    [Tooltip("If true, when the day runs out StartNewDay is called immediately. Useful for testing.")]
+    public bool autoRestartDay = true;
 
     [Header("Message durations")]
     public float failureMessageDuration = 1.5f;
     public float successMessageDuration = 1.0f;
     public float leaveMessageDuration = 1.5f;
+
+    [Header("Visual")]
+    [Tooltip("Default fade duration for customer visuals (seconds)")]
+    public float customerFadeDuration = 0.25f;
 
     // runtime
     private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
@@ -48,12 +59,15 @@ public class CustomerManager : MonoBehaviour
     private GameObject activeDialogInstance = null;
     private Coroutine messageCoroutine = null;
 
-    private int dayNumber = 0;
+    // current requested (chosen index into preferredRecipeNames & orderStories)
+    private int currentRequestedIndex = -1;
+    private string currentRequestedRecipeName = null;
+    private TextAsset currentRequestedOrderStory = null;
 
-    private enum ManagerState { Idle, ShowingMessage, WaitingBetweenCustomers, DayEnding }
+    private enum ManagerState { Idle, Ordering, WaitingForServe, ShowingMessage, WaitingBetweenCustomers, DayEnding }
     private ManagerState state = ManagerState.Idle;
 
-    // prevent double-serve race
+    // prevent race on serve
     private bool serveLocked = false;
 
     private void Start()
@@ -81,9 +95,9 @@ public class CustomerManager : MonoBehaviour
     private void StartNewDay()
     {
         if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+
         state = ManagerState.Idle;
-        dayNumber++;
-        Debug.Log("[CustomerManager] Starting day " + dayNumber);
+        Debug.Log($"[CustomerManager] StartNewDay: profiles={(profiles!=null?profiles.Count:0)} minCustomersPerDay={minCustomersPerDay} spawnAllPerDay={spawnAllPerDay} autoRestartDay={autoRestartDay}");
 
         if (profiles == null || profiles.Count == 0)
         {
@@ -93,14 +107,26 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        int maxAvailable = profiles.Count;
-        int count = Mathf.Clamp(UnityEngine.Random.Range(minCustomersPerDay, maxAvailable + 1), 1, maxAvailable);
-
         var pool = new List<CustomerProfile>(profiles);
         Shuffle(pool);
+
+        int count;
+        if (spawnAllPerDay)
+        {
+            count = pool.Count;
+        }
+        else
+        {
+            int minC = Mathf.Max(1, minCustomersPerDay);
+            int maxC = Mathf.Max(minC, pool.Count);
+            count = UnityEngine.Random.Range(minC, maxC + 1);
+            count = Mathf.Clamp(count, 1, pool.Count);
+        }
+
         todaysProfiles = pool.GetRange(0, count);
         todaysIndex = 0;
 
+        Debug.Log($"[CustomerManager] Today will have {todaysProfiles.Count} customers.");
         SpawnNextFromToday();
     }
 
@@ -117,16 +143,29 @@ public class CustomerManager : MonoBehaviour
 
     private void SpawnNextFromToday()
     {
+        Debug.Log($"[CustomerManager] SpawnNextFromToday called. state={state} todaysIndex={todaysIndex} todaysProfilesCount={(todaysProfiles!=null?todaysProfiles.Count:0)}");
+
         ClearDialogInstance();
 
         if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
         {
-            StartCoroutine(NextDayDelayed());
+            Debug.Log("[CustomerManager] No more customers today.");
+            if (autoRestartDay)
+            {
+                Debug.Log("[CustomerManager] autoRestartDay=true -> Starting next day immediately.");
+                StartNewDay();
+            }
+            else
+            {
+                Debug.Log("[CustomerManager] Scheduling NextDayDelayed.");
+                StartCoroutine(NextDayDelayed());
+            }
             return;
         }
 
         if (state != ManagerState.Idle)
         {
+            Debug.Log("[CustomerManager] Spawn deferred because state != Idle. Scheduling spawn shortly.");
             StartCoroutine(SpawnNextWhenIdleCoroutine());
             return;
         }
@@ -143,7 +182,7 @@ public class CustomerManager : MonoBehaviour
         go.name = "Customer_" + profile.profileName;
         var cust = go.GetComponent<Customer>() ?? go.AddComponent<Customer>();
 
-        // set profile-related fields
+        // configure customer
         cust.maxFails = Mathf.Max(1, profile.maxFails);
         cust.failCount = 0;
 
@@ -162,31 +201,81 @@ public class CustomerManager : MonoBehaviour
             }
         }
 
-        // Choose requested recipe
-        Recipe requested = null;
-        if (profile.preferredRecipeNames != null && recipeValidator != null && recipeValidator.recipes != null)
+        // Visual fade-in if available (try both controller names)
+        var visOld = go.GetComponent("CustomerVisualController");
+        if (visOld != null)
         {
-            var names = new List<string>(profile.preferredRecipeNames);
-            Shuffle(names);
-            foreach (var n in names)
+            var comp = go.GetComponent("CustomerVisualController");
+            StartCoroutine(CallFadeInCoroutineDynamic(comp, customerFadeDuration));
+        }
+        else
+        {
+            var visNew = go.GetComponent("CustomerVisualFade");
+            if (visNew != null)
             {
-                if (string.IsNullOrWhiteSpace(n)) continue;
-                requested = recipeValidator.recipes.Find(r => string.Equals(r.recipeName, n.Trim(), StringComparison.OrdinalIgnoreCase));
-                if (requested != null) break;
+                var comp2 = go.GetComponent("CustomerVisualFade");
+                StartCoroutine(CallFadeInCoroutineDynamic(comp2, customerFadeDuration));
             }
         }
-        if (requested == null && recipeValidator != null && recipeValidator.recipes != null && recipeValidator.recipes.Count > 0)
-            requested = recipeValidator.recipes[UnityEngine.Random.Range(0, recipeValidator.recipes.Count)];
 
-        // set current
-        cust.SetRequest(requested);
-        currentCustomer = cust;
+        // Selection logic: pick index from preferredRecipeNames, then use orderStories[index]
+        int prefCount = profile.preferredRecipeNames != null ? profile.preferredRecipeNames.Count : 0;
+        int storyCount = profile.orderStories != null ? profile.orderStories.Count : 0;
+
+        if (prefCount <= 0)
+        {
+            Debug.LogWarning("[CustomerManager] Profile has no preferredRecipeNames. Skipping profile: " + profile.profileName);
+            Destroy(go);
+            SpawnNextFromToday();
+            return;
+        }
+
+        int idx = UnityEngine.Random.Range(0, prefCount);
+        currentRequestedIndex = idx;
+        currentRequestedRecipeName = profile.preferredRecipeNames[idx];
+
+        if (idx < storyCount)
+            currentRequestedOrderStory = profile.orderStories[idx];
+        else
+        {
+            currentRequestedOrderStory = null;
+            Debug.LogWarning($"[CustomerManager] Profile '{profile.profileName}' missing orderStories[{idx}]. Falling back to placeholder.");
+        }
+
         currentProfile = profile;
 
-        Debug.Log("[CustomerManager] Spawned '" + profile.profileName + "' requesting '" + (requested != null ? requested.recipeName : "NONE") + "' (maxFails=" + cust.maxFails + ")");
+        // Find recipe object by name to present placeholder and also for validation later
+        Recipe requestedRecipe = null;
+        if (!string.IsNullOrEmpty(currentRequestedRecipeName) && recipeValidator != null && recipeValidator.recipes != null)
+        {
+            requestedRecipe = recipeValidator.recipes.Find(r => string.Equals(r.recipeName, currentRequestedRecipeName, StringComparison.OrdinalIgnoreCase));
+            if (requestedRecipe == null)
+                Debug.LogWarning("[CustomerManager] Requested recipe '" + currentRequestedRecipeName + "' not found in recipeValidator.recipes.");
+        }
+        cust.SetRequest(requestedRecipe);
+        currentCustomer = cust;
 
-        // show request text in small dialog (Jasmine Tea)
-        CreateDialogInstanceForRecipe(requested);
+        Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
+
+        // Play ordering phase
+        state = ManagerState.Ordering;
+        if (inkDialogController != null && currentRequestedOrderStory != null)
+        {
+            // ensure placeholder cleared
+            ClearDialogInstance();
+            inkDialogController.PlayCurhat(currentRequestedOrderStory, (r, tags) =>
+            {
+                state = ManagerState.WaitingForServe;
+                Debug.Log("[CustomerManager] Ordering story complete, now WaitingForServe.");
+            });
+        }
+        else
+        {
+            // fallback placeholder dialog
+            CreateDialogInstanceForRecipe(requestedRecipe);
+            state = ManagerState.WaitingForServe;
+            Debug.Log("[CustomerManager] Ordering fallback (placeholder) shown; WaitingForServe.");
+        }
     }
 
     private IEnumerator SpawnNextWhenIdleCoroutine()
@@ -197,6 +286,7 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator NextDayDelayed()
     {
+        Debug.Log($"[CustomerManager] NextDayDelayed: waiting {delayBeforeNextDay}s then StartNewDay.");
         yield return new WaitForSecondsRealtime(delayBeforeNextDay);
         StartNewDay();
     }
@@ -205,7 +295,7 @@ public class CustomerManager : MonoBehaviour
     #region Curhat handling (after successful serve)
     private IEnumerator RunCurhatIfAnyAndThenAdvance()
     {
-        // show a small thank-you first (update request dialog text)
+        // small thank-you message via placeholder dialog if exists
         var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
         if (txt != null)
         {
@@ -213,10 +303,19 @@ public class CustomerManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(successMessageDuration);
         }
 
-        // run curhat if profile has any stories
-        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0 && inkDialogController != null)
+        // clear placeholder dialog before curhat
+        ClearDialogInstance();
+
+        // choose curhat story: prefer curhatStories, else fallback to orderStory
+        TextAsset curhatToPlay = null;
+        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0)
+            curhatToPlay = currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)];
+        else
+            curhatToPlay = currentRequestedOrderStory;
+
+        if (curhatToPlay != null && inkDialogController != null)
         {
-            // safety: jika controller sedang bermain, tunggu sampai selesai
+            // wait if controller busy
             while (inkDialogController.IsPlaying)
                 yield return null;
 
@@ -224,22 +323,22 @@ public class CustomerManager : MonoBehaviour
             DialogueReaction reaction = DialogueReaction.Neutral;
             List<string> tags = null;
 
-            // play story (dialog panel right)
-            inkDialogController.PlayCurhat(currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)], (r, tgs) =>
+            inkDialogController.PlayCurhat(curhatToPlay, (r, tgs) =>
             {
                 reaction = r;
                 tags = tgs;
                 done = true;
             });
 
-            // wait until done
             yield return new WaitUntil(() => done);
 
-            // apply reaction effects
             HandleCurhatReaction(currentCustomer, reaction, tags);
         }
+        else
+        {
+            Debug.Log("[CustomerManager] No curhat story to play (null).");
+        }
 
-        // proceed to next customer after a short delay
         yield return new WaitForSecondsRealtime(delayBetweenCustomers);
         AdvanceToNextCustomer();
     }
@@ -266,14 +365,14 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
-    #region Dialog helper (request placeholder)
+    #region Dialog helper (legacy placeholder)
     private void CreateDialogInstanceForRecipe(Recipe recipe)
     {
         ClearDialogInstance();
 
         if (dialogPrefab == null)
         {
-            Debug.LogWarning("[CustomerManager] dialogPrefab not assigned. No visual dialog will be shown.");
+            Debug.LogWarning("[CustomerManager] dialogPrefab not assigned.");
             return;
         }
 
@@ -287,7 +386,7 @@ public class CustomerManager : MonoBehaviour
         var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
         if (txt != null)
         {
-            txt.text = recipe != null ? recipe.recipeName : "Saya ingin sesuatu...";
+            txt.text = recipe != null ? recipe.recipeName : (currentRequestedRecipeName ?? "Saya ingin sesuatu...");
             txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
         }
     }
@@ -313,29 +412,37 @@ public class CustomerManager : MonoBehaviour
     #region Serve handling
     private void OnServeReceived(Recipe served)
     {
-        Debug.Log("[CustomerManager] OnServeReceived. state=" + state + " current=" + (currentCustomer != null ? currentCustomer.name : "null"));
+        Debug.Log($"[CustomerManager] OnServeReceived. state={state} current={(currentCustomer!=null?currentCustomer.name:"null")} serveLocked={serveLocked}");
 
         if (serveLocked)
         {
-            Debug.Log("[CustomerManager] Serve ignored - locked to prevent double processing.");
+            Debug.Log("[CustomerManager] Serve ignored - locked.");
             return;
         }
 
-        if (state != ManagerState.Idle) { Debug.Log("[CustomerManager] Serve ignored - not idle."); return; }
-        if (currentCustomer == null) { Debug.Log("[CustomerManager] No active customer."); return; }
+        if (state != ManagerState.WaitingForServe)
+        {
+            Debug.Log("[CustomerManager] Serve ignored - not ready for serve.");
+            return;
+        }
+        if (currentCustomer == null)
+        {
+            Debug.Log("[CustomerManager] No active customer.");
+            return;
+        }
 
-        // lock briefly to avoid re-entrancy
         serveLocked = true;
         StartCoroutine(ReleaseServeLockNextFrame());
 
-        bool ok = currentCustomer.CheckServed(served);
+        bool ok = (served != null && string.Equals(served.recipeName, currentRequestedRecipeName, StringComparison.OrdinalIgnoreCase));
         if (ok)
         {
+            Debug.Log("[CustomerManager] Correct serve!");
             StartCoroutine(RunCurhatIfAnyAndThenAdvance());
             return;
         }
 
-        // WRONG serve handling
+        // Wrong serve
         Debug.Log("[CustomerManager] Wrong serve. fail(before)=" + currentCustomer.failCount + ", max=" + currentCustomer.maxFails);
         bool reached = currentCustomer.RegisterFail();
         Debug.Log("[CustomerManager] fail(after)=" + currentCustomer.failCount + ", reachedMax=" + reached);
@@ -350,13 +457,20 @@ public class CustomerManager : MonoBehaviour
             }
             else
             {
-                StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, null);
+                StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
             }
         }
         else
         {
-            if (reached) StartCoroutine(AdvanceAfterDelay(0f));
-            else Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
+            if (reached)
+            {
+                StartCoroutine(AdvanceAfterDelay(0f));
+            }
+            else
+            {
+                Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
+                state = ManagerState.WaitingForServe;
+            }
         }
     }
 
@@ -373,23 +487,59 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
-    #region Actions (Advance)
+    #region Advance & messages
     public void AdvanceToNextCustomer()
     {
         if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
         messageCoroutine = StartCoroutine(AdvanceToNextCustomerCoroutine());
     }
 
+    // Non-blocking fade-out: start fade coroutines but do NOT wait for them;
+    // schedule destroy after fade duration so fade is visible.
     private IEnumerator AdvanceToNextCustomerCoroutine()
     {
         state = ManagerState.WaitingBetweenCustomers;
+        Debug.Log("[CustomerManager] AdvanceToNextCustomerCoroutine started.");
+
+        GameObject goToDestroy = null;
 
         if (currentCustomer != null)
         {
-            currentCustomer.gameObject.SetActive(false);
-            Destroy(currentCustomer.gameObject, 0.05f);
+            goToDestroy = currentCustomer.gameObject;
+
+            // Attempt fade-out on either visual controller name (start fading non-blocking)
+            var visOld = currentCustomer.GetComponent("CustomerVisualController");
+            if (visOld != null)
+            {
+                StartCoroutine(CallFadeOutCoroutineDynamic(visOld, customerFadeDuration));
+                Debug.Log("[CustomerManager] Started non-blocking fadeOut via CustomerVisualController.");
+            }
+            else
+            {
+                var visNew = currentCustomer.GetComponent("CustomerVisualFade");
+                if (visNew != null)
+                {
+                    StartCoroutine(CallFadeOutCoroutineDynamic(visNew, customerFadeDuration));
+                    Debug.Log("[CustomerManager] Started non-blocking fadeOut via CustomerVisualFade.");
+                }
+            }
+
+            // Optionally disable interaction components here (so player can't interact while fading)
+            // e.g., disable colliders/buttons on the customer root if present
+            var coll = goToDestroy.GetComponent<Collider>();
+            if (coll != null) coll.enabled = false;
+            var uic = goToDestroy.GetComponentInChildren<UnityEngine.UI.Button>(true);
+            if (uic != null) uic.interactable = false;
+
+            // schedule destroy after fade duration (plus small cushion)
+            StartCoroutine(DestroyGameObjectAfterDelay(goToDestroy, customerFadeDuration + 0.05f));
+
+            // clear references immediately (so gameplay can continue)
             currentCustomer = null;
             currentProfile = null;
+            currentRequestedIndex = -1;
+            currentRequestedRecipeName = null;
+            currentRequestedOrderStory = null;
         }
 
         ClearDialogInstance();
@@ -398,11 +548,12 @@ public class CustomerManager : MonoBehaviour
 
         state = ManagerState.Idle;
         messageCoroutine = null;
+        Debug.Log("[CustomerManager] AdvanceToNextCustomerCoroutine finished. Spawning next...");
         SpawnNextFromToday();
     }
     #endregion
 
-    #region Message helper (robust)
+    #region Helpers: ShowMessage and Restore
     private void StartShowMessageAndThen(TextMeshProUGUI txt, string message, float duration, Func<IEnumerator> followupFactory)
     {
         if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
@@ -428,13 +579,109 @@ public class CustomerManager : MonoBehaviour
         }
         else
         {
-            if (currentCustomer != null && currentCustomer.requestedRecipe != null)
-                txt.text = currentCustomer.requestedRecipe.recipeName;
-            else
-                txt.text = prev;
+            if (activeDialogInstance != null)
+            {
+                var existingTxt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (existingTxt != null)
+                    existingTxt.text = currentRequestedRecipeName ?? prev;
+            }
 
             state = ManagerState.Idle;
             messageCoroutine = null;
+        }
+    }
+
+    private IEnumerator RestoreWaitingForServeCoroutine()
+    {
+        state = ManagerState.WaitingForServe;
+
+        if (activeDialogInstance != null)
+        {
+            var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (txt != null)
+            {
+                txt.text = currentRequestedRecipeName ?? (currentCustomer != null && currentCustomer.requestedRecipe != null ? currentCustomer.requestedRecipe.recipeName : "");
+            }
+        }
+
+        yield break;
+    }
+    #endregion
+
+    #region Dynamic fade-in/out callers (reflection invocation)
+    private IEnumerator CallFadeInCoroutineDynamic(object compObj, float duration)
+    {
+        if (compObj == null) yield break;
+        var comp = compObj as MonoBehaviour;
+        if (comp == null) yield break;
+
+        var mi = comp.GetType().GetMethod("FadeInCoroutine", new Type[] { typeof(float) });
+        if (mi != null)
+        {
+            var enumerator = mi.Invoke(comp, new object[] { duration }) as IEnumerator;
+            if (enumerator != null)
+            {
+                yield return StartCoroutine(enumerator);
+                yield break;
+            }
+        }
+
+        mi = comp.GetType().GetMethod("FadeInCoroutine", Type.EmptyTypes);
+        if (mi != null)
+        {
+            var enumerator = mi.Invoke(comp, null) as IEnumerator;
+            if (enumerator != null)
+            {
+                yield return StartCoroutine(enumerator);
+                yield break;
+            }
+        }
+
+        yield break;
+    }
+
+    private IEnumerator CallFadeOutCoroutineDynamic(object compObj, float duration)
+    {
+        if (compObj == null) yield break;
+        var comp = compObj as MonoBehaviour;
+        if (comp == null) yield break;
+
+        var mi = comp.GetType().GetMethod("FadeOutCoroutine", new Type[] { typeof(float) });
+        if (mi != null)
+        {
+            var enumerator = mi.Invoke(comp, new object[] { duration }) as IEnumerator;
+            if (enumerator != null)
+            {
+                yield return StartCoroutine(enumerator);
+                yield break;
+            }
+        }
+
+        mi = comp.GetType().GetMethod("FadeOutCoroutine", Type.EmptyTypes);
+        if (mi != null)
+        {
+            var enumerator = mi.Invoke(comp, null) as IEnumerator;
+            if (enumerator != null)
+            {
+                yield return StartCoroutine(enumerator);
+                yield break;
+            }
+        }
+
+        yield break;
+    }
+    #endregion
+
+    #region Utility: delayed destroy
+    private IEnumerator DestroyGameObjectAfterDelay(GameObject go, float delay)
+    {
+        if (go == null) yield break;
+        yield return new WaitForSecondsRealtime(delay);
+        if (go != null)
+        {
+            // Ensure it's safe to destroy (not already destroyed)
+            Destroy(go);
+            Debug.Log("[CustomerManager] Destroyed faded customer object after delay.");
         }
     }
     #endregion

@@ -8,77 +8,59 @@ using TMPro;
 using Ink.Runtime;
 
 /// <summary>
-/// InkDialogController - improved:
-/// - Jika bodyText tidak diassign, akan GetComponentInChildren dari dialogPanelRoot
-/// - Jika choiceButtons tidak diassign, akan mengisi dari children of choiceContainer
-/// - Memastikan listeners di-add/remove dengan UnityAction dan dibersihkan setelah pilihan
-/// - Setelah pemilihan: tombol hilang / dialog ditutup
+/// InkDialogController (updated)
+/// - Panel scale animation (appear from small to normal, disappear reverse)
+/// - Per-line typewriter effect (configurable)
+/// - Continue button support (hold per line)
+/// - Choice handling with suppression of echoed choice text
+/// - Prioritize inspector-assigned choiceContainer + choiceButtons; fallback auto-find
 /// </summary>
-public enum DialogueReaction
-{
-    Agree,
-    Neutral,
-    Disagree
-}
+public enum DialogueReaction { Agree, Neutral, Disagree }
 
 public class InkDialogController : MonoBehaviour
 {
-    [Header("UI References (assign prefab root, controller bisa auto-find child TMP / buttons)")]
-    [Tooltip("Panel dialog besar (kanan). Harus memiliki TextMeshProUGUI child yang menampilkan body dialog.")]
+    [Header("Panel / Prefab mode")]
+    [Tooltip("Optional: assign a static dialog panel in scene. If empty, dialogPrefab+dialogAnchor will be instantiated.")]
     public GameObject dialogPanelRoot;
+    [Tooltip("Prefab for dialog (must contain BodyText and choice buttons). Used if dialogPanelRoot is empty.")]
+    public GameObject dialogPrefab;
+    [Tooltip("Parent RectTransform to instantiate dialogPrefab under.")]
+    public RectTransform dialogAnchor;
 
-    [Tooltip("Optional: assign direct reference ke bodyText. Jika kosong, akan dicari di dialogPanelRoot.")]
-    public TextMeshProUGUI bodyText;
-
-    [Tooltip("Container untuk choice buttons (tengah-bawah). Buttons harus berada sebagai children.")]
+    [Header("Choice UI (assign prepared container + buttons)")]
+    [Tooltip("Assign the GameObject that contains your choice buttons (container).")]
     public GameObject choiceContainer;
+    [Tooltip("Optional: assign the Button objects used as choices (0..n). If empty, controller will auto-find children inside choiceContainer.")]
+    public List<Button> choiceButtons = new List<Button>();
 
-    [Tooltip("Optional: assign 3 buttons in inspector (0=Agree,1=Neutral,2=Disagree). Jika kosong, controller akan auto-find Buttons in choiceContainer.")]
-    public List<Button> choiceButtons = new List<Button>(3);
-
-    [Tooltip("Optional: assign TMP labels for each button (will override child TMP if present).")]
-    public TextMeshProUGUI[] choiceLabels;
-
-    [Tooltip("Optional Continue button if you want to step lines.")]
+    [Header("Per-line hold and typewriter")]
+    [Tooltip("If assigned, the story will pause at each line until this button is pressed.")]
     public Button continueButton;
+    [Tooltip("Enable per-character typing effect.")]
+    public bool useTypewriter = true;
+    [Tooltip("Characters per second for typewriter effect.")]
+    public float typewriterCharsPerSecond = 60f;
+
+    [Header("Panel scale animation")]
+    [Tooltip("Duration of panel appear/disappear scale animation.")]
+    public float panelScaleDuration = 0.18f;
+    [Tooltip("Start scale factor when appearing (0..1).")]
+    [Range(0.1f, 1f)]
+    public float panelStartScale = 0.6f;
 
     private Story inkStory;
     private Action<DialogueReaction, List<string>> onComplete;
     private bool isPlaying = false;
     public bool IsPlaying => isPlaying;
 
+    private GameObject runtimeDialogInstance = null;
+
     private void Awake()
     {
-        // ensure dialog root inactive initially
         if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
         if (choiceContainer != null) choiceContainer.SetActive(false);
-
-        // auto-find bodyText from dialogPanelRoot if not assigned
-        if (bodyText == null && dialogPanelRoot != null)
-        {
-            bodyText = dialogPanelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
-        }
-
-        // if choiceButtons not assigned in inspector, try to auto-find from choiceContainer
-        if ((choiceButtons == null || choiceButtons.Count == 0) && choiceContainer != null)
-        {
-            choiceButtons = new List<Button>();
-            var found = choiceContainer.GetComponentsInChildren<Button>(true);
-            foreach (var b in found)
-                choiceButtons.Add(b);
-        }
-
-        // make sure we have three slots (if fewer, we still work with available buttons)
-        if (choiceButtons == null) choiceButtons = new List<Button>();
-
-        // bind continueButton to a named method (safe)
-        if (continueButton != null)
-            continueButton.onClick.AddListener(OnContinuePressed);
     }
 
-    /// <summary>
-    /// Play a compiled Ink JSON TextAsset — use prefab's bodyText and buttons.
-    /// </summary>
     public void PlayCurhat(TextAsset inkJson, Action<DialogueReaction, List<string>> onCompleteCallback)
     {
         if (inkJson == null)
@@ -87,13 +69,11 @@ public class InkDialogController : MonoBehaviour
             onCompleteCallback?.Invoke(DialogueReaction.Neutral, new List<string>());
             return;
         }
-
         if (isPlaying)
         {
             Debug.LogWarning("[InkDialogController] Already playing a story.");
             return;
         }
-
         StartCoroutine(PlayCoroutine(inkJson, onCompleteCallback));
     }
 
@@ -102,176 +82,257 @@ public class InkDialogController : MonoBehaviour
         isPlaying = true;
         onComplete = onCompleteCallback;
 
-        if (dialogPanelRoot != null) dialogPanelRoot.SetActive(true);
-        if (choiceContainer != null) choiceContainer.SetActive(false);
-
-        // ensure bodyText available now (in case it was added later)
-        if (bodyText == null && dialogPanelRoot != null)
-            bodyText = dialogPanelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
-
-        // ensure choiceButtons available (re-scan in case not in Awake)
-        if ((choiceButtons == null || choiceButtons.Count == 0) && choiceContainer != null)
+        // Prepare panel (static or runtime)
+        GameObject panelRoot = dialogPanelRoot;
+        bool usingRuntimeInstance = false;
+        if (panelRoot == null)
         {
-            choiceButtons = new List<Button>();
-            var found = choiceContainer.GetComponentsInChildren<Button>(true);
-            foreach (var b in found)
-                choiceButtons.Add(b);
+            if (dialogPrefab == null || dialogAnchor == null)
+            {
+                Debug.LogError("[InkDialogController] No dialogPanelRoot and no dialogPrefab/dialogAnchor assigned.");
+                Finish(DialogueReaction.Neutral, new List<string>());
+                yield break;
+            }
+            runtimeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
+            panelRoot = runtimeDialogInstance;
+            usingRuntimeInstance = true;
         }
 
-        // Create story from compiled JSON (Ink runtime must be installed)
-        try
+        // Ensure start scale
+        panelRoot.SetActive(true);
+        panelRoot.transform.localScale = Vector3.one * panelStartScale;
+        yield return StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
+
+        // UI refs
+        TextMeshProUGUI bodyText = panelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        GameObject container = choiceContainer;
+        if (container == null)
         {
-            inkStory = new Story(inkJson.text);
+            var anyBtn = panelRoot.GetComponentInChildren<Button>(true);
+            if (anyBtn != null) container = anyBtn.transform.parent != null ? anyBtn.transform.parent.gameObject : anyBtn.gameObject;
         }
+
+        List<Button> buttons = new List<Button>();
+        if (choiceButtons != null && choiceButtons.Count > 0)
+        {
+            foreach (var b in choiceButtons) if (b != null) buttons.Add(b);
+        }
+        else if (container != null)
+        {
+            buttons.AddRange(container.GetComponentsInChildren<Button>(true));
+        }
+
+        Button contBtn = continueButton;
+        if (contBtn == null)
+        {
+            var contT = panelRoot.transform.Find("ContinueButton");
+            if (contT != null) contBtn = contT.GetComponent<Button>();
+        }
+
+        // Create story
+        try { inkStory = new Story(inkJson.text); }
         catch (Exception ex)
         {
-            Debug.LogError("[InkDialogController] Failed to create Story from JSON: " + ex.Message);
+            Debug.LogError("[InkDialogController] Failed to create Story: " + ex.Message);
+            if (usingRuntimeInstance && runtimeDialogInstance != null) Destroy(runtimeDialogInstance);
             Finish(DialogueReaction.Neutral, new List<string>());
             yield break;
         }
 
-        // display lines until we reach choices
-        while (inkStory.canContinue)
+        // Hide choices initially
+        if (container != null) container.SetActive(false);
+
+        // Track last choice for suppression & tags
+        List<string> lastChosenTags = null;
+        string lastChosenText = null;
+        int? lastChosenIndex = null;
+
+        // Main loop: proceed through story lines and choices until done
+        while (true)
         {
-            string line = inkStory.Continue().Trim();
-            if (bodyText != null) bodyText.text = line;
-
-            if (continueButton != null)
+            // Print lines while can continue
+            while (inkStory.canContinue)
             {
-                bool cont = false;
-                UnityAction handler = () => cont = true;
-                continueButton.onClick.AddListener(handler);
-                while (!cont) yield return null;
-                continueButton.onClick.RemoveListener(handler);
-            }
-            else
-            {
-                yield return null; // let UI update
-            }
-        }
+                string line = inkStory.Continue().Trim();
 
-        var choices = inkStory.currentChoices;
-        if (choices == null || choices.Count == 0)
-        {
-            // no choices, finish
-            Finish(DialogueReaction.Neutral, new List<string>());
-            yield break;
-        }
-
-        // Activate choice container and populate buttons
-        int mapCount = Math.Min(3, choices.Count);
-        if (choiceContainer != null) choiceContainer.SetActive(true);
-
-        // Clean up any previous listeners on buttons and set labels
-        for (int i = 0; i < choiceButtons.Count; i++)
-        {
-            var btn = choiceButtons[i];
-            if (btn == null) continue;
-
-            btn.onClick.RemoveAllListeners(); // safe cleanup
-
-            if (i < mapCount)
-            {
-                btn.gameObject.SetActive(true);
-
-                string label = choices[i].text.Trim();
-                if (choiceLabels != null && i < choiceLabels.Length && choiceLabels[i] != null)
+                // suppress echoed choice text if equals lastChosenText
+                if (!string.IsNullOrEmpty(lastChosenText) && line == lastChosenText)
                 {
-                    choiceLabels[i].text = label;
+                    Debug.Log("[InkDialogController] Suppressed echoed choice: " + line);
+                    lastChosenText = null; // only suppress once
+                    continue;
+                }
+
+                if (bodyText != null)
+                {
+                    if (useTypewriter)
+                        yield return StartCoroutine(TypewriterEffect(bodyText, line));
+                    else
+                        bodyText.text = line;
+                }
+
+                // wait for continue button if assigned
+                if (contBtn != null)
+                {
+                    bool pressed = false;
+                    UnityAction onPress = () => pressed = true;
+                    contBtn.onClick.AddListener(onPress);
+                    while (!pressed) yield return null;
+                    contBtn.onClick.RemoveListener(onPress);
                 }
                 else
                 {
-                    var lbl = btn.GetComponentInChildren<TextMeshProUGUI>(true);
-                    if (lbl != null) lbl.text = label;
+                    // no continueButton: a single frame delay gives UI time to update (auto advance)
+                    yield return null;
+                }
+            }
+
+            // Check choices
+            var choices = inkStory.currentChoices;
+            if (choices == null || choices.Count == 0)
+            {
+                // story done
+                break;
+            }
+
+            // Show choice container
+            if (container != null) container.SetActive(true);
+
+            int mapCount = Math.Min(buttons.Count, choices.Count);
+
+            // reset buttons
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                var b = buttons[i];
+                if (b == null) continue;
+                b.onClick.RemoveAllListeners();
+                b.gameObject.SetActive(false);
+                b.interactable = false;
+            }
+
+            // populate
+            for (int i = 0; i < mapCount; i++)
+            {
+                var btn = buttons[i];
+                if (btn == null) continue;
+                btn.gameObject.SetActive(true);
+                btn.interactable = true;
+
+                var tmpLabel = btn.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmpLabel != null) tmpLabel.text = choices[i].text.Trim();
+                else
+                {
+                    var legacy = btn.GetComponentInChildren<UnityEngine.UI.Text>(true);
+                    if (legacy != null) legacy.text = choices[i].text.Trim();
                 }
 
-                // Add listener with UnityAction capturing index
-                int idx = i;
-                UnityAction choiceHandler = () => OnChoiceSelected(idx);
-                btn.onClick.AddListener(choiceHandler);
+                int idx = i; // capture
+                UnityAction handler = () =>
+                {
+                    Debug.Log("[InkDialogController] Choice clicked idx=" + idx + " text='" + choices[idx].text + "'");
+                    // hide choices immediately
+                    if (container != null) container.SetActive(false);
+                    foreach (var b in buttons) if (b != null) { b.onClick.RemoveAllListeners(); b.gameObject.SetActive(false); }
+
+                    // choose choice
+                    inkStory.ChooseChoiceIndex(idx);
+
+                    // record for suppression and final tags
+                    var raw = choices[idx].tags;
+                    lastChosenTags = new List<string>();
+                    if (raw != null) foreach (var t in raw) lastChosenTags.Add(t);
+                    lastChosenIndex = idx;
+                    lastChosenText = choices[idx].text.Trim();
+                    // do not call onComplete here; we continue loop to print the consequences
+                };
+
+                btn.onClick.AddListener(handler);
             }
-            else
-            {
-                // hide excess buttons
-                btn.gameObject.SetActive(false);
-            }
+
+            // wait for a choice to be selected (detect via lastChosenIndex)
+            while (!lastChosenIndex.HasValue)
+                yield return null;
+
+            // reset for potential next choice round
+            lastChosenIndex = null;
         }
 
-        // Wait for selection: the OnChoiceSelected will call onComplete
-        bool waiting = true;
-        DialogueReaction selectedReaction = DialogueReaction.Neutral;
-        List<string> selectedTags = new List<string>();
-
-        Action<DialogueReaction, List<string>> localComplete = (r, tags) =>
+        // Story finished. Determine reaction (prefer tags)
+        DialogueReaction finalReaction = DialogueReaction.Neutral;
+        if (lastChosenTags != null && lastChosenTags.Count > 0)
         {
-            selectedReaction = r;
-            selectedTags = tags ?? new List<string>();
-            waiting = false;
-        };
+            var parsed = ParseReactionFromTags(lastChosenTags);
+            if (parsed.HasValue) finalReaction = parsed.Value;
+        }
 
-        var prevOnComplete = onComplete;
-        onComplete = localComplete;
+        // Hide panel with scale animation
+        yield return StartCoroutine(ScaleTransform(panelRoot.transform, 1f, panelStartScale, panelScaleDuration));
+        if (usingRuntimeInstance && runtimeDialogInstance != null) Destroy(runtimeDialogInstance);
 
-        while (waiting) yield return null;
-
-        onComplete = prevOnComplete;
-        Finish(selectedReaction, selectedTags);
+        Finish(finalReaction, lastChosenTags);
     }
 
-    /// <summary>
-    /// Handle button press — cleans up UI/listeners immediately, tells inkStory to choose, then invokes callback.
-    /// </summary>
-    private void OnChoiceSelected(int choiceIndex)
+    private IEnumerator TypewriterEffect(TextMeshProUGUI tmp, string fullText)
     {
-        if (inkStory == null || inkStory.currentChoices == null || choiceIndex >= inkStory.currentChoices.Count)
-            return;
+        if (tmp == null)
+            yield break;
 
-        // Normalize tags into List<string>
-        var tags = new List<string>();
-        if (inkStory.currentChoices[choiceIndex].tags != null)
+        tmp.text = fullText;
+        tmp.ForceMeshUpdate();
+        int totalChars = tmp.textInfo.characterCount;
+        if (totalChars == 0)
         {
-            foreach (var t in inkStory.currentChoices[choiceIndex].tags)
-                tags.Add(t);
+            yield break;
         }
 
-        // Immediately cleanup UI and listeners so buttons disappear
-        if (choiceContainer != null) choiceContainer.SetActive(false);
-        foreach (var btn in choiceButtons)
+        tmp.maxVisibleCharacters = 0;
+        float charsPerSec = Mathf.Max(1f, typewriterCharsPerSecond);
+        float delay = 1f / charsPerSec;
+        int shown = 0;
+        while (shown < totalChars)
         {
-            if (btn == null) continue;
-            btn.onClick.RemoveAllListeners();
-            // optionally hide the button GameObject to avoid visual leftover
-            btn.gameObject.SetActive(false);
+            shown++;
+            tmp.maxVisibleCharacters = shown;
+            yield return new WaitForSeconds(delay);
         }
-
-        // Make the choice in the Ink story runtime
-        inkStory.ChooseChoiceIndex(choiceIndex);
-
-        DialogueReaction reaction = DialogueReaction.Neutral;
-        if (choiceIndex == 0) reaction = DialogueReaction.Agree;
-        else if (choiceIndex == 1) reaction = DialogueReaction.Neutral;
-        else if (choiceIndex == 2) reaction = DialogueReaction.Disagree;
-
-        // invoke callback (this will be captured by coroutine waiting)
-        onComplete?.Invoke(reaction, tags);
+        // ensure full visible
+        tmp.maxVisibleCharacters = totalChars;
+        yield break;
     }
 
-    private void OnContinuePressed()
+    private IEnumerator ScaleTransform(Transform t, float fromScale, float toScale, float duration)
     {
-        // no-op, handled by dynamic UnityAction in coroutine
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(elapsed / duration);
+            float s = Mathf.SmoothStep(fromScale, toScale, p);
+            t.localScale = Vector3.one * s;
+            yield return null;
+        }
+        t.localScale = Vector3.one * toScale;
     }
 
-    /// <summary>
-    /// Finish: hide dialog, reset isPlaying, and call onComplete if not already called.
-    /// </summary>
+    private DialogueReaction? ParseReactionFromTags(List<string> tags)
+    {
+        if (tags == null) return null;
+        foreach (var t in tags)
+        {
+            if (string.IsNullOrEmpty(t)) continue;
+            var low = t.Trim().ToLowerInvariant();
+            if (low.Contains("reaction:agree") || low == "agree") return DialogueReaction.Agree;
+            if (low.Contains("reaction:neutral") || low == "neutral") return DialogueReaction.Neutral;
+            if (low.Contains("reaction:disagree") || low == "disagree") return DialogueReaction.Disagree;
+        }
+        return null;
+    }
+
     private void Finish(DialogueReaction reaction, List<string> tags)
     {
-        if (choiceContainer != null) choiceContainer.SetActive(false);
         if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
-
         isPlaying = false;
-
-        // invoke game-level callback (if any)
         onComplete?.Invoke(reaction, tags);
         onComplete = null;
         inkStory = null;

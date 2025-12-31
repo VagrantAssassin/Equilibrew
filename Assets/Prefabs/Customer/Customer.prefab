@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1129775429576812833}
   - component: {fileID: 3691147484519025739}
   - component: {fileID: 4989768352361182342}
+  - component: {fileID: 6903058053850580191}
   m_Layer: 5
   m_Name: Customer
   m_TagString: Untagged
@@ -94,3 +95,16 @@ MonoBehaviour:
     resultSprite: {fileID: 0}
   failCount: 0
   maxFails: 3
+--- !u!114 &6903058053850580191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044435669375680158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f2354b6ba7e58947b2a9b23e6f54795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeDuration: 0.5
