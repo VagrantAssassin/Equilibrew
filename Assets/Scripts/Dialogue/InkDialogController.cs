@@ -8,43 +8,35 @@ using TMPro;
 using Ink.Runtime;
 
 /// <summary>
-/// InkDialogController (updated)
-/// - Panel scale animation (appear from small to normal, disappear reverse)
-/// - Per-line typewriter effect (configurable)
-/// - Continue button support (hold per line)
-/// - Choice handling with suppression of echoed choice text
-/// - Prioritize inspector-assigned choiceContainer + choiceButtons; fallback auto-find
+/// InkDialogController (fixed)
+/// - Menggabungkan tags pilihan terakhir dan story.currentTags pada akhir cerita,
+///   sehingga semua tag yang di-author pada .ink dikirim ke callback.
+/// - Menyediakan SetSpeakerName dan behavior runtime instance seperti sebelumnya.
 /// </summary>
 public enum DialogueReaction { Agree, Neutral, Disagree }
 
 public class InkDialogController : MonoBehaviour
 {
     [Header("Panel / Prefab mode")]
-    [Tooltip("Optional: assign a static dialog panel in scene. If empty, dialogPrefab+dialogAnchor will be instantiated.")]
     public GameObject dialogPanelRoot;
-    [Tooltip("Prefab for dialog (must contain BodyText and choice buttons). Used if dialogPanelRoot is empty.")]
     public GameObject dialogPrefab;
-    [Tooltip("Parent RectTransform to instantiate dialogPrefab under.")]
     public RectTransform dialogAnchor;
 
-    [Header("Choice UI (assign prepared container + buttons)")]
-    [Tooltip("Assign the GameObject that contains your choice buttons (container).")]
+    [Header("Choice UI (assign if preferred)")]
     public GameObject choiceContainer;
-    [Tooltip("Optional: assign the Button objects used as choices (0..n). If empty, controller will auto-find children inside choiceContainer.")]
     public List<Button> choiceButtons = new List<Button>();
 
-    [Header("Per-line hold and typewriter")]
-    [Tooltip("If assigned, the story will pause at each line until this button is pressed.")]
+    [Header("Speaker name (optional)")]
+    [Tooltip("Optional TextMeshProUGUI inside dialog prefab to show speaker/customer name. Child object name typically 'SpeakerName' or 'Name'.")]
+    public TextMeshProUGUI speakerNameText;
+
+    [Header("Hold control & typewriter")]
     public Button continueButton;
-    [Tooltip("Enable per-character typing effect.")]
     public bool useTypewriter = true;
-    [Tooltip("Characters per second for typewriter effect.")]
     public float typewriterCharsPerSecond = 60f;
 
-    [Header("Panel scale animation")]
-    [Tooltip("Duration of panel appear/disappear scale animation.")]
+    [Header("Panel animation")]
     public float panelScaleDuration = 0.18f;
-    [Tooltip("Start scale factor when appearing (0..1).")]
     [Range(0.1f, 1f)]
     public float panelStartScale = 0.6f;
 
@@ -54,6 +46,10 @@ public class InkDialogController : MonoBehaviour
     public bool IsPlaying => isPlaying;
 
     private GameObject runtimeDialogInstance = null;
+    private bool runtimeKeptOpen = false;
+
+    // cached speaker name so SetSpeakerName before PlayCurhat will be applied later
+    private string cachedSpeakerName = "";
 
     private void Awake()
     {
@@ -61,7 +57,50 @@ public class InkDialogController : MonoBehaviour
         if (choiceContainer != null) choiceContainer.SetActive(false);
     }
 
-    public void PlayCurhat(TextAsset inkJson, Action<DialogueReaction, List<string>> onCompleteCallback)
+    // --- speaker name helper (unchanged except using GetComponentInChildren) ---
+    public void SetSpeakerName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) name = "";
+        cachedSpeakerName = name ?? "";
+
+        // 1) runtime instance
+        if (runtimeDialogInstance != null)
+        {
+            var t = FindChildByNamesRecursive(runtimeDialogInstance.transform, new string[] { "SpeakerName", "Name" });
+            if (t != null)
+            {
+                var tmp = t.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmp != null) { tmp.text = name; return; }
+            }
+            var tmpFallback = FindTMPByNameHint(runtimeDialogInstance.transform, "name");
+            if (tmpFallback != null) { tmpFallback.text = name; return; }
+        }
+
+        // 2) inspector-assigned
+        if (speakerNameText != null)
+        {
+            speakerNameText.text = name;
+            return;
+        }
+
+        // 3) dialogPanelRoot
+        if (dialogPanelRoot != null)
+        {
+            var t2 = FindChildByNamesRecursive(dialogPanelRoot.transform, new string[] { "SpeakerName", "Name" });
+            if (t2 != null)
+            {
+                var tmp2 = t2.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmp2 != null) { tmp2.text = name; return; }
+            }
+            var tmpFallback2 = FindTMPByNameHint(dialogPanelRoot.transform, "name");
+            if (tmpFallback2 != null) { tmpFallback2.text = name; return; }
+        }
+    }
+
+    /// <summary>
+    /// PlayCurhat(TextAsset inkJson, callback, skipOpenAnimation=false, leavePanelOpen=false, requireUserToAcknowledgeEnd=false)
+    /// </summary>
+    public void PlayCurhat(TextAsset inkJson, Action<DialogueReaction, List<string>> onCompleteCallback, bool skipOpenAnimation = false, bool leavePanelOpen = false, bool requireUserToAcknowledgeEnd = false)
     {
         if (inkJson == null)
         {
@@ -74,36 +113,71 @@ public class InkDialogController : MonoBehaviour
             Debug.LogWarning("[InkDialogController] Already playing a story.");
             return;
         }
-        StartCoroutine(PlayCoroutine(inkJson, onCompleteCallback));
+        StartCoroutine(PlayCoroutine(inkJson, onCompleteCallback, skipOpenAnimation, leavePanelOpen, requireUserToAcknowledgeEnd));
     }
 
-    private IEnumerator PlayCoroutine(TextAsset inkJson, Action<DialogueReaction, List<string>> onCompleteCallback)
+    private IEnumerator PlayCoroutine(TextAsset inkJson, Action<DialogueReaction, List<string>> onCompleteCallback, bool skipOpenAnimation, bool leavePanelOpen, bool requireUserToAcknowledgeEnd)
     {
         isPlaying = true;
         onComplete = onCompleteCallback;
 
-        // Prepare panel (static or runtime)
         GameObject panelRoot = dialogPanelRoot;
-        bool usingRuntimeInstance = false;
-        if (panelRoot == null)
+        bool usingRuntimeInstThisCall = false;
+        if (runtimeDialogInstance != null)
+        {
+            panelRoot = runtimeDialogInstance;
+            skipOpenAnimation = skipOpenAnimation || true;
+        }
+        else if (panelRoot == null)
         {
             if (dialogPrefab == null || dialogAnchor == null)
             {
                 Debug.LogError("[InkDialogController] No dialogPanelRoot and no dialogPrefab/dialogAnchor assigned.");
-                Finish(DialogueReaction.Neutral, new List<string>());
+                Finish(DialogueReaction.Neutral, new List<string>(), leavePanelOpen);
                 yield break;
             }
             runtimeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
             panelRoot = runtimeDialogInstance;
-            usingRuntimeInstance = true;
+            usingRuntimeInstThisCall = true;
+
+            // Apply cached speaker name if present
+            if (!string.IsNullOrEmpty(cachedSpeakerName))
+            {
+                var speak = FindChildByNamesRecursive(runtimeDialogInstance.transform, new string[] { "SpeakerName", "Name" });
+                if (speak != null)
+                {
+                    var tmp = speak.GetComponentInChildren<TextMeshProUGUI>(true);
+                    if (tmp != null) tmp.text = cachedSpeakerName;
+                }
+                else
+                {
+                    var tmpFallback = FindTMPByNameHint(runtimeDialogInstance.transform, "name");
+                    if (tmpFallback != null) tmpFallback.text = cachedSpeakerName;
+                }
+            }
         }
 
-        // Ensure start scale
-        panelRoot.SetActive(true);
-        panelRoot.transform.localScale = Vector3.one * panelStartScale;
-        yield return StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
+        if (runtimeDialogInstance != null && speakerNameText == null)
+        {
+            var speak = FindChildByNamesRecursive(runtimeDialogInstance.transform, new string[] { "SpeakerName", "Name" });
+            if (speak != null)
+            {
+                var tmp = speak.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmp != null) speakerNameText = tmp;
+            }
+        }
 
-        // UI refs
+        panelRoot.SetActive(true);
+        if (!(skipOpenAnimation || runtimeDialogInstance != null && runtimeKeptOpen))
+        {
+            panelRoot.transform.localScale = Vector3.one * panelStartScale;
+            yield return StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
+        }
+        else
+        {
+            panelRoot.transform.localScale = Vector3.one;
+        }
+
         TextMeshProUGUI bodyText = panelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
 
         GameObject container = choiceContainer;
@@ -130,37 +204,31 @@ public class InkDialogController : MonoBehaviour
             if (contT != null) contBtn = contT.GetComponent<Button>();
         }
 
-        // Create story
         try { inkStory = new Story(inkJson.text); }
         catch (Exception ex)
         {
             Debug.LogError("[InkDialogController] Failed to create Story: " + ex.Message);
-            if (usingRuntimeInstance && runtimeDialogInstance != null) Destroy(runtimeDialogInstance);
-            Finish(DialogueReaction.Neutral, new List<string>());
+            Finish(DialogueReaction.Neutral, new List<string>(), leavePanelOpen);
             yield break;
         }
 
-        // Hide choices initially
         if (container != null) container.SetActive(false);
+        if (contBtn != null) { contBtn.gameObject.SetActive(false); contBtn.interactable = false; }
 
-        // Track last choice for suppression & tags
         List<string> lastChosenTags = null;
         string lastChosenText = null;
         int? lastChosenIndex = null;
 
-        // Main loop: proceed through story lines and choices until done
         while (true)
         {
-            // Print lines while can continue
             while (inkStory.canContinue)
             {
                 string line = inkStory.Continue().Trim();
 
-                // suppress echoed choice text if equals lastChosenText
                 if (!string.IsNullOrEmpty(lastChosenText) && line == lastChosenText)
                 {
-                    Debug.Log("[InkDialogController] Suppressed echoed choice: " + line);
-                    lastChosenText = null; // only suppress once
+                    Debug.Log("[InkDialogController] Suppressed echoed choice line: " + line);
+                    lastChosenText = null;
                     continue;
                 }
 
@@ -172,36 +240,32 @@ public class InkDialogController : MonoBehaviour
                         bodyText.text = line;
                 }
 
-                // wait for continue button if assigned
-                if (contBtn != null)
+                if (contBtn != null && inkStory.canContinue)
                 {
+                    contBtn.gameObject.SetActive(true);
+                    contBtn.interactable = true;
                     bool pressed = false;
                     UnityAction onPress = () => pressed = true;
                     contBtn.onClick.AddListener(onPress);
                     while (!pressed) yield return null;
                     contBtn.onClick.RemoveListener(onPress);
+                    contBtn.gameObject.SetActive(false);
                 }
                 else
                 {
-                    // no continueButton: a single frame delay gives UI time to update (auto advance)
                     yield return null;
                 }
             }
 
-            // Check choices
             var choices = inkStory.currentChoices;
             if (choices == null || choices.Count == 0)
             {
-                // story done
                 break;
             }
 
-            // Show choice container
             if (container != null) container.SetActive(true);
 
             int mapCount = Math.Min(buttons.Count, choices.Count);
-
-            // reset buttons
             for (int i = 0; i < buttons.Count; i++)
             {
                 var b = buttons[i];
@@ -211,7 +275,6 @@ public class InkDialogController : MonoBehaviour
                 b.interactable = false;
             }
 
-            // populate
             for (int i = 0; i < mapCount; i++)
             {
                 var btn = buttons[i];
@@ -227,92 +290,108 @@ public class InkDialogController : MonoBehaviour
                     if (legacy != null) legacy.text = choices[i].text.Trim();
                 }
 
-                int idx = i; // capture
+                int idx = i;
                 UnityAction handler = () =>
                 {
                     Debug.Log("[InkDialogController] Choice clicked idx=" + idx + " text='" + choices[idx].text + "'");
-                    // hide choices immediately
                     if (container != null) container.SetActive(false);
-                    foreach (var b in buttons) if (b != null) { b.onClick.RemoveAllListeners(); b.gameObject.SetActive(false); }
+                    foreach (var b2 in buttons) if (b2 != null) { b2.onClick.RemoveAllListeners(); b2.gameObject.SetActive(false); }
 
-                    // choose choice
                     inkStory.ChooseChoiceIndex(idx);
 
-                    // record for suppression and final tags
+                    // collect tags from the chosen choice
                     var raw = choices[idx].tags;
                     lastChosenTags = new List<string>();
                     if (raw != null) foreach (var t in raw) lastChosenTags.Add(t);
                     lastChosenIndex = idx;
                     lastChosenText = choices[idx].text.Trim();
-                    // do not call onComplete here; we continue loop to print the consequences
                 };
 
                 btn.onClick.AddListener(handler);
             }
 
-            // wait for a choice to be selected (detect via lastChosenIndex)
-            while (!lastChosenIndex.HasValue)
-                yield return null;
-
-            // reset for potential next choice round
+            while (!lastChosenIndex.HasValue) yield return null;
             lastChosenIndex = null;
         }
 
-        // Story finished. Determine reaction (prefer tags)
+        // At this point, story ended (no more choices)
+        // Build final tag list: combine lastChosenTags (choice tags) and inkStory.currentTags (tags on final line)
+        List<string> finalTags = new List<string>();
+        if (lastChosenTags != null)
+        {
+            foreach (var t in lastChosenTags) if (!string.IsNullOrEmpty(t) && !finalTags.Contains(t)) finalTags.Add(t);
+        }
+
+        // inkStory.currentTags contains tags on the last continued line(s)
+        var curr = inkStory.currentTags;
+        if (curr != null && curr.Count > 0)
+        {
+            foreach (var t in curr)
+            {
+                if (string.IsNullOrEmpty(t)) continue;
+                if (!finalTags.Contains(t)) finalTags.Add(t);
+            }
+        }
+
+        // Determine final reaction from lastChosenTags (choice tags) if available, else neutral
         DialogueReaction finalReaction = DialogueReaction.Neutral;
         if (lastChosenTags != null && lastChosenTags.Count > 0)
         {
             var parsed = ParseReactionFromTags(lastChosenTags);
             if (parsed.HasValue) finalReaction = parsed.Value;
         }
+        else if (curr != null && curr.Count > 0)
+        {
+            var parsed2 = ParseReactionFromTags(curr);
+            if (parsed2.HasValue) finalReaction = parsed2.Value;
+        }
 
-        // Hide panel with scale animation
-        yield return StartCoroutine(ScaleTransform(panelRoot.transform, 1f, panelStartScale, panelScaleDuration));
-        if (usingRuntimeInstance && runtimeDialogInstance != null) Destroy(runtimeDialogInstance);
+        if (contBtn != null) { contBtn.gameObject.SetActive(false); contBtn.interactable = false; }
+        if (container != null) container.SetActive(false);
 
-        Finish(finalReaction, lastChosenTags);
+        if (requireUserToAcknowledgeEnd && contBtn != null)
+        {
+            contBtn.gameObject.SetActive(true);
+            contBtn.interactable = true;
+            bool ack = false;
+            UnityAction onPressEnd = () => ack = true;
+            contBtn.onClick.AddListener(onPressEnd);
+            while (!ack) yield return null;
+            contBtn.onClick.RemoveListener(onPressEnd);
+            contBtn.gameObject.SetActive(false);
+        }
+
+        if (runtimeDialogInstance != null && leavePanelOpen)
+        {
+            runtimeKeptOpen = true;
+        }
+        else
+        {
+            Transform t = panelRoot.transform;
+            yield return StartCoroutine(ScaleTransform(t, 1f, panelStartScale, panelScaleDuration));
+
+            if (runtimeDialogInstance != null)
+            {
+                Destroy(runtimeDialogInstance);
+                runtimeDialogInstance = null;
+                runtimeKeptOpen = false;
+            }
+            else
+            {
+                if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
+            }
+        }
+
+        // Pass finalReaction and finalTags to callback (ensures tags on final line are included)
+        Finish(finalReaction, finalTags, leavePanelOpen);
     }
 
-    private IEnumerator TypewriterEffect(TextMeshProUGUI tmp, string fullText)
+    private void Finish(DialogueReaction reaction, List<string> tags, bool leavePanelOpen)
     {
-        if (tmp == null)
-            yield break;
-
-        tmp.text = fullText;
-        tmp.ForceMeshUpdate();
-        int totalChars = tmp.textInfo.characterCount;
-        if (totalChars == 0)
-        {
-            yield break;
-        }
-
-        tmp.maxVisibleCharacters = 0;
-        float charsPerSec = Mathf.Max(1f, typewriterCharsPerSecond);
-        float delay = 1f / charsPerSec;
-        int shown = 0;
-        while (shown < totalChars)
-        {
-            shown++;
-            tmp.maxVisibleCharacters = shown;
-            yield return new WaitForSeconds(delay);
-        }
-        // ensure full visible
-        tmp.maxVisibleCharacters = totalChars;
-        yield break;
-    }
-
-    private IEnumerator ScaleTransform(Transform t, float fromScale, float toScale, float duration)
-    {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float p = Mathf.Clamp01(elapsed / duration);
-            float s = Mathf.SmoothStep(fromScale, toScale, p);
-            t.localScale = Vector3.one * s;
-            yield return null;
-        }
-        t.localScale = Vector3.one * toScale;
+        isPlaying = false;
+        onComplete?.Invoke(reaction, tags ?? new List<string>());
+        onComplete = null;
+        inkStory = null;
     }
 
     private DialogueReaction? ParseReactionFromTags(List<string> tags)
@@ -329,12 +408,73 @@ public class InkDialogController : MonoBehaviour
         return null;
     }
 
-    private void Finish(DialogueReaction reaction, List<string> tags)
+    private IEnumerator TypewriterEffect(TextMeshProUGUI tmp, string fullText)
     {
-        if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
-        isPlaying = false;
-        onComplete?.Invoke(reaction, tags);
-        onComplete = null;
-        inkStory = null;
+        if (tmp == null) yield break;
+        tmp.text = fullText;
+        tmp.ForceMeshUpdate();
+        int totalChars = tmp.textInfo.characterCount;
+        if (totalChars == 0) yield break;
+
+        tmp.maxVisibleCharacters = 0;
+        float charsPerSec = Mathf.Max(1f, typewriterCharsPerSecond);
+        float delay = 1f / charsPerSec;
+        int shown = 0;
+        while (shown < totalChars)
+        {
+            shown++;
+            tmp.maxVisibleCharacters = shown;
+            yield return new WaitForSeconds(delay);
+        }
+        tmp.maxVisibleCharacters = totalChars;
+    }
+
+    private IEnumerator ScaleTransform(Transform t, float fromScale, float toScale, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(elapsed / duration);
+            float s = Mathf.SmoothStep(fromScale, toScale, p);
+            t.localScale = Vector3.one * s;
+            yield return null;
+        }
+        t.localScale = Vector3.one * toScale;
+    }
+
+    // Helper: find child recursively by any of the given names (case-insensitive)
+    private Transform FindChildByNamesRecursive(Transform root, string[] names)
+    {
+        if (root == null || names == null) return null;
+        foreach (var n in names)
+        {
+            if (string.Equals(root.name, n, StringComparison.OrdinalIgnoreCase)) return root;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var c = root.GetChild(i);
+            var found = FindChildByNamesRecursive(c, names);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    // Helper: find first TextMeshProUGUI child whose transform.name contains hint (case-insensitive)
+    private TextMeshProUGUI FindTMPByNameHint(Transform root, string hint)
+    {
+        if (root == null || string.IsNullOrEmpty(hint)) return null;
+        if (root.name.IndexOf(hint, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            var tmpHere = root.GetComponent<TextMeshProUGUI>();
+            if (tmpHere != null) return tmpHere;
+        }
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var t = FindTMPByNameHint(root.GetChild(i), hint);
+            if (t != null) return t;
+        }
+        return null;
     }
 }

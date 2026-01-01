@@ -5,12 +5,16 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// CustomerManager - full stable version (fade-out visible fix)
-/// - Compatible with CustomerVisualController OR CustomerVisualFade (tries both)
-/// - Picks index from preferredRecipeNames and plays orderStories[index] if present
-/// - Plays curhat after correct serve, clears placeholder before playing Ink
-/// - Non-blocking visual fade-out that runs while object is still active, then destroyed after duration
-/// - Debug logs added to help trace flow
+/// CustomerManager - complete final version with speaker-name helpers included
+/// - Uses profile-provided Ink TextAssets for order/success/wrong/leave/curhat where available.
+/// - Ensures wrong story will replay reliably by clearing previous panel and waiting for controller to be idle.
+/// - Non-blocking visible fade-in/out, scheduling destroy after fade so fade is visible.
+/// - Ordering: leavePanelOpen = true (panel reused)
+/// - successStory / leaveStory: require user acknowledge at end (requireUserToAcknowledgeEnd = true)
+/// - wrongStory / ordering: no acknowledgment required at end
+/// - curhat: requires user acknowledgement at end so player can read it
+/// - Automatically sets speaker/name text on dialog prefab instances by searching for child "Name"/"SpeakerName" or a child with "name" in its transform name.
+/// - Reaction interpretation: Satisfy / Neutral / Angry (determined from Ink tags or fallback DialogueReaction)
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -82,6 +86,7 @@ public class CustomerManager : MonoBehaviour
             Debug.LogWarning("[CustomerManager] cupController not assigned.");
         }
 
+        // If GameManager exists and uses restart events, subscribe optionally (not required here)
         StartNewDay();
     }
 
@@ -257,21 +262,22 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
 
-        // Play ordering phase
+        // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
         if (inkDialogController != null && currentRequestedOrderStory != null)
         {
-            // ensure placeholder cleared
             ClearDialogInstance();
+            // set speaker name for dialog
+            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            // leavePanelOpen=true so we can reuse panel for serve-result/curhat; ordering does not require ack at end.
             inkDialogController.PlayCurhat(currentRequestedOrderStory, (r, tags) =>
             {
                 state = ManagerState.WaitingForServe;
                 Debug.Log("[CustomerManager] Ordering story complete, now WaitingForServe.");
-            });
+            }, skipOpenAnimation: false, leavePanelOpen: true, requireUserToAcknowledgeEnd: false);
         }
         else
         {
-            // fallback placeholder dialog
             CreateDialogInstanceForRecipe(requestedRecipe);
             state = ManagerState.WaitingForServe;
             Debug.Log("[CustomerManager] Ordering fallback (placeholder) shown; WaitingForServe.");
@@ -289,123 +295,6 @@ public class CustomerManager : MonoBehaviour
         Debug.Log($"[CustomerManager] NextDayDelayed: waiting {delayBeforeNextDay}s then StartNewDay.");
         yield return new WaitForSecondsRealtime(delayBeforeNextDay);
         StartNewDay();
-    }
-    #endregion
-
-    #region Curhat handling (after successful serve)
-    private IEnumerator RunCurhatIfAnyAndThenAdvance()
-    {
-        // small thank-you message via placeholder dialog if exists
-        var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (txt != null)
-        {
-            StartShowMessageAndThen(txt, "Terima kasih", successMessageDuration, null);
-            yield return new WaitForSecondsRealtime(successMessageDuration);
-        }
-
-        // clear placeholder dialog before curhat
-        ClearDialogInstance();
-
-        // choose curhat story: prefer curhatStories, else fallback to orderStory
-        TextAsset curhatToPlay = null;
-        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0)
-            curhatToPlay = currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)];
-        else
-            curhatToPlay = currentRequestedOrderStory;
-
-        if (curhatToPlay != null && inkDialogController != null)
-        {
-            // wait if controller busy
-            while (inkDialogController.IsPlaying)
-                yield return null;
-
-            bool done = false;
-            DialogueReaction reaction = DialogueReaction.Neutral;
-            List<string> tags = null;
-
-            inkDialogController.PlayCurhat(curhatToPlay, (r, tgs) =>
-            {
-                reaction = r;
-                tags = tgs;
-                done = true;
-            });
-
-            yield return new WaitUntil(() => done);
-
-            HandleCurhatReaction(currentCustomer, reaction, tags);
-        }
-        else
-        {
-            Debug.Log("[CustomerManager] No curhat story to play (null).");
-        }
-
-        yield return new WaitForSecondsRealtime(delayBetweenCustomers);
-        AdvanceToNextCustomer();
-    }
-
-    private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags)
-    {
-        if (cust == null) return;
-
-        switch (reaction)
-        {
-            case DialogueReaction.Agree:
-                Debug.Log("[CustomerManager] Curhat Reaction: AGREE for " + cust.name);
-                break;
-            case DialogueReaction.Neutral:
-                Debug.Log("[CustomerManager] Curhat Reaction: NEUTRAL for " + cust.name);
-                break;
-            case DialogueReaction.Disagree:
-                Debug.Log("[CustomerManager] Curhat Reaction: DISAGREE for " + cust.name);
-                break;
-        }
-
-        if (tags != null && tags.Count > 0)
-            Debug.Log("[CustomerManager] Curhat tags: " + string.Join(",", tags));
-    }
-    #endregion
-
-    #region Dialog helper (legacy placeholder)
-    private void CreateDialogInstanceForRecipe(Recipe recipe)
-    {
-        ClearDialogInstance();
-
-        if (dialogPrefab == null)
-        {
-            Debug.LogWarning("[CustomerManager] dialogPrefab not assigned.");
-            return;
-        }
-
-        if (dialogAnchor == null)
-            activeDialogInstance = Instantiate(dialogPrefab);
-        else
-            activeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
-
-        if (activeDialogInstance == null) return;
-
-        var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (txt != null)
-        {
-            txt.text = recipe != null ? recipe.recipeName : (currentRequestedRecipeName ?? "Saya ingin sesuatu...");
-            txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
-        }
-    }
-
-    private void ClearDialogInstance()
-    {
-        if (activeDialogInstance != null)
-        {
-            Destroy(activeDialogInstance);
-            activeDialogInstance = null;
-        }
-
-        if (messageCoroutine != null)
-        {
-            StopCoroutine(messageCoroutine);
-            messageCoroutine = null;
-        }
-
-        if (state == ManagerState.ShowingMessage) state = ManagerState.Idle;
     }
     #endregion
 
@@ -438,7 +327,12 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Correct serve!");
-            StartCoroutine(RunCurhatIfAnyAndThenAdvance());
+            // reward on correct serve
+            if (GameManager.Instance != null)
+                GameManager.Instance.AddScore(GameManager.Instance.pointsPerCorrectServe);
+
+            // start coroutine that will play success story (if any) then curhat
+            StartCoroutine(CorrectServeSequence());
             return;
         }
 
@@ -447,29 +341,56 @@ public class CustomerManager : MonoBehaviour
         bool reached = currentCustomer.RegisterFail();
         Debug.Log("[CustomerManager] fail(after)=" + currentCustomer.failCount + ", reachedMax=" + reached);
 
-        var dialogText = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (dialogText != null)
+        if (!reached)
         {
-            if (reached)
+            // Not yet leaving: try to play profile.wrongStory if exists
+            if (currentProfile != null && currentProfile.wrongStory != null && inkDialogController != null)
+            {
+                // set speaker name
+                inkDialogController.SetSpeakerName(currentProfile.profileName);
+                StartCoroutine(PlayWrongStoryThenRestore(currentProfile.wrongStory));
+            }
+            else
+            {
+                // fallback to previous text message behavior
+                var dialogText = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (dialogText != null)
+                {
+                    StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
+                }
+                else
+                {
+                    Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
+                    state = ManagerState.WaitingForServe;
+                }
+            }
+            return;
+        }
+
+        // reached max fails -> customer leaves (penalize player)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.DecreaseHP(1, "wrong_leave");
+        }
+
+        if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
+        {
+            // set speaker name
+            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            StartCoroutine(PlayLeaveStoryThenAdvance(currentProfile.leaveStory));
+        }
+        else
+        {
+            // fallback
+            var dialogText = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (dialogText != null)
             {
                 StartShowMessageAndThen(dialogText, "Kamu gimana sih kerjanya, saya mau pergi saja", leaveMessageDuration, null);
                 StartCoroutine(AdvanceAfterDelay(leaveMessageDuration));
             }
             else
             {
-                StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
-            }
-        }
-        else
-        {
-            if (reached)
-            {
                 StartCoroutine(AdvanceAfterDelay(0f));
-            }
-            else
-            {
-                Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
-                state = ManagerState.WaitingForServe;
             }
         }
     }
@@ -487,6 +408,271 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
+    #region Correct / Wrong / Leave sequences
+    private void SetSpeakerAndPlay(TextAsset story, bool skipOpenAnim, bool leaveOpen, bool requireAck, Action<DialogueReaction, List<string>> callback)
+    {
+        if (inkDialogController != null)
+        {
+            inkDialogController.SetSpeakerName(currentProfile != null ? currentProfile.profileName : "");
+            inkDialogController.PlayCurhat(story, callback, skipOpenAnim, leaveOpen, requireAck);
+        }
+    }
+
+    private IEnumerator CorrectServeSequence()
+    {
+        // If profile has successStory play it first (require acknowledgement at end), else proceed directly
+        if (currentProfile != null && currentProfile.successStory != null && inkDialogController != null)
+        {
+            bool done = false;
+            DialogueReaction ignored = DialogueReaction.Neutral;
+            // set speaker name
+            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            // successStory requires acknowledgement from player at end
+            inkDialogController.PlayCurhat(currentProfile.successStory, (r, tgs) =>
+            {
+                ignored = r;
+                done = true;
+            }, skipOpenAnimation: true, leavePanelOpen: true, requireUserToAcknowledgeEnd: true);
+            yield return new WaitUntil(() => done);
+
+            // After success story (acknowledged), play curhat (if any). Curhat will require ack as well below.
+            yield return StartCoroutine(RunCurhatIfAnyAndThenAdvance());
+        }
+        else
+        {
+            // No success story: directly run curhat
+            yield return StartCoroutine(RunCurhatIfAnyAndThenAdvance());
+        }
+    }
+
+    // Ensure previous panel is cleared and controller idle before replaying wrong story.
+    private IEnumerator PlayWrongStoryThenRestore(TextAsset wrongStory)
+    {
+        if (inkDialogController == null)
+        {
+            // fallback: show simple message then restore waiting state
+            var dialogTextFallback = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (dialogTextFallback != null)
+            {
+                StartShowMessageAndThen(dialogTextFallback, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
+            }
+            yield break;
+        }
+
+        // Wait until any existing Ink play finishes to avoid overlapping plays
+        while (inkDialogController.IsPlaying)
+            yield return null;
+
+        // Clear any leftover placeholder or previous panel so we start fresh
+        ClearDialogInstance();
+
+        bool done = false;
+
+        // Play the wrongStory; do NOT skip opening animation so replay is obvious. No ack required.
+        inkDialogController.PlayCurhat(wrongStory, (r, tgs) =>
+        {
+            done = true;
+        }, skipOpenAnimation: false, leavePanelOpen: true, requireUserToAcknowledgeEnd: false);
+
+        // Wait until the wrong dialog finishes playing
+        yield return new WaitUntil(() => done);
+
+        // After showing wrong dialog, restore waiting UI so player can try again
+        StartCoroutine(RestoreWaitingForServeCoroutine());
+    }
+
+    private IEnumerator PlayLeaveStoryThenAdvance(TextAsset leaveStory)
+    {
+        if (inkDialogController == null)
+        {
+            StartCoroutine(AdvanceAfterDelay(0f));
+            yield break;
+        }
+
+        bool done = false;
+        // Leave story requires user acknowledge at end before advancing
+        inkDialogController.PlayCurhat(leaveStory, (r, tgs) =>
+        {
+            done = true;
+        }, skipOpenAnimation: true, leavePanelOpen: false, requireUserToAcknowledgeEnd: true);
+
+        yield return new WaitUntil(() => done);
+        // After leave story (acknowledged), advance to next customer
+        AdvanceToNextCustomer();
+    }
+    #endregion
+
+    #region Curhat handling (REQUIRES ACKNOWLEDGEMENT AT END)
+    private IEnumerator RunCurhatIfAnyAndThenAdvance()
+    {
+        // small thank-you message via placeholder dialog if exists
+        var txt = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (txt != null)
+        {
+            StartShowMessageAndThen(txt, "Terima kasih", successMessageDuration, null);
+            yield return new WaitForSecondsRealtime(successMessageDuration);
+        }
+
+        // clear placeholder dialog before curhat
+        ClearDialogInstance();
+
+        // choose curhat story: prefer curhatStories, else fallback to orderStory
+        TextAsset curhatToPlay = null;
+        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0)
+            curhatToPlay = currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)];
+        else
+            curhatToPlay = currentRequestedOrderStory;
+
+        if (curhatToPlay != null && inkDialogController != null)
+        {
+            // set speaker name
+            inkDialogController.SetSpeakerName(currentProfile != null ? currentProfile.profileName : "");
+
+            // wait if controller busy
+            while (inkDialogController.IsPlaying)
+                yield return null;
+
+            bool done = false;
+            DialogueReaction reaction = DialogueReaction.Neutral;
+            List<string> tags = null;
+
+            // Play curhat reusing panel if one was left open (skipOpenAnimation true).
+            // requireUserToAcknowledgeEnd = true so curhat won't auto-close before player reads it.
+            inkDialogController.PlayCurhat(curhatToPlay, (r, tgs) =>
+            {
+                reaction = r;
+                tags = tgs;
+                done = true;
+            }, skipOpenAnimation: true, leavePanelOpen: false, requireUserToAcknowledgeEnd: true);
+
+            yield return new WaitUntil(() => done);
+
+            HandleCurhatReaction(currentCustomer, reaction, tags);
+        }
+        else
+        {
+            Debug.Log("[CustomerManager] No curhat story to play (null).");
+        }
+
+        yield return new WaitForSecondsRealtime(delayBetweenCustomers);
+        AdvanceToNextCustomer();
+    }
+    #endregion
+
+    #region HandleCurhatReaction (extend for game effects)
+    private enum CurhatOutcome { Satisfy, Neutral, Angry }
+
+    private CurhatOutcome DetermineOutcomeFromTags(List<string> tags, DialogueReaction reactionFromInk)
+    {
+        // Prefer explicit tag if present; fallback to reaction enum if no tag found.
+        if (tags != null)
+        {
+            foreach (var t in tags)
+            {
+                if (string.IsNullOrEmpty(t)) continue;
+                var low = t.Trim().ToLowerInvariant();
+                if (low.Contains("reaction:satisfy") || low == "satisfy" || low.Contains("satisfy") || low.Contains("agree")) return CurhatOutcome.Satisfy;
+                if (low.Contains("reaction:angry") || low == "angry" || low.Contains("angry") || low.Contains("disagree")) return CurhatOutcome.Angry;
+                if (low.Contains("reaction:neutral") || low == "neutral" || low.Contains("neutral")) return CurhatOutcome.Neutral;
+            }
+        }
+
+        // Fallback: use DialogueReaction (legacy)
+        switch (reactionFromInk)
+        {
+            case DialogueReaction.Agree: return CurhatOutcome.Satisfy;
+            case DialogueReaction.Disagree: return CurhatOutcome.Angry;
+            default: return CurhatOutcome.Neutral;
+        }
+    }
+
+    private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags)
+    {
+        if (cust == null) return;
+
+        // Determine outcome based on tags or fallback reaction
+        CurhatOutcome outcome = DetermineOutcomeFromTags(tags, reaction);
+
+        // Read per-profile overrides if available; otherwise use GameManager defaults
+        int pointsSatisfy = (currentProfile != null) ? currentProfile.pointsOnSatisfy : (GameManager.Instance != null ? GameManager.Instance.pointsPerSatisfyDefault : 5);
+        int pointsNeutral = (currentProfile != null) ? currentProfile.pointsOnNeutral : (GameManager.Instance != null ? GameManager.Instance.pointsPerNeutralDefault : 0);
+        int hpLossAngry = (currentProfile != null) ? currentProfile.hpLossOnAngry : (GameManager.Instance != null ? GameManager.Instance.hpLossOnAngryDefault : 1);
+
+        switch (outcome)
+        {
+            case CurhatOutcome.Satisfy:
+                Debug.Log($"[CustomerManager] Curhat outcome: SATISFY for {cust.name}");
+                if (GameManager.Instance != null && pointsSatisfy != 0)
+                    GameManager.Instance.AddScore(pointsSatisfy);
+                // TODO: trigger happy animation on cust if available
+                break;
+
+            case CurhatOutcome.Neutral:
+                Debug.Log($"[CustomerManager] Curhat outcome: NEUTRAL for {cust.name}");
+                if (GameManager.Instance != null && pointsNeutral != 0)
+                    GameManager.Instance.AddScore(pointsNeutral);
+                break;
+
+            case CurhatOutcome.Angry:
+                Debug.Log($"[CustomerManager] Curhat outcome: ANGRY for {cust.name}");
+                if (GameManager.Instance != null && hpLossAngry > 0)
+                    GameManager.Instance.DecreaseHP(hpLossAngry, "curhat_angry");
+                // TODO: trigger angry animation/visual feedback on cust
+                break;
+        }
+
+        if (tags != null && tags.Count > 0)
+            Debug.Log("[CustomerManager] Curhat tags: " + string.Join(",", tags));
+    }
+    #endregion
+
+    #region Dialog helper (legacy placeholder)
+    private void CreateDialogInstanceForRecipe(Recipe recipe)
+    {
+        ClearDialogInstance();
+
+        if (dialogPrefab == null)
+        {
+            Debug.LogWarning("[CustomerManager] dialogPrefab not assigned.");
+            return;
+        }
+
+        if (dialogAnchor == null)
+            activeDialogInstance = Instantiate(dialogPrefab);
+        else
+            activeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
+
+        if (activeDialogInstance == null) return;
+
+        var txt = activeDialogInstance.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (txt != null)
+        {
+            txt.text = recipe != null ? recipe.recipeName : (currentRequestedRecipeName ?? "Saya ingin sesuatu...");
+            txt.gameObject.SetActive(!string.IsNullOrEmpty(txt.text));
+        }
+
+        // Auto set speaker/name on legacy dialog instance if it has a child named "Name" or "SpeakerName"
+        SetNameOnDialogInstance(activeDialogInstance, currentProfile != null ? currentProfile.profileName : "");
+    }
+
+    private void ClearDialogInstance()
+    {
+        if (activeDialogInstance != null)
+        {
+            Destroy(activeDialogInstance);
+            activeDialogInstance = null;
+        }
+
+        if (messageCoroutine != null)
+        {
+            StopCoroutine(messageCoroutine);
+            messageCoroutine = null;
+        }
+
+        if (state == ManagerState.ShowingMessage) state = ManagerState.Idle;
+    }
+    #endregion
+
     #region Advance & messages
     public void AdvanceToNextCustomer()
     {
@@ -494,8 +680,6 @@ public class CustomerManager : MonoBehaviour
         messageCoroutine = StartCoroutine(AdvanceToNextCustomerCoroutine());
     }
 
-    // Non-blocking fade-out: start fade coroutines but do NOT wait for them;
-    // schedule destroy after fade duration so fade is visible.
     private IEnumerator AdvanceToNextCustomerCoroutine()
     {
         state = ManagerState.WaitingBetweenCustomers;
@@ -507,12 +691,11 @@ public class CustomerManager : MonoBehaviour
         {
             goToDestroy = currentCustomer.gameObject;
 
-            // Attempt fade-out on either visual controller name (start fading non-blocking)
+            // Attempt fade-out on either visual controller name (start fading non-blocking, visible)
             var visOld = currentCustomer.GetComponent("CustomerVisualController");
             if (visOld != null)
             {
                 StartCoroutine(CallFadeOutCoroutineDynamic(visOld, customerFadeDuration));
-                Debug.Log("[CustomerManager] Started non-blocking fadeOut via CustomerVisualController.");
             }
             else
             {
@@ -520,12 +703,10 @@ public class CustomerManager : MonoBehaviour
                 if (visNew != null)
                 {
                     StartCoroutine(CallFadeOutCoroutineDynamic(visNew, customerFadeDuration));
-                    Debug.Log("[CustomerManager] Started non-blocking fadeOut via CustomerVisualFade.");
                 }
             }
 
-            // Optionally disable interaction components here (so player can't interact while fading)
-            // e.g., disable colliders/buttons on the customer root if present
+            // disable immediate interaction components so player can't interact while fading
             var coll = goToDestroy.GetComponent<Collider>();
             if (coll != null) coll.enabled = false;
             var uic = goToDestroy.GetComponentInChildren<UnityEngine.UI.Button>(true);
@@ -608,7 +789,7 @@ public class CustomerManager : MonoBehaviour
     }
     #endregion
 
-    #region Dynamic fade-in/out callers (reflection invocation)
+    #region Dynamic fade-in/out callers & destroy helper
     private IEnumerator CallFadeInCoroutineDynamic(object compObj, float duration)
     {
         if (compObj == null) yield break;
@@ -670,19 +851,69 @@ public class CustomerManager : MonoBehaviour
 
         yield break;
     }
-    #endregion
 
-    #region Utility: delayed destroy
     private IEnumerator DestroyGameObjectAfterDelay(GameObject go, float delay)
     {
         if (go == null) yield break;
         yield return new WaitForSecondsRealtime(delay);
         if (go != null)
         {
-            // Ensure it's safe to destroy (not already destroyed)
             Destroy(go);
             Debug.Log("[CustomerManager] Destroyed faded customer object after delay.");
         }
+    }
+    #endregion
+
+    #region Utility: set name on legacy dialog instance & helpers
+    private void SetNameOnDialogInstance(GameObject dialogInstance, string name)
+    {
+        if (dialogInstance == null) return;
+        var t = FindChildByNamesRecursive(dialogInstance.transform, new string[] { "Name", "SpeakerName" });
+        if (t != null)
+        {
+            // grab TMP from the subtree (handles Name -> Text structure)
+            var tmp = t.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp != null) { tmp.text = name ?? ""; return; }
+        }
+
+        // fallback: find first TMP with 'name' in transform name
+        var tmpFallback = FindTMPByNameHint(dialogInstance.transform, "name");
+        if (tmpFallback != null) tmpFallback.text = name ?? "";
+    }
+
+    // Helper: find child recursively by any of the given names (case-insensitive)
+    private Transform FindChildByNamesRecursive(Transform root, string[] names)
+    {
+        if (root == null || names == null) return null;
+        foreach (var n in names)
+        {
+            if (string.Equals(root.name, n, StringComparison.OrdinalIgnoreCase)) return root;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var c = root.GetChild(i);
+            var found = FindChildByNamesRecursive(c, names);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    // Helper: find first TextMeshProUGUI child whose transform.name contains hint (case-insensitive)
+    private TextMeshProUGUI FindTMPByNameHint(Transform root, string hint)
+    {
+        if (root == null || string.IsNullOrEmpty(hint)) return null;
+        if (root.name.IndexOf(hint, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            var tmpHere = root.GetComponent<TextMeshProUGUI>();
+            if (tmpHere != null) return tmpHere;
+        }
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var t = FindTMPByNameHint(root.GetChild(i), hint);
+            if (t != null) return t;
+        }
+        return null;
     }
     #endregion
 }

@@ -10,15 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
-  m_Name: Loyal Customer
+  m_Name: Diana
   m_EditorClassIdentifier: 
   profileName: Diana
-  portrait: {fileID: 4919402153586549462, guid: c89ecdbcf70eeda418b864a88ccdf2b5, type: 3}
+  portrait: {fileID: 21300000, guid: 0d47dcb574814574ca62f414b0a073ce, type: 3}
   preferredRecipeNames:
   - Black Tea
-  - Green Tea
-  - Mint Tea
+  orderStories:
+  - {fileID: 4900000, guid: 50c4ea7176e4dc6459418493fe4a3632, type: 3}
   curhatStories:
   - {fileID: 4900000, guid: 9ab0acd9cf6b6ef49a1807f4fcc50310, type: 3}
+  successStory: {fileID: 4900000, guid: aff9feb87a91d8e48884c30eae93aa29, type: 3}
+  wrongStory: {fileID: 4900000, guid: bb30a713b3a0f7842a09b25436afecd4, type: 3}
+  leaveStory: {fileID: 4900000, guid: 0ab83df04d78a084e99d407e08f5b83f, type: 3}
   maxFails: 3
-  personality: 1
+  pointsOnSatisfy: 10
+  pointsOnNeutral: 5
+  hpLossOnAngry: 1
