@@ -16,14 +16,18 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: e721e8932786692479bcf4db6dbafe45, type: 3}
   preferredRecipeNames:
   - Lavender Tea
+  - Golden Jasmine Tea
   orderStories:
   - {fileID: 4900000, guid: 260605e049fb58946bd31e7264701023, type: 3}
+  - {fileID: 4900000, guid: 5d2fed525b3b48a45a57918df5a11be5, type: 3}
   curhatStories:
   - {fileID: 4900000, guid: 0f1b4116cbd72c94fae635c972fc3e2c, type: 3}
+  - {fileID: 4900000, guid: ef59ddb2103ba204e99e35bcbcd301d9, type: 3}
+  - {fileID: 4900000, guid: 180d60f7ea3b2a34897a3e2f3e1385d5, type: 3}
   successStory: {fileID: 4900000, guid: 73245ab838b10ba42a6d322ad0dd2e70, type: 3}
   wrongStory: {fileID: 4900000, guid: 2377a8a850042254c9835eba4571de57, type: 3}
   leaveStory: {fileID: 4900000, guid: f7c71d93f3c9bb34da006be0eeb54fcd, type: 3}
-  maxFails: 2
+  maxFails: 1
   pointsOnSatisfy: 10
   pointsOnNeutral: 5
   hpLossOnAngry: 1

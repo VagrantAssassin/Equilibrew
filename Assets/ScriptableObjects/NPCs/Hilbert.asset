@@ -16,12 +16,19 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: 9f986a2eed775fe41935aca6ed60ce0c, type: 3}
   preferredRecipeNames:
   - Apple Tea
+  - Milk Tea
+  - Apple green Tea
   orderStories:
-  - {fileID: 0}
-  curhatStories: []
-  successStory: {fileID: 0}
-  wrongStory: {fileID: 0}
-  leaveStory: {fileID: 0}
+  - {fileID: 4900000, guid: 74225493b8d49f44fab1f08bfdd4fcac, type: 3}
+  - {fileID: 4900000, guid: d981e7f0c5b5f8c4eae5f9a0598f4c2c, type: 3}
+  - {fileID: 4900000, guid: 35855c02b9d5bd54e899efda3cf259ee, type: 3}
+  curhatStories:
+  - {fileID: 4900000, guid: 548cb2d409931594b868ec96a400eebb, type: 3}
+  - {fileID: 4900000, guid: 1b9f3214ecfb6314f85dcf31643a19bb, type: 3}
+  - {fileID: 4900000, guid: fb3ac91e56fc8f448be67fce601b59aa, type: 3}
+  successStory: {fileID: 4900000, guid: 9f9b8f7715b551c4b86b9eb8322a8f0c, type: 3}
+  wrongStory: {fileID: 4900000, guid: c2c3e32830f23bb48b1aaccff9d3dbb2, type: 3}
+  leaveStory: {fileID: 4900000, guid: 686d479a73d62664387413c18668195a, type: 3}
   maxFails: 2
   pointsOnSatisfy: 10
   pointsOnNeutral: 5

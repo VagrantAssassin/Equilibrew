@@ -1,0 +1,1 @@
+I pesan minuman yang glowing-glowing seperti emas itu ya

@@ -1,0 +1,1 @@
+Gua ga pesen ini, mana pesenan gua!

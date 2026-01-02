@@ -15,6 +15,10 @@ using TMPro;
 /// - curhat: requires user acknowledgement at end so player can read it
 /// - Automatically sets speaker/name text on dialog prefab instances by searching for child "Name"/"SpeakerName" or a child with "name" in its transform name.
 /// - Reaction interpretation: Satisfy / Neutral / Angry (determined from Ink tags or fallback DialogueReaction)
+/// 
+/// Change in this version:
+/// - allowServeWhilePanelOpen logic refined so wrongStory (non-ack) allows re-serving when finished,
+///   while still blocking serve while story is actively playing.
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -73,6 +77,10 @@ public class CustomerManager : MonoBehaviour
 
     // prevent race on serve
     private bool serveLocked = false;
+
+    // allow serve while panel open temporarily (used for ordering flows that don't require user ack,
+    // and used after wrongStory (non-ack) finishes so player can attempt again).
+    private bool allowServeWhilePanelOpen = false;
 
     private void Start()
     {
@@ -264,22 +272,36 @@ public class CustomerManager : MonoBehaviour
 
         // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
+        allowServeWhilePanelOpen = false; // default false; set true only if ordering flow explicitly allows serve while panel open
+
         if (inkDialogController != null && currentRequestedOrderStory != null)
         {
             ClearDialogInstance();
             // set speaker name for dialog
             inkDialogController.SetSpeakerName(currentProfile.profileName);
-            // leavePanelOpen=true so we can reuse panel for serve-result/curhat; ordering does not require ack at end.
+
+            // For ordering we intentionally set leavePanelOpen = true so we can reuse the panel.
+            // Ordering normally does not require ack (requireUserToAcknowledgeEnd = false),
+            // so we allow serve while panel is left open in that case (preserve original UX).
+            bool requireAck = false;
+            bool leavePanelOpen = true;
+            if (!requireAck && leavePanelOpen)
+                allowServeWhilePanelOpen = true;
+
             inkDialogController.PlayCurhat(currentRequestedOrderStory, (r, tags) =>
             {
+                // When ordering story completes, we enter WaitingForServe.
+                // If ordering was non-ack and leavePanelOpen=true, allowServeWhilePanelOpen remains true
                 state = ManagerState.WaitingForServe;
                 Debug.Log("[CustomerManager] Ordering story complete, now WaitingForServe.");
-            }, skipOpenAnimation: false, leavePanelOpen: true, requireUserToAcknowledgeEnd: false);
+            }, skipOpenAnimation: false, leavePanelOpen: leavePanelOpen, requireUserToAcknowledgeEnd: requireAck);
         }
         else
         {
             CreateDialogInstanceForRecipe(requestedRecipe);
             state = ManagerState.WaitingForServe;
+            // placeholder flow: allow serve while placeholder visible (original UX)
+            allowServeWhilePanelOpen = true;
             Debug.Log("[CustomerManager] Ordering fallback (placeholder) shown; WaitingForServe.");
         }
     }
@@ -301,11 +323,34 @@ public class CustomerManager : MonoBehaviour
     #region Serve handling
     private void OnServeReceived(Recipe served)
     {
-        Debug.Log($"[CustomerManager] OnServeReceived. state={state} current={(currentCustomer!=null?currentCustomer.name:"null")} serveLocked={serveLocked}");
+        Debug.Log($"[CustomerManager] OnServeReceived. state={state} current={(currentCustomer!=null?currentCustomer.name:"null")} serveLocked={serveLocked} allowServeWhilePanelOpen={allowServeWhilePanelOpen}");
 
+        // New guards: block serve when dialog is active or ink controller is playing or legacy dialog instance is visible,
+        // except when allowServeWhilePanelOpen == true (ordering flow that allowed serve even if panel was left open).
         if (serveLocked)
         {
             Debug.Log("[CustomerManager] Serve ignored - locked.");
+            return;
+        }
+
+        if (inkDialogController != null)
+        {
+            if (inkDialogController.IsPlaying)
+            {
+                Debug.Log("[CustomerManager] Serve ignored - Ink dialog still playing.");
+                return;
+            }
+
+            if (inkDialogController.IsPanelOpen && !allowServeWhilePanelOpen)
+            {
+                Debug.Log("[CustomerManager] Serve ignored - dialog panel still open.");
+                return;
+            }
+        }
+
+        if (activeDialogInstance != null && activeDialogInstance.activeInHierarchy && !allowServeWhilePanelOpen)
+        {
+            Debug.Log("[CustomerManager] Serve ignored - activeDialogInstance is visible.");
             return;
         }
 
@@ -320,8 +365,12 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
+        // Passed guards — lock and process
         serveLocked = true;
         StartCoroutine(ReleaseServeLockNextFrame());
+
+        // As soon as we start processing a serve, disallow serve-while-panel-open for safety
+        allowServeWhilePanelOpen = false;
 
         bool ok = (served != null && string.Equals(served.recipeName, currentRequestedRecipeName, StringComparison.OrdinalIgnoreCase));
         if (ok)
@@ -346,6 +395,9 @@ public class CustomerManager : MonoBehaviour
             // Not yet leaving: try to play profile.wrongStory if exists
             if (currentProfile != null && currentProfile.wrongStory != null && inkDialogController != null)
             {
+                // Ensure serve is blocked while the wrongStory is actively playing
+                allowServeWhilePanelOpen = false;
+
                 // set speaker name
                 inkDialogController.SetSpeakerName(currentProfile.profileName);
                 StartCoroutine(PlayWrongStoryThenRestore(currentProfile.wrongStory));
@@ -356,11 +408,16 @@ public class CustomerManager : MonoBehaviour
                 var dialogText = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
                 if (dialogText != null)
                 {
+                    // After this failure message we want player to be able to serve again,
+                    // so allowServeWhilePanelOpen = true so serve will be accepted even if placeholder remains visible.
+                    allowServeWhilePanelOpen = true;
                     StartShowMessageAndThen(dialogText, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
                 }
                 else
                 {
                     Debug.Log("[CustomerManager] Wrong serve recorded; customer remains (no dialog).");
+                    // allow re-serve immediately in this fallback case
+                    allowServeWhilePanelOpen = true;
                     state = ManagerState.WaitingForServe;
                 }
             }
@@ -372,6 +429,9 @@ public class CustomerManager : MonoBehaviour
         {
             GameManager.Instance.DecreaseHP(1, "wrong_leave");
         }
+
+        // ensure panel-open-serve flag is cleared
+        allowServeWhilePanelOpen = false;
 
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
         {
@@ -413,6 +473,8 @@ public class CustomerManager : MonoBehaviour
     {
         if (inkDialogController != null)
         {
+            // any story that requires ack or is not an ordering flow should disable allowServeWhilePanelOpen
+            allowServeWhilePanelOpen = false;
             inkDialogController.SetSpeakerName(currentProfile != null ? currentProfile.profileName : "");
             inkDialogController.PlayCurhat(story, callback, skipOpenAnim, leaveOpen, requireAck);
         }
@@ -428,6 +490,8 @@ public class CustomerManager : MonoBehaviour
             // set speaker name
             inkDialogController.SetSpeakerName(currentProfile.profileName);
             // successStory requires acknowledgement from player at end
+            // success story should block serve while showing/ack required
+            allowServeWhilePanelOpen = false;
             inkDialogController.PlayCurhat(currentProfile.successStory, (r, tgs) =>
             {
                 ignored = r;
@@ -454,6 +518,8 @@ public class CustomerManager : MonoBehaviour
             var dialogTextFallback = activeDialogInstance?.GetComponentInChildren<TextMeshProUGUI>(true);
             if (dialogTextFallback != null)
             {
+                // allow re-serve after message
+                allowServeWhilePanelOpen = true;
                 StartShowMessageAndThen(dialogTextFallback, "Ini bukan pesanan saya", failureMessageDuration, () => RestoreWaitingForServeCoroutine());
             }
             yield break;
@@ -469,6 +535,7 @@ public class CustomerManager : MonoBehaviour
         bool done = false;
 
         // Play the wrongStory; do NOT skip opening animation so replay is obvious. No ack required.
+        // wrongStory should block serve while showing (we cleared allowServeWhilePanelOpen before calling)
         inkDialogController.PlayCurhat(wrongStory, (r, tgs) =>
         {
             done = true;
@@ -476,6 +543,9 @@ public class CustomerManager : MonoBehaviour
 
         // Wait until the wrong dialog finishes playing
         yield return new WaitUntil(() => done);
+
+        // After showing wrong dialog, allow re-serving even if panel remains (wrong story is non-ack)
+        allowServeWhilePanelOpen = true;
 
         // After showing wrong dialog, restore waiting UI so player can try again
         StartCoroutine(RestoreWaitingForServeCoroutine());
@@ -491,6 +561,7 @@ public class CustomerManager : MonoBehaviour
 
         bool done = false;
         // Leave story requires user acknowledge at end before advancing
+        allowServeWhilePanelOpen = false;
         inkDialogController.PlayCurhat(leaveStory, (r, tgs) =>
         {
             done = true;
@@ -535,6 +606,9 @@ public class CustomerManager : MonoBehaviour
             bool done = false;
             DialogueReaction reaction = DialogueReaction.Neutral;
             List<string> tags = null;
+
+            // Curhat requires user acknowledgement at end, so block serve while showing
+            allowServeWhilePanelOpen = false;
 
             // Play curhat reusing panel if one was left open (skipOpenAnimation true).
             // requireUserToAcknowledgeEnd = true so curhat won't auto-close before player reads it.

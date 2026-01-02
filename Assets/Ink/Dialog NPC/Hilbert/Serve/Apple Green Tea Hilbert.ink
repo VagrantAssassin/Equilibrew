@@ -1,0 +1,1 @@
+Biasa, gua pesen teh apel tapi yang ijo

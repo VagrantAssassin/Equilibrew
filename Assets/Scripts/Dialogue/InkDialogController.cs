@@ -1,3 +1,5 @@
+// (Full file with only one small addition: public bool IsPanelOpen property)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,6 +57,17 @@ public class InkDialogController : MonoBehaviour
     {
         if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
         if (choiceContainer != null) choiceContainer.SetActive(false);
+    }
+
+    // NEW: expose whether dialog panel is currently visible/open
+    public bool IsPanelOpen
+    {
+        get
+        {
+            if (runtimeDialogInstance != null) return runtimeDialogInstance.activeInHierarchy;
+            if (dialogPanelRoot != null) return dialogPanelRoot.activeInHierarchy;
+            return false;
+        }
     }
 
     // --- speaker name helper (unchanged except using GetComponentInChildren) ---

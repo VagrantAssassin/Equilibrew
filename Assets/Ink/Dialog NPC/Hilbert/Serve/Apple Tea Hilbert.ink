@@ -1,0 +1,1 @@
+Gue lagi pengen minuman yang manis dan berasa apel apel gitu, ada ga lo?

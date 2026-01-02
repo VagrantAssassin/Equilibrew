@@ -16,10 +16,16 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: ad7fbf34d66fd1f4d8543656b01341ab, type: 3}
   preferredRecipeNames:
   - Mint Tea
+  - Jasmine Tea
+  - Honey Tea
   orderStories:
   - {fileID: 4900000, guid: e67e09f0fd556f24b98cdfc500cea0e7, type: 3}
+  - {fileID: 4900000, guid: 94f38976783543f4fb2eedcdd8e2d088, type: 3}
+  - {fileID: 4900000, guid: 9aa8853c52dc3e24dacafedc3531e853, type: 3}
   curhatStories:
   - {fileID: 4900000, guid: ef92987f0a335be4e975f48749e2959f, type: 3}
+  - {fileID: 4900000, guid: df6c3b81d8c7fab47b08316f34dc5ee8, type: 3}
+  - {fileID: 4900000, guid: 0a1271573a99bdb44b64757d8a8dcab1, type: 3}
   successStory: {fileID: 4900000, guid: 7b86b24e1b5e6bf4aa26bbd4a6588213, type: 3}
   wrongStory: {fileID: 4900000, guid: 466a45f11d3a737478ab537634220d89, type: 3}
   leaveStory: {fileID: 4900000, guid: 48a18b1b3d79c874cb345014f9a9f28d, type: 3}
