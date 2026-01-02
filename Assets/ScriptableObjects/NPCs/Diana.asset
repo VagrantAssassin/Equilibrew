@@ -19,7 +19,7 @@ MonoBehaviour:
   orderStories:
   - {fileID: 4900000, guid: 50c4ea7176e4dc6459418493fe4a3632, type: 3}
   curhatStories:
-  - {fileID: 4900000, guid: 9ab0acd9cf6b6ef49a1807f4fcc50310, type: 3}
+  - {fileID: 4900000, guid: ce0da65c29b844846a8ee8e35f195cc4, type: 3}
   successStory: {fileID: 4900000, guid: aff9feb87a91d8e48884c30eae93aa29, type: 3}
   wrongStory: {fileID: 4900000, guid: bb30a713b3a0f7842a09b25436afecd4, type: 3}
   leaveStory: {fileID: 4900000, guid: 0ab83df04d78a084e99d407e08f5b83f, type: 3}

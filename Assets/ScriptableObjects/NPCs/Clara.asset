@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
+  m_Name: Clara
+  m_EditorClassIdentifier: 
+  profileName: Clara
+  portrait: {fileID: 21300000, guid: e721e8932786692479bcf4db6dbafe45, type: 3}
+  preferredRecipeNames:
+  - Lavender Tea
+  orderStories:
+  - {fileID: 4900000, guid: 260605e049fb58946bd31e7264701023, type: 3}
+  curhatStories:
+  - {fileID: 4900000, guid: 0f1b4116cbd72c94fae635c972fc3e2c, type: 3}
+  successStory: {fileID: 4900000, guid: 73245ab838b10ba42a6d322ad0dd2e70, type: 3}
+  wrongStory: {fileID: 4900000, guid: 2377a8a850042254c9835eba4571de57, type: 3}
+  leaveStory: {fileID: 4900000, guid: f7c71d93f3c9bb34da006be0eeb54fcd, type: 3}
+  maxFails: 2
+  pointsOnSatisfy: 10
+  pointsOnNeutral: 5
+  hpLossOnAngry: 1

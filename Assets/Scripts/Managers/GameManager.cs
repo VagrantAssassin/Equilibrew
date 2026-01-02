@@ -1,4 +1,3 @@
-// (isi file — overwrite existing GameManager.cs)
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,9 +37,14 @@ public class GameManager : MonoBehaviour
     [Header("Restart behavior")]
     public bool reloadSceneOnRestart = false;
 
+    // runtime
     private int score = 0;
     private int hp = 0;
 
+    // Game over state flag
+    private bool isGameOver = false;
+
+    // Events (only GameManager may invoke them)
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
     public event Action<int, int> OnScoreChanged;
@@ -62,18 +66,26 @@ public class GameManager : MonoBehaviour
 
     public void InitGame()
     {
+        // restore time/audio and clear game-over flag
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        isGameOver = false;
+
         score = startingScore;
         hp = Mathf.Clamp(maxHP, 0, 999);
         UpdateHearts();
         UpdateScoreText();
     }
 
-    public void AddScore(int points)
+    // AddScore with optional reason (for logging)
+    public void AddScore(int points, string reason = null)
     {
-        if (points == 0) return;
+        if (points == 0 || isGameOver) return;
+        int prev = score;
         score += points;
         UpdateScoreText();
         OnScoreChanged?.Invoke(score, points);
+        Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
     }
 
     public int GetScore() => score;
@@ -81,17 +93,20 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseHP(int count = 1, string reason = "")
     {
-        if (count <= 0) return;
+        if (count <= 0 || isGameOver) return;
+        int prev = hp;
         hp = Mathf.Max(0, hp - count);
         UpdateHearts();
         OnHPChanged?.Invoke(hp, -count);
-        Debug.Log($"[GameManager] DecreaseHP by {count} reason={reason} -> hp={hp}");
+        Debug.Log($"[GameManager] DecreaseHP by {count} reason={reason} -> {prev} -> {hp}");
+
         if (hp <= 0) TriggerGameOver();
     }
 
     public void IncreaseHP(int count = 1)
     {
-        if (count <= 0) return;
+        if (count <= 0 || isGameOver) return;
+        int prev = hp;
         hp = Mathf.Min(maxHP, hp + count);
         UpdateHearts();
         OnHPChanged?.Invoke(hp, count);
@@ -121,8 +136,17 @@ public class GameManager : MonoBehaviour
 
     private void TriggerGameOver()
     {
+        if (isGameOver) return;
+        isGameOver = true;
+
+        Debug.Log("[GameManager] GameOver triggered.");
         SaveHighscoreIfNeeded();
         ShowGameOverPanel();
+
+        // freeze game time and pause audio when game over
+        Time.timeScale = 0f;
+        AudioListener.pause = true;
+
         OnGameOverEvent?.Invoke();
     }
 
@@ -148,17 +172,39 @@ public class GameManager : MonoBehaviour
         if (score > prev) { PlayerPrefs.SetInt(highscoreKey, score); PlayerPrefs.Save(); }
     }
 
+    /// <summary>
+    /// Restart game: either reload scene (full reset) or reset internal state and fire OnGameRestartEvent.
+    /// </summary>
     public void RestartGame()
     {
+        // restore time/audio and clear game over state
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        isGameOver = false;
+
         if (reloadSceneOnRestart)
         {
-            Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             return;
         }
 
         HideGameOverPanel();
         InitGame();
+        OnGameRestartEvent?.Invoke();
+        Debug.Log("[GameManager] RestartGame: reset internal state and fired OnGameRestartEvent.");
+    }
+
+    /// <summary>
+    /// Public helper so external code can request the restart event to be fired.
+    /// Use this instead of trying to invoke the event from outside.
+    /// </summary>
+    public void FireOnGameRestart()
+    {
+        // keep behavior consistent: restore time/audio first
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        isGameOver = false;
+
         OnGameRestartEvent?.Invoke();
     }
 

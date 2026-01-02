@@ -1,0 +1,1 @@
+Kamu lagi main main sama I, mending I get out saja cih

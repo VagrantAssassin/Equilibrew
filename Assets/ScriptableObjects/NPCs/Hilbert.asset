@@ -10,12 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
-  m_Name: New Customer
+  m_Name: Hilbert
   m_EditorClassIdentifier: 
-  profileName: Hansen
-  portrait: {fileID: 3816965715477470609, guid: c89ecdbcf70eeda418b864a88ccdf2b5, type: 3}
+  profileName: Hilbert
+  portrait: {fileID: 21300000, guid: 9f986a2eed775fe41935aca6ed60ce0c, type: 3}
   preferredRecipeNames:
-  - Matcha Latte
-  - Jasmine Tea
-  personality: 0
+  - Apple Tea
+  orderStories:
+  - {fileID: 0}
+  curhatStories: []
+  successStory: {fileID: 0}
+  wrongStory: {fileID: 0}
+  leaveStory: {fileID: 0}
   maxFails: 2
+  pointsOnSatisfy: 10
+  pointsOnNeutral: 5
+  hpLossOnAngry: 1
