@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// GameManager
 /// - Manages score, HP and game over state.
 /// - Exposes events for score/hp changes and game lifecycle.
 /// - Updated: heart UI now supports sprite-swap mode (keep hearts visible and swap sprite instead of enabling/disabling).
+/// - Added: public RestartGame() to be used by UI Retry button.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
     public string highscoreKey = "EQ_HIGH_SCORE";
 
     [Header("Restart behavior")]
+    [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
     public bool reloadSceneOnRestart = false;
 
     // runtime
@@ -230,17 +233,55 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Fire game restart event so other systems (UI, managers) can re-init or reset.
+    /// Note: FireOnGameRestart will also reload scene if reloadSceneOnRestart = true.
     /// </summary>
     public void FireOnGameRestart()
     {
         Debug.Log("[GameManager] FireOnGameRestart invoked.");
         OnGameRestartEvent?.Invoke();
 
-        // Optionally reload scene (if configured)
         if (reloadSceneOnRestart)
         {
-            // simple reload current scene
-            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
+
+    /// <summary>
+    /// Public restart method for UI Retry button.
+    /// - If reloadSceneOnRestart==true -> reload active scene.
+    /// - Else -> hide game over panel, call InitGame() and invoke OnGameRestartEvent.
+    /// Attach this method to Retry button's OnClick in the Inspector.
+    /// </summary>
+    public void RestartGame()
+    {
+        Debug.Log("[GameManager] RestartGame called by UI.");
+
+        if (reloadSceneOnRestart)
+        {
+            // will reload the scene (and all managers will re-awake)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
+        // Otherwise perform in-place re-init
+        HideGameOverPanel();
+        InitGame();
+        OnGameRestartEvent?.Invoke();
+    }
+
+    /// <summary>
+    /// Convenience alias for UI, if you prefer more explicit name in Inspector.
+    /// </summary>
+    public void RestartGame_FromButton()
+    {
+        RestartGame();
+    }
+
+    /// <summary>
+    /// Fire game restart programmatically (alias kept for compatibility).
+    /// </summary>
+    public void FireOnGameRestart_Public()
+    {
+        FireOnGameRestart();
     }
 }
