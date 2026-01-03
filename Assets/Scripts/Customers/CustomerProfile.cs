@@ -32,5 +32,8 @@ public class CustomerProfile : ScriptableObject
     [Tooltip("HP lost (positive integer) when curhat result is ANGRY. Set 0 to disable.")]
     public int hpLossOnAngry = 1;
 
-    // You may also add other profile-specific mapping later (e.g. tagEffects list).
+    [Header("Background / Bio (editable)")]
+    [Tooltip("Short background / biography text for the customer (e.g. 'yatim piatu, bercita-cita jadi ...').")]
+    [TextArea(3, 6)]
+    public string background = "";
 }

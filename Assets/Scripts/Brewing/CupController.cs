@@ -72,6 +72,12 @@ public class CupController : MonoBehaviour
             if (enableDebugLogs) Debug.Log("[CupController] Ingredient added: '" + normalized + "'");
         }
 
+        // Play ingredient-in SFX (centralized via AudioManager)
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX_IngredientIn();
+        }
+
         UpdateUI();
         CheckRecipe();
     }
@@ -176,6 +182,12 @@ public class CupController : MonoBehaviour
         lastServedRecipe = currentMatchedRecipe;
 
         if (enableDebugLogs) Debug.Log($"[CupController] Served recipe: {lastServedRecipe.recipeName}");
+
+        // Play serve SFX
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX_Serve();
+        }
 
         // notify listeners (e.g., CustomerManager / DialogueManager)
         OnServe?.Invoke(lastServedRecipe);

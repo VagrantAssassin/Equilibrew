@@ -1,25 +1,26 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// GameManager (singleton) untuk endless mode: menyimpan defaults global.
-/// Per-profile values harus diletakkan di CustomerProfile (preferred).
+/// GameManager
+/// - Manages score, HP and game over state.
+/// - Exposes events for score/hp changes and game lifecycle.
+/// - Updated: heart UI now supports sprite-swap mode (keep hearts visible and swap sprite instead of enabling/disabling).
 /// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     [Header("Gameplay")]
-    public int maxHP = 3;
     public int startingScore = 0;
-    public int pointsPerCorrectServe = 10;
+    public int maxHP = 3;
+    public int pointsPerCorrectServe = 5;
 
-    [Header("Global defaults for dialog reaction (fallbacks)")]
-    [Tooltip("Default points when curhat yields 'satisfy' and profile doesn't override.")]
     public int pointsPerSatisfyDefault = 5;
-    [Tooltip("Default points when curhat yields 'neutral' and profile doesn't override.")]
     public int pointsPerNeutralDefault = 0;
     [Tooltip("Default HP loss when curhat yields 'angry' and profile doesn't override.")]
     public int hpLossOnAngryDefault = 1;
@@ -30,6 +31,16 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public TextMeshProUGUI gameOverScoreText;
     public TextMeshProUGUI gameOverBestText;
+
+    [Header("Hearts - sprite swap (optional)")]
+    [Tooltip("Sprite to show when a heart slot is full (HP present).")]
+    public Sprite heartFullSprite;
+    [Tooltip("Sprite to show when a heart slot is lost/damaged (HP absent).")]
+    public Sprite heartLostSprite;
+    [Tooltip("If true, GameManager will swap sprites on Image components under heartsParent instead of enabling/disabling GameObjects.")]
+    public bool useHeartSpriteSwap = true;
+    [Tooltip("If true and using sprite swap, call SetNativeSize() on Image after sprite assignment.")]
+    public bool setHeartImageNativeSize = false;
 
     [Header("Highscore key")]
     public string highscoreKey = "EQ_HIGH_SCORE";
@@ -117,14 +128,48 @@ public class GameManager : MonoBehaviour
         if (scoreText != null) scoreText.text = $"Score: {score}";
     }
 
+    /// <summary>
+    /// UpdateHearts:
+    /// - If useHeartSpriteSwap==true and child has Image, swap sprite to full/lost accordingly (keeps the image visible).
+    /// - Otherwise fallback to legacy behaviour (enable/disable child GameObject).
+    /// </summary>
     private void UpdateHearts()
     {
         if (heartsParent == null) return;
         int n = heartsParent.childCount;
         for (int i = 0; i < n; i++)
         {
-            var go = heartsParent.GetChild(i).gameObject;
-            if (go != null) go.SetActive(i < hp);
+            var child = heartsParent.GetChild(i).gameObject;
+            if (child == null) continue;
+
+            if (useHeartSpriteSwap)
+            {
+                var img = child.GetComponent<Image>();
+                if (img != null)
+                {
+                    // swap sprite according to hp
+                    if (i < hp)
+                    {
+                        if (heartFullSprite != null) img.sprite = heartFullSprite;
+                    }
+                    else
+                    {
+                        if (heartLostSprite != null) img.sprite = heartLostSprite;
+                    }
+                    img.enabled = true;
+                    if (setHeartImageNativeSize && img.sprite != null) img.SetNativeSize();
+                }
+                else
+                {
+                    // fallback: if there's no Image component, keep legacy behaviour
+                    child.SetActive(i < hp);
+                }
+            }
+            else
+            {
+                // legacy behaviour: enable/disable whole GameObject
+                child.SetActive(i < hp);
+            }
         }
     }
 
@@ -156,61 +201,46 @@ public class GameManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             if (gameOverScoreText != null) gameOverScoreText.text = $"Score: {score}";
-            int best = PlayerPrefs.GetInt(highscoreKey, 0);
-            if (gameOverBestText != null) gameOverBestText.text = $"Best: {best}";
+            if (gameOverBestText != null)
+            {
+                int best = PlayerPrefs.GetInt(highscoreKey, 0);
+                gameOverBestText.text = $"Best: {best}";
+            }
         }
     }
 
     private void HideGameOverPanel()
     {
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
     }
 
     private void SaveHighscoreIfNeeded()
     {
-        int prev = PlayerPrefs.GetInt(highscoreKey, 0);
-        if (score > prev) { PlayerPrefs.SetInt(highscoreKey, score); PlayerPrefs.Save(); }
-    }
-
-    /// <summary>
-    /// Restart game: either reload scene (full reset) or reset internal state and fire OnGameRestartEvent.
-    /// </summary>
-    public void RestartGame()
-    {
-        // restore time/audio and clear game over state
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-        isGameOver = false;
-
-        if (reloadSceneOnRestart)
+        int best = PlayerPrefs.GetInt(highscoreKey, 0);
+        if (score > best)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            return;
+            PlayerPrefs.SetInt(highscoreKey, score);
+            PlayerPrefs.Save();
+            Debug.Log($"[GameManager] New highscore saved: {score}");
         }
-
-        HideGameOverPanel();
-        InitGame();
-        OnGameRestartEvent?.Invoke();
-        Debug.Log("[GameManager] RestartGame: reset internal state and fired OnGameRestartEvent.");
     }
 
     /// <summary>
-    /// Public helper so external code can request the restart event to be fired.
-    /// Use this instead of trying to invoke the event from outside.
+    /// Fire game restart event so other systems (UI, managers) can re-init or reset.
     /// </summary>
     public void FireOnGameRestart()
     {
-        // keep behavior consistent: restore time/audio first
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-        isGameOver = false;
-
+        Debug.Log("[GameManager] FireOnGameRestart invoked.");
         OnGameRestartEvent?.Invoke();
-    }
 
-    public void ClearSavedHighscore()
-    {
-        PlayerPrefs.DeleteKey(highscoreKey);
-        PlayerPrefs.Save();
+        // Optionally reload scene (if configured)
+        if (reloadSceneOnRestart)
+        {
+            // simple reload current scene
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
     }
 }

@@ -19,6 +19,7 @@ using TMPro;
 /// Change in this version:
 /// - allowServeWhilePanelOpen logic refined so wrongStory (non-ack) allows re-serving when finished,
 ///   while still blocking serve while story is actively playing.
+/// - Plays NPC spawn/despawn SFX via AudioManager when customer spawns or is scheduled for despawn.
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
@@ -229,6 +230,12 @@ public class CustomerManager : MonoBehaviour
                 var comp2 = go.GetComponent("CustomerVisualFade");
                 StartCoroutine(CallFadeInCoroutineDynamic(comp2, customerFadeDuration));
             }
+        }
+
+        // Play NPC spawn SFX
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX_NPCSpawn();
         }
 
         // Selection logic: pick index from preferredRecipeNames, then use orderStories[index]
@@ -764,6 +771,12 @@ public class CustomerManager : MonoBehaviour
         if (currentCustomer != null)
         {
             goToDestroy = currentCustomer.gameObject;
+
+            // Play NPC despawn SFX when customer starts leaving
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX_NPCDespawn();
+            }
 
             // Attempt fade-out on either visual controller name (start fading non-blocking, visible)
             var visOld = currentCustomer.GetComponent("CustomerVisualController");

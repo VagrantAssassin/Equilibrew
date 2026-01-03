@@ -3,18 +3,28 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Simple Main Menu controller:
-/// - PlayGame(): load scene dengan nama yang diberikan (default "Cafe") dan setelah scene siap, reset GameManager (InitGame + request restart event)
-/// - CloseGame(): quit application (works in build; stops play mode in Editor)
+/// MainMenuController (simplified)
+/// - Play BGM Main Menu on Start (AudioManager will also switch BGM automatically when scenes change)
+/// - Buttons should use ButtonSfx component for SFX (so we removed startButton/exitButton fields)
 /// </summary>
 public class MainMenuController : MonoBehaviour
 {
     [Tooltip("Nama scene game (Cafe). Pastikan scene ada di Build Settings.")]
     public string gameSceneName = "Cafe";
 
+    private void Start()
+    {
+        // Play Menu BGM when main menu loads (AudioManager will also handle sceneLoaded).
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM_MainMenu();
+        }
+    }
+
     // Public button handlers ------------------------------------------------
     public void PlayGame()
     {
+        // Start scene load; AudioManager will switch BGM on sceneLoaded
         StartCoroutine(LoadGameAndResetCoroutine());
     }
 
