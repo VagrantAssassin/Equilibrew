@@ -27,7 +27,7 @@ MonoBehaviour:
   successStory: {fileID: 4900000, guid: 73245ab838b10ba42a6d322ad0dd2e70, type: 3}
   wrongStory: {fileID: 4900000, guid: 2377a8a850042254c9835eba4571de57, type: 3}
   leaveStory: {fileID: 4900000, guid: f7c71d93f3c9bb34da006be0eeb54fcd, type: 3}
-  maxFails: 1
+  maxFails: 2
   pointsOnSatisfy: 10
   pointsOnNeutral: 5
   hpLossOnAngry: 1
