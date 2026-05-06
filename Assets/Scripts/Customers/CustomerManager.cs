@@ -60,6 +60,10 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Default fade duration for customer visuals (seconds)")]
     public float customerFadeDuration = 0.25f;
 
+    [Header("Affinity UI (optional)")]
+    [Tooltip("Widget UI yang menampilkan hati affinity pelanggan aktif. Assign di Inspector.")]
+    public CustomerAffinityWidget affinityWidget;
+
     // runtime
     private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
     private int todaysIndex = 0;
@@ -295,6 +299,9 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
 
+        // Show affinity widget for this customer
+        affinityWidget?.Show(profile.affinity, profile.GetCurrentTier());
+
         // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
         allowServeWhilePanelOpen = false; // default false; set true only if ordering flow explicitly allows serve while panel open
@@ -420,6 +427,7 @@ public class CustomerManager : MonoBehaviour
         {
             currentProfile.ChangeAffinity(-5f);
             Debug.Log($"[CustomerManager] Wrong serve: affinity -5 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
         }
 
         // Wrong serve
@@ -732,6 +740,7 @@ public class CustomerManager : MonoBehaviour
                     Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
                     break;
             }
+            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
         }
 
         // Read per-profile overrides if available; otherwise use GameManager defaults
@@ -927,6 +936,9 @@ public class CustomerManager : MonoBehaviour
             currentRequestedIndex = -1;
             currentRequestedRecipeName = null;
             currentRequestedOrderStory = null;
+
+            // Hide affinity widget — no active customer
+            affinityWidget?.Hide();
         }
 
         ClearDialogInstance();
