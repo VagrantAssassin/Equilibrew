@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     [Header("Gameplay")]
     public int startingScore = 0;
     public int maxHP = 3;
-    public int pointsPerCorrectServe = 5;
+    public int pointsPerCorrectServe = 10;
 
     public int pointsPerSatisfyDefault = 5;
     public int pointsPerNeutralDefault = 0;

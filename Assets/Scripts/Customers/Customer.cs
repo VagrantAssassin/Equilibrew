@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Simple Customer data container and checker.
 /// Now includes fail tracking (failCount & maxFails) so each customer can leave after N wrong serves.
+/// Also holds a reference to its CustomerProfile for affinity access.
 /// </summary>
 public class Customer : MonoBehaviour
 {
@@ -11,6 +12,18 @@ public class Customer : MonoBehaviour
     // fail tracking for this instance
     [HideInInspector] public int failCount = 0;
     [HideInInspector] public int maxFails = 3; // default, overwritten by CustomerManager when spawned from profile
+
+    /// <summary>
+    /// Reference to the CustomerProfile this customer was spawned from.
+    /// Set by CustomerManager immediately after spawning.
+    /// </summary>
+    [HideInInspector] public CustomerProfile profile;
+
+    /// <summary>Convenience: current affinity value from the profile (0-100).</summary>
+    public float Affinity => profile != null ? profile.affinity : 50f;
+
+    /// <summary>Convenience: current affinity tier from the profile.</summary>
+    public AffinityTier Tier => profile != null ? profile.GetCurrentTier() : AffinityTier.Friend;
 
     public void SetRequest(Recipe r)
     {
