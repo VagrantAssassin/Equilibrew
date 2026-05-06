@@ -60,6 +60,10 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Default fade duration for customer visuals (seconds)")]
     public float customerFadeDuration = 0.25f;
 
+    [Header("Affinity UI (optional)")]
+    [Tooltip("Widget UI yang menampilkan hati affinity pelanggan aktif. Assign di Inspector.")]
+    public CustomerAffinityWidget affinityWidget;
+
     // runtime
     private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
     private int todaysIndex = 0;
@@ -95,7 +99,13 @@ public class CustomerManager : MonoBehaviour
             Debug.LogWarning("[CustomerManager] cupController not assigned.");
         }
 
-        // If GameManager exists and uses restart events, subscribe optionally (not required here)
+        // Subscribe to game restart event so affinities reset on game restart
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameRestartEvent += OnGameRestart;
+
+        // Reset all affinities to 50% at game start
+        ResetAllAffinities();
+
         StartNewDay();
     }
 
@@ -103,6 +113,9 @@ public class CustomerManager : MonoBehaviour
     {
         if (cupController != null)
             cupController.OnServe -= OnServeReceived;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameRestartEvent -= OnGameRestart;
     }
 
     #region Daily flow
@@ -199,6 +212,7 @@ public class CustomerManager : MonoBehaviour
         // configure customer
         cust.maxFails = Mathf.Max(1, profile.maxFails);
         cust.failCount = 0;
+        cust.profile = profile;
 
         var img = go.GetComponentInChildren<UnityEngine.UI.Image>(true);
         if (img != null)
@@ -262,6 +276,14 @@ public class CustomerManager : MonoBehaviour
             Debug.LogWarning($"[CustomerManager] Profile '{profile.profileName}' missing orderStories[{idx}]. Falling back to placeholder.");
         }
 
+        // Override with tier-specific order story if available (affinity system)
+        List<TextAsset> tierOrderStories = GetOrderStoriesForTier(profile);
+        if (tierOrderStories != null && idx < tierOrderStories.Count && tierOrderStories[idx] != null)
+        {
+            currentRequestedOrderStory = tierOrderStories[idx];
+            Debug.Log($"[CustomerManager] Using tier-specific order story for tier={profile.GetCurrentTier()} affinity={profile.affinity}%");
+        }
+
         currentProfile = profile;
 
         // Find recipe object by name to present placeholder and also for validation later
@@ -276,6 +298,9 @@ public class CustomerManager : MonoBehaviour
         currentCustomer = cust;
 
         Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
+
+        // Show affinity widget for this customer
+        affinityWidget?.Show(profile.affinity, profile.GetCurrentTier());
 
         // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
@@ -383,13 +408,26 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Correct serve!");
-            // reward on correct serve
+            // reward on correct serve — base score modified by affinity tier
             if (GameManager.Instance != null)
-                GameManager.Instance.AddScore(GameManager.Instance.pointsPerCorrectServe);
+            {
+                int baseScore = GameManager.Instance.pointsPerCorrectServe;
+                int affinityModifier = GetAffinityScoreModifier(currentProfile);
+                GameManager.Instance.AddScore(baseScore + affinityModifier, "correct_serve");
+                Debug.Log($"[CustomerManager] Score awarded: {baseScore} + {affinityModifier} (tier={currentProfile?.GetCurrentTier()}, affinity={currentProfile?.affinity}%)");
+            }
 
             // start coroutine that will play success story (if any) then curhat
             StartCoroutine(CorrectServeSequence());
             return;
+        }
+
+        // Wrong serve — decrease affinity by 5%
+        if (currentProfile != null)
+        {
+            currentProfile.ChangeAffinity(-5f);
+            Debug.Log($"[CustomerManager] Wrong serve: affinity -5 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
         }
 
         // Wrong serve
@@ -594,11 +632,22 @@ public class CustomerManager : MonoBehaviour
         // clear placeholder dialog before curhat
         ClearDialogInstance();
 
-        // choose curhat story: prefer curhatStories, else fallback to orderStory
+        // choose curhat story: prefer tier-specific list, then generic curhatStories, then fallback to orderStory
         TextAsset curhatToPlay = null;
-        if (currentProfile != null && currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0)
-            curhatToPlay = currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)];
-        else
+        if (currentProfile != null)
+        {
+            // Try tier-specific curhat stories first (affinity system)
+            List<TextAsset> tierCurhats = GetCurhatStoriesForTier(currentProfile);
+            if (tierCurhats != null && tierCurhats.Count > 0)
+            {
+                curhatToPlay = tierCurhats[UnityEngine.Random.Range(0, tierCurhats.Count)];
+                Debug.Log($"[CustomerManager] Using tier-specific curhat for tier={currentProfile.GetCurrentTier()} affinity={currentProfile.affinity}%");
+            }
+            // Fall back to generic curhatStories
+            else if (currentProfile.curhatStories != null && currentProfile.curhatStories.Count > 0)
+                curhatToPlay = currentProfile.curhatStories[UnityEngine.Random.Range(0, currentProfile.curhatStories.Count)];
+        }
+        if (curhatToPlay == null)
             curhatToPlay = currentRequestedOrderStory;
 
         if (curhatToPlay != null && inkDialogController != null)
@@ -674,6 +723,26 @@ public class CustomerManager : MonoBehaviour
         // Determine outcome based on tags or fallback reaction
         CurhatOutcome outcome = DetermineOutcomeFromTags(tags, reaction);
 
+        // --- Affinity change based on curhat outcome (affinity system) ---
+        if (currentProfile != null)
+        {
+            switch (outcome)
+            {
+                case CurhatOutcome.Satisfy:
+                    currentProfile.ChangeAffinity(10f);
+                    Debug.Log($"[CustomerManager] Curhat SATISFY: affinity +10 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                    break;
+                case CurhatOutcome.Angry:
+                    currentProfile.ChangeAffinity(-10f);
+                    Debug.Log($"[CustomerManager] Curhat ANGRY: affinity -10 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                    break;
+                default:
+                    Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                    break;
+            }
+            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
+        }
+
         // Read per-profile overrides if available; otherwise use GameManager defaults
         int pointsSatisfy = (currentProfile != null) ? currentProfile.pointsOnSatisfy : (GameManager.Instance != null ? GameManager.Instance.pointsPerSatisfyDefault : 5);
         int pointsNeutral = (currentProfile != null) ? currentProfile.pointsOnNeutral : (GameManager.Instance != null ? GameManager.Instance.pointsPerNeutralDefault : 0);
@@ -684,26 +753,85 @@ public class CustomerManager : MonoBehaviour
             case CurhatOutcome.Satisfy:
                 Debug.Log($"[CustomerManager] Curhat outcome: SATISFY for {cust.name}");
                 if (GameManager.Instance != null && pointsSatisfy != 0)
-                    GameManager.Instance.AddScore(pointsSatisfy);
-                // TODO: trigger happy animation on cust if available
+                    GameManager.Instance.AddScore(pointsSatisfy, "curhat_satisfy");
                 break;
 
             case CurhatOutcome.Neutral:
                 Debug.Log($"[CustomerManager] Curhat outcome: NEUTRAL for {cust.name}");
                 if (GameManager.Instance != null && pointsNeutral != 0)
-                    GameManager.Instance.AddScore(pointsNeutral);
+                    GameManager.Instance.AddScore(pointsNeutral, "curhat_neutral");
                 break;
 
             case CurhatOutcome.Angry:
                 Debug.Log($"[CustomerManager] Curhat outcome: ANGRY for {cust.name}");
                 if (GameManager.Instance != null && hpLossAngry > 0)
                     GameManager.Instance.DecreaseHP(hpLossAngry, "curhat_angry");
-                // TODO: trigger angry animation/visual feedback on cust
                 break;
         }
 
         if (tags != null && tags.Count > 0)
             Debug.Log("[CustomerManager] Curhat tags: " + string.Join(",", tags));
+    }
+    #endregion
+
+    #region Affinity helpers
+    /// <summary>
+    /// Reset affinity semua profil ke 50%. Dipanggil saat game mulai atau di-restart.
+    /// </summary>
+    private void ResetAllAffinities()
+    {
+        if (profiles == null) return;
+        foreach (var p in profiles)
+            if (p != null) p.ResetAffinity();
+        Debug.Log("[CustomerManager] All affinities reset to 50%.");
+    }
+
+    /// <summary>Handler untuk GameManager.OnGameRestartEvent.</summary>
+    private void OnGameRestart()
+    {
+        ResetAllAffinities();
+    }
+
+    /// <summary>
+    /// Kembalikan bonus/penalty skor berdasarkan tier affinity profil saat ini.
+    /// Hostile: -5, Friend/BestFriend/Soulmate: +5
+    /// </summary>
+    private int GetAffinityScoreModifier(CustomerProfile profile)
+    {
+        if (profile == null) return 0;
+        return profile.GetCurrentTier() == AffinityTier.Hostile ? -5 : 5;
+    }
+
+    /// <summary>
+    /// Kembalikan list order stories yang sesuai tier affinity profil saat ini.
+    /// Returns null/empty jika tier list kosong sehingga caller dapat fallback ke orderStories.
+    /// </summary>
+    private List<TextAsset> GetOrderStoriesForTier(CustomerProfile profile)
+    {
+        if (profile == null) return null;
+        switch (profile.GetCurrentTier())
+        {
+            case AffinityTier.Soulmate:   return profile.orderStoriesSoulmate;
+            case AffinityTier.BestFriend: return profile.orderStoriesBestFriend;
+            case AffinityTier.Friend:     return profile.orderStoriesFriend;
+            default:                      return profile.orderStoriesHostile;
+        }
+    }
+
+    /// <summary>
+    /// Kembalikan list curhat stories yang sesuai tier affinity profil saat ini.
+    /// Returns null/empty jika tier list kosong sehingga caller dapat fallback ke curhatStories.
+    /// </summary>
+    private List<TextAsset> GetCurhatStoriesForTier(CustomerProfile profile)
+    {
+        if (profile == null) return null;
+        switch (profile.GetCurrentTier())
+        {
+            case AffinityTier.Soulmate:   return profile.curhatStoriesSoulmate;
+            case AffinityTier.BestFriend: return profile.curhatStoriesBestFriend;
+            case AffinityTier.Friend:     return profile.curhatStoriesFriend;
+            default:                      return profile.curhatStoriesHostile;
+        }
     }
     #endregion
 
@@ -808,6 +936,9 @@ public class CustomerManager : MonoBehaviour
             currentRequestedIndex = -1;
             currentRequestedRecipeName = null;
             currentRequestedOrderStory = null;
+
+            // Hide affinity widget — no active customer
+            affinityWidget?.Hide();
         }
 
         ClearDialogInstance();
