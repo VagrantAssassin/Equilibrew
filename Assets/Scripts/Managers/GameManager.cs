@@ -120,7 +120,12 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void BeginNewDay(int customerCount)
     {
-        if (isGameOver || customerCount <= 0) return;
+        if (isGameOver) return;
+        if (customerCount <= 0)
+        {
+            Debug.LogWarning("[GameManager] BeginNewDay called with customerCount <= 0. Day start ignored.");
+            return;
+        }
 
         currentDay += 1;
         int safeDivider = Mathf.Max(1, dayGrowthDivider);

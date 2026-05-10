@@ -62,7 +62,7 @@ public class GameProgressData : ScriptableObject
     public void AddCurrency(int amount)
     {
         if (amount <= 0) return;
-        currency = Mathf.Max(0, currency + amount);
+        currency += amount;
     }
 
     public bool TrySpendCurrency(int amount)
