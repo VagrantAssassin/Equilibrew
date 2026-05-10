@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Highscore key")]
     public string highscoreKey = "EQ_HIGH_SCORE";
+    [Header("Currency persistence key")]
+    public string currencyKey = "EQ_CURRENCY";
 
     [Header("Restart behavior")]
     [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
@@ -85,7 +87,8 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = false;
         isGameOver = false;
 
-        score = startingScore;
+        score = PlayerPrefs.HasKey(currencyKey) ? PlayerPrefs.GetInt(currencyKey, startingScore) : startingScore;
+        SaveCurrency();
         hp = Mathf.Clamp(maxHP, 0, 999);
         UpdateHearts();
         UpdateScoreText();
@@ -97,6 +100,7 @@ public class GameManager : MonoBehaviour
         if (points == 0 || isGameOver) return;
         int prev = score;
         score += points;
+        SaveCurrency();
         UpdateScoreText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
@@ -229,6 +233,12 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
             Debug.Log($"[GameManager] New highscore saved: {score}");
         }
+    }
+
+    private void SaveCurrency()
+    {
+        PlayerPrefs.SetInt(currencyKey, score);
+        PlayerPrefs.Save();
     }
 
     /// <summary>
