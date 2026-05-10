@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     // runtime
     private int score = 0;
     private int hp = 0;
+    private bool currencyDirty = false;
 
     // Game over state flag
     private bool isGameOver = false;
@@ -88,7 +89,12 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
 
         score = PlayerPrefs.GetInt(currencyKey, startingScore);
-        SaveCurrency(true);
+        if (!PlayerPrefs.HasKey(currencyKey))
+        {
+            PlayerPrefs.SetInt(currencyKey, score);
+            PlayerPrefs.Save();
+        }
+        currencyDirty = false;
         hp = Mathf.Clamp(maxHP, 0, 999);
         UpdateHearts();
         UpdateScoreText();
@@ -100,7 +106,7 @@ public class GameManager : MonoBehaviour
         if (points == 0 || isGameOver) return;
         int prev = score;
         score += points;
-        SaveCurrency(false);
+        currencyDirty = true;
         UpdateScoreText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
@@ -192,7 +198,7 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
 
         Debug.Log("[GameManager] GameOver triggered.");
-        SaveCurrency(true);
+        FlushCurrencyIfDirty();
         SaveHighscoreIfNeeded();
         ShowGameOverPanel();
 
@@ -236,20 +242,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SaveCurrency(bool flushToDisk)
+    private void FlushCurrencyIfDirty()
     {
+        if (!currencyDirty) return;
         PlayerPrefs.SetInt(currencyKey, score);
-        if (flushToDisk) PlayerPrefs.Save();
+        PlayerPrefs.Save();
+        currencyDirty = false;
     }
 
     private void OnApplicationPause(bool pauseStatus)
     {
-        if (pauseStatus) SaveCurrency(true);
+        if (pauseStatus) FlushCurrencyIfDirty();
     }
 
     private void OnApplicationQuit()
     {
-        SaveCurrency(true);
+        FlushCurrencyIfDirty();
     }
 
     /// <summary>
