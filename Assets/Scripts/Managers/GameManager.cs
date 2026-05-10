@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Highscore key")]
     public string highscoreKey = "EQ_HIGH_SCORE";
+    [Header("Currency persistence key")]
+    public string currencyKey = "EQ_CURRENCY";
 
     [Header("Restart behavior")]
     [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
@@ -54,6 +56,7 @@ public class GameManager : MonoBehaviour
     // runtime
     private int score = 0;
     private int hp = 0;
+    private bool currencyDirty = false;
 
     // Game over state flag
     private bool isGameOver = false;
@@ -85,7 +88,13 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = false;
         isGameOver = false;
 
-        score = startingScore;
+        score = PlayerPrefs.GetInt(currencyKey, startingScore);
+        if (!PlayerPrefs.HasKey(currencyKey))
+        {
+            PlayerPrefs.SetInt(currencyKey, score);
+            PlayerPrefs.Save();
+        }
+        currencyDirty = false;
         hp = Mathf.Clamp(maxHP, 0, 999);
         UpdateHearts();
         UpdateScoreText();
@@ -97,6 +106,7 @@ public class GameManager : MonoBehaviour
         if (points == 0 || isGameOver) return;
         int prev = score;
         score += points;
+        currencyDirty = true;
         UpdateScoreText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
@@ -188,6 +198,7 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
 
         Debug.Log("[GameManager] GameOver triggered.");
+        FlushCurrencyIfDirty();
         SaveHighscoreIfNeeded();
         ShowGameOverPanel();
 
@@ -229,6 +240,24 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
             Debug.Log($"[GameManager] New highscore saved: {score}");
         }
+    }
+
+    private void FlushCurrencyIfDirty()
+    {
+        if (!currencyDirty) return;
+        PlayerPrefs.SetInt(currencyKey, score);
+        PlayerPrefs.Save();
+        currencyDirty = false;
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) FlushCurrencyIfDirty();
+    }
+
+    private void OnApplicationQuit()
+    {
+        FlushCurrencyIfDirty();
     }
 
     /// <summary>
