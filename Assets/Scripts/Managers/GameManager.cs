@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Called by CustomerManager when a new day starts and customer count is known.
-    /// Formula: customers * 5 * (1 + day/10) using integer division.
+    /// Formula: customers * targetPerCustomer * (1 + day/dayGrowthDivider) using integer division.
     /// </summary>
     public void BeginNewDay(int customerCount)
     {

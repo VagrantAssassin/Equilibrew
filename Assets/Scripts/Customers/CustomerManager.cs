@@ -147,7 +147,7 @@ public class CustomerManager : MonoBehaviour
         else
         {
             if (maxCustomersPerDay < minCustomersPerDay)
-                Debug.LogWarning($"[CustomerManager] maxCustomersPerDay ({maxCustomersPerDay}) is smaller than minCustomersPerDay ({minCustomersPerDay}); using clamped range.");
+                Debug.LogWarning($"[CustomerManager] maxCustomersPerDay ({maxCustomersPerDay}) is smaller than minCustomersPerDay ({minCustomersPerDay}); effective range will be [{minCustomersPerDay}, {minCustomersPerDay}] before pool clamping.");
 
             int minC = Mathf.Clamp(minCustomersPerDay, 1, pool.Count);
             int maxC = Mathf.Clamp(maxCustomersPerDay, minC, pool.Count);

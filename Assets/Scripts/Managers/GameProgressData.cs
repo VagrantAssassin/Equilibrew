@@ -29,9 +29,9 @@ public class GameProgressData : ScriptableObject
 
     public void Load()
     {
-        currency = PlayerPrefs.GetInt(CurrencyKey, currency);
-        highScore = PlayerPrefs.GetInt(HighScoreKey, highScore);
-        longestDay = PlayerPrefs.GetInt(LongestDayKey, longestDay);
+        currency = PlayerPrefs.GetInt(CurrencyKey, 0);
+        highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        longestDay = PlayerPrefs.GetInt(LongestDayKey, 0);
 
         if (powerUpUpgrades == null) powerUpUpgrades = new List<PowerUpUpgradeState>();
         foreach (var entry in powerUpUpgrades)
