@@ -67,7 +67,7 @@ public class GameProgressData : ScriptableObject
 
     public bool TrySpendCurrency(int amount)
     {
-        if (amount <= 0) return true;
+        if (amount <= 0) return false;
         if (currency < amount) return false;
         currency -= amount;
         return true;

@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     public int targetPerCustomer = 5;
     [Tooltip("Formula factor uses integer division: (1 + day/dayGrowthDivider).")]
     public int dayGrowthDivider = 10;
+    [Tooltip("Currency gained for every this many score points.")]
+    public int scoreToCurrencyDivider = 10;
 
     [Header("Persistent Progress")]
     public GameProgressData progressData;
@@ -168,7 +170,8 @@ public class GameManager : MonoBehaviour
     {
         if (progressData == null) return;
 
-        int totalConvertible = Mathf.Max(0, score / 10);
+        int safeDivider = Mathf.Max(1, scoreToCurrencyDivider);
+        int totalConvertible = Mathf.Max(0, score / safeDivider);
         int delta = totalConvertible - scoreCurrencyConverted;
         if (delta <= 0) return;
 
@@ -252,6 +255,7 @@ public class GameManager : MonoBehaviour
         if (progressData != null) return;
         progressData = ScriptableObject.CreateInstance<GameProgressData>();
         progressData.name = "RuntimeGameProgressData";
+        Debug.LogWarning("[GameManager] progressData is not assigned in Inspector. Using runtime fallback instance.");
     }
 
     // Legacy compatibility API (no-op due to HP removal)
