@@ -87,8 +87,8 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = false;
         isGameOver = false;
 
-        score = PlayerPrefs.HasKey(currencyKey) ? PlayerPrefs.GetInt(currencyKey, startingScore) : startingScore;
-        SaveCurrency();
+        score = PlayerPrefs.GetInt(currencyKey, startingScore);
+        SaveCurrency(true);
         hp = Mathf.Clamp(maxHP, 0, 999);
         UpdateHearts();
         UpdateScoreText();
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
         if (points == 0 || isGameOver) return;
         int prev = score;
         score += points;
-        SaveCurrency();
+        SaveCurrency(false);
         UpdateScoreText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
@@ -192,6 +192,7 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
 
         Debug.Log("[GameManager] GameOver triggered.");
+        SaveCurrency(true);
         SaveHighscoreIfNeeded();
         ShowGameOverPanel();
 
@@ -235,10 +236,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SaveCurrency()
+    private void SaveCurrency(bool flushToDisk)
     {
         PlayerPrefs.SetInt(currencyKey, score);
-        PlayerPrefs.Save();
+        if (flushToDisk) PlayerPrefs.Save();
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) SaveCurrency(true);
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveCurrency(true);
     }
 
     /// <summary>
