@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     [Header("Daily Target Formula")]
     [Tooltip("Base target points contributed by each customer.")]
     public int targetPerCustomer = 5;
-    [Tooltip("Formula factor uses integer division: (1 + day/dayGrowthDivider).")]
+    [Tooltip("Formula factor uses float division then floored to int: (1 + day/dayGrowthDivider).")]
     public int dayGrowthDivider = 10;
     [Tooltip("Currency gained for every this many score points.")]
     public int scoreToCurrencyDivider = 10;
@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Called by CustomerManager when a new day starts and customer count is known.
-    /// Formula: customers * targetPerCustomer * (1 + day/dayGrowthDivider) using integer division.
+    /// Formula: customers * targetPerCustomer * (1 + day/dayGrowthDivider) using float division then floor.
     /// </summary>
     public void BeginNewDay(int customerCount)
     {
@@ -148,8 +148,8 @@ public class GameManager : MonoBehaviour
 
         currentDay += 1;
         int safeDivider = Mathf.Max(1, dayGrowthDivider);
-        int multiplier = 1 + (currentDay / safeDivider);
-        int dayTargetIncrease = Mathf.Max(0, customerCount * targetPerCustomer * multiplier);
+        float multiplier = 1f + (currentDay / (float)safeDivider);
+        int dayTargetIncrease = Mathf.Max(0, Mathf.FloorToInt(customerCount * targetPerCustomer * multiplier));
         cumulativeTargetScore += dayTargetIncrease;
 
         if (progressData != null)
@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
 
         UpdateDayText();
         UpdateTargetText();
-        Debug.Log($"[GameManager] Day {currentDay} started. Customers={customerCount} DailyTarget+={dayTargetIncrease} CumulativeTarget={cumulativeTargetScore}");
+        Debug.Log($"[GameManager] Day {currentDay} started. Customers={customerCount} Multiplier={multiplier:0.##} DailyTarget+={dayTargetIncrease} CumulativeTarget={cumulativeTargetScore}");
     }
 
     public void ShowDayTransition(float durationSeconds)

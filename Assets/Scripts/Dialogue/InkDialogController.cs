@@ -48,6 +48,7 @@ public class InkDialogController : MonoBehaviour
 
     private Story inkStory;
     private Action<DialogueReaction, List<string>> onComplete;
+    public event Action<DialogueReaction, List<string>> OnChoiceSelected;
     private bool isPlaying = false;
     public bool IsPlaying => isPlaying;
 
@@ -328,6 +329,8 @@ public class InkDialogController : MonoBehaviour
                     var raw = choices[idx].tags;
                     lastChosenTags = new List<string>();
                     if (raw != null) foreach (var t in raw) lastChosenTags.Add(t);
+                    DialogueReaction choiceReaction = ParseReactionFromTags(lastChosenTags) ?? DialogueReaction.Neutral;
+                    OnChoiceSelected?.Invoke(choiceReaction, new List<string>(lastChosenTags));
                     lastChosenIndex = idx;
                     lastChosenText = choices[idx].text.Trim();
                 };
