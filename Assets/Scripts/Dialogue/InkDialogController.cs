@@ -190,11 +190,17 @@ public class InkDialogController : MonoBehaviour
         if (!(skipOpenAnimation || runtimeDialogInstance != null && runtimeKeptOpen))
         {
             panelRoot.transform.localScale = Vector3.one * panelStartScale;
+            if (affinityWidget != null)
+            {
+                affinityWidget.transform.localScale = Vector3.one * panelStartScale;
+                StartCoroutine(ScaleTransform(affinityWidget.transform, panelStartScale, 1f, panelScaleDuration));
+            }
             yield return StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
         }
         else
         {
             panelRoot.transform.localScale = Vector3.one;
+            if (affinityWidget != null) affinityWidget.transform.localScale = Vector3.one;
         }
 
         TextMeshProUGUI bodyText = panelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
@@ -387,6 +393,7 @@ public class InkDialogController : MonoBehaviour
         else
         {
             Transform t = panelRoot.transform;
+            if (affinityWidget != null) StartCoroutine(ScaleTransform(affinityWidget.transform, 1f, panelStartScale, panelScaleDuration));
             yield return StartCoroutine(ScaleTransform(t, 1f, panelStartScale, panelScaleDuration));
 
             // Hide affinity widget together with dialog panel
