@@ -62,9 +62,6 @@ public class GameManager : MonoBehaviour
     private bool isGameOver = false;
     private Coroutine dayTransitionCoroutine;
     private bool dayTransitionContinueRequested = false;
-    // Guard: set to true once BeginNewDay() is first called so we can warn if InitGame() is
-    // invoked unexpectedly while a run is already in progress.
-    private bool _gameHasStarted = false;
 
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
@@ -77,6 +74,8 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EnsureProgressData();
+        progressData.Load();
+        InitGame();
 
         if (dayTransitionContinueButton != null)
         {
@@ -93,8 +92,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        progressData.Load();
-        InitGame();
         UpdateUI();
         HideGameOverPanel();
         HideDayTransitionPanel();
@@ -328,17 +325,6 @@ public class GameManager : MonoBehaviour
         progressData = ScriptableObject.CreateInstance<GameProgressData>();
         progressData.name = "RuntimeGameProgressData";
         Debug.LogWarning("[GameManager] progressData is not assigned in Inspector. Using runtime fallback instance.");
-    }
-
-    // Legacy compatibility API (no-op due to HP removal)
-    public int GetHP() => 0;
-    public void DecreaseHP(int count = 1, string reason = "")
-    {
-        Debug.Log($"[GameManager] DecreaseHP ignored (HP mechanic removed). count={count}, reason={reason}");
-    }
-    public void IncreaseHP(int count = 1)
-    {
-        Debug.Log($"[GameManager] IncreaseHP ignored (HP mechanic removed). count={count}");
     }
 
     public void FireOnGameRestart()
