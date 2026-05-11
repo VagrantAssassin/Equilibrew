@@ -240,7 +240,8 @@ public class GameManager : MonoBehaviour
 
     private void UpdateDayText()
     {
-        if (dayText != null) dayText.text = $"Day: {Mathf.Max(1, currentDay)}";
+        if (dayText != null)
+            dayText.text = currentDay <= 0 ? "Day: -" : $"Day: {currentDay}";
     }
 
     private void UpdateTargetText()
@@ -260,6 +261,17 @@ public class GameManager : MonoBehaviour
         UpdateDayText();
         UpdateTargetText();
         UpdateCurrencyText();
+    }
+
+    public bool EvaluateEndOfDayAndTriggerGameOver()
+    {
+        if (isGameOver) return true;
+        if (currentDay <= 0) return false;
+        if (score >= cumulativeTargetScore) return false;
+
+        Debug.LogWarning($"[GameManager] End-of-day check failed. Score={score} Target={cumulativeTargetScore}. Triggering GameOver.");
+        TriggerGameOver();
+        return true;
     }
 
     private void TriggerGameOver()

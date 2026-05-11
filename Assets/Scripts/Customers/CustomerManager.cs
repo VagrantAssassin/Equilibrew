@@ -355,6 +355,14 @@ public class CustomerManager : MonoBehaviour
     private IEnumerator NextDayDelayed()
     {
         Debug.Log("[CustomerManager] NextDayDelayed: starting next day.");
+
+        var gm = GameManager.Instance;
+        if (gm != null && gm.EvaluateEndOfDayAndTriggerGameOver())
+        {
+            state = ManagerState.DayEnding;
+            yield break;
+        }
+
         yield return null;
         StartNewDay();
     }
