@@ -423,6 +423,7 @@ public class CustomerManager : MonoBehaviour
                 var swap = todaysProfiles[todaysIndex];
                 todaysProfiles[todaysIndex] = todaysProfiles[i];
                 todaysProfiles[i] = swap;
+                Debug.Log($"[CustomerManager] Reordered today's queue to avoid immediate repeat: '{lastSpawnedProfile.profileName}' moved away from index {todaysIndex}.");
                 break;
             }
         }
@@ -809,9 +810,9 @@ public class CustomerManager : MonoBehaviour
             {
                 if (string.IsNullOrEmpty(t)) continue;
                 var low = t.Trim().ToLowerInvariant();
-                if (low.Contains("reaction:angry") || low == "angry" || low.Contains("angry") || low.Contains("disagree")) return CurhatOutcome.Angry;
-                if (low.Contains("reaction:satisfy") || low == "satisfy" || low.Contains("satisfy") || low == "agree" || low.Contains("reaction:agree")) return CurhatOutcome.Satisfy;
-                if (low.Contains("reaction:neutral") || low == "neutral" || low.Contains("neutral")) return CurhatOutcome.Neutral;
+                if (low.Contains("reaction:angry") || low.Contains("angry") || low.Contains("disagree")) return CurhatOutcome.Angry;
+                if (low.Contains("reaction:satisfy") || low.Contains("reaction:agree") || low.Contains("satisfy") || low == "agree") return CurhatOutcome.Satisfy;
+                if (low.Contains("reaction:neutral") || low.Contains("neutral")) return CurhatOutcome.Neutral;
             }
         }
 
