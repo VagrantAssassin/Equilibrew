@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public int targetPerCustomer = 5;
     [Tooltip("Formula factor uses float division then floored to int: (1 + day/dayGrowthDivider).")]
     public int dayGrowthDivider = 10;
-    [Tooltip("Currency gained for every this many score points.")]
+    [Tooltip("Currency gained for every this many score points (converted once at game over).")]
     public int scoreToCurrencyDivider = 10;
 
     [Header("Persistent Progress")]
@@ -118,10 +118,8 @@ public class GameManager : MonoBehaviour
         score += points;
 
         SaveHighscoreIfNeeded();
-        ConvertScoreToCurrency();
 
         UpdateScoreText();
-        UpdateCurrencyText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
     }
@@ -223,7 +221,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ConvertScoreToCurrency()
+    private void ConvertFinalScoreToCurrency()
     {
         if (progressData == null) return;
 
@@ -284,7 +282,9 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
 
         Debug.Log("[GameManager] GameOver triggered.");
+        ConvertFinalScoreToCurrency();
         SaveHighscoreIfNeeded();
+        UpdateCurrencyText();
         ShowGameOverPanel();
 
         Time.timeScale = 0f;

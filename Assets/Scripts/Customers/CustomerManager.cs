@@ -537,17 +537,7 @@ public class CustomerManager : MonoBehaviour
         bool ok = (served != null && string.Equals(served.recipeName, currentRequestedRecipeName, StringComparison.OrdinalIgnoreCase));
         if (ok)
         {
-            Debug.Log("[CustomerManager] Correct serve!");
-            // Correct serve: base score multiplied by affinity-tier multiplier.
-            if (GameManager.Instance != null)
-            {
-                int basePoints = GameManager.Instance.pointsPerCorrectServe;
-                float multiplier = GetAffinityScoreMultiplier(currentProfile);
-                int finalPoints = Mathf.FloorToInt(basePoints * multiplier);
-                GameManager.Instance.AddScore(finalPoints, $"correct_serve_x{multiplier:0.##}");
-                Debug.Log($"[CustomerManager] Correct serve score: base={basePoints} multiplier={multiplier:0.##} final={finalPoints}");
-            }
-
+            Debug.Log("[CustomerManager] Correct serve! Score will be granted after curhat ends.");
             // start coroutine that will play success story (if any) then curhat
             StartCoroutine(CorrectServeSequence());
             return;
@@ -601,6 +591,9 @@ public class CustomerManager : MonoBehaviour
             Debug.Log($"[CustomerManager] Max fail reached: affinity {affinityPenaltyOnMaxFailLeave} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
             UpdateAffinityWidgetDisplay(currentProfile);
         }
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.AddScore(-10, "max_fail_penalty");
 
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
         {
@@ -968,6 +961,15 @@ public class CustomerManager : MonoBehaviour
             case CurhatOutcome.Angry:
                 Debug.Log($"[CustomerManager] Curhat outcome: ANGRY for {cust.name}");
                 break;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            int basePoints = GameManager.Instance.pointsPerCorrectServe;
+            float multiplier = GetAffinityScoreMultiplier(currentProfile);
+            int finalPoints = Mathf.FloorToInt(basePoints * multiplier);
+            GameManager.Instance.AddScore(finalPoints, $"curhat_complete_x{multiplier:0.##}");
+            Debug.Log($"[CustomerManager] Curhat complete score: base={basePoints} multiplier={multiplier:0.##} final={finalPoints}");
         }
 
         if (tags != null && tags.Count > 0)
