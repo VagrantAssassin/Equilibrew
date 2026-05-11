@@ -42,6 +42,10 @@ public class InkDialogController : MonoBehaviour
     [Range(0.1f, 1f)]
     public float panelStartScale = 0.6f;
 
+    [Header("Affinity Widget (optional)")]
+    [Tooltip("Customer affinity widget. Shown together with the dialog panel opening and hidden when the panel closes.")]
+    public CustomerAffinityWidget affinityWidget;
+
     private Story inkStory;
     private Action<DialogueReaction, List<string>> onComplete;
     private bool isPlaying = false;
@@ -181,6 +185,8 @@ public class InkDialogController : MonoBehaviour
         }
 
         panelRoot.SetActive(true);
+        // Show affinity widget together with dialog panel
+        affinityWidget?.Show();
         if (!(skipOpenAnimation || runtimeDialogInstance != null && runtimeKeptOpen))
         {
             panelRoot.transform.localScale = Vector3.one * panelStartScale;
@@ -382,6 +388,9 @@ public class InkDialogController : MonoBehaviour
         {
             Transform t = panelRoot.transform;
             yield return StartCoroutine(ScaleTransform(t, 1f, panelStartScale, panelScaleDuration));
+
+            // Hide affinity widget together with dialog panel
+            affinityWidget?.Hide();
 
             if (runtimeDialogInstance != null)
             {

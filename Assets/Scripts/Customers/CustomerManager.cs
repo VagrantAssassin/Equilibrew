@@ -307,8 +307,8 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
 
-        // Show affinity widget for this customer
-        affinityWidget?.Show(profile.affinity, profile.GetCurrentTier());
+        // Prepare affinity widget display values (will be shown by InkDialogController when dialog opens)
+        affinityWidget?.UpdateDisplay(profile.affinity, profile.GetCurrentTier());
 
         // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
