@@ -361,10 +361,11 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator SpawnFirstCustomerAfterDayIntro(float delay)
     {
-        if (GameManager.Instance != null)
+        var gm = GameManager.Instance;
+        if (gm != null)
         {
-            GameManager.Instance.ShowDayTransition(delay);
-            while (GameManager.Instance != null && GameManager.Instance.IsDayTransitionVisible())
+            gm.ShowDayTransition(delay);
+            while (gm != null && gm.IsDayTransitionVisible())
                 yield return null;
         }
         else if (delay > 0f)

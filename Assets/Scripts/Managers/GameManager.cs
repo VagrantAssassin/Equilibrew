@@ -72,7 +72,16 @@ public class GameManager : MonoBehaviour
         EnsureProgressData();
 
         if (dayTransitionContinueButton != null)
+        {
+            dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
             dayTransitionContinueButton.onClick.AddListener(OnDayTransitionContinuePressed);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (dayTransitionContinueButton != null)
+            dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
     }
 
     private void Start()
