@@ -136,7 +136,6 @@ public class GameManager : MonoBehaviour
     public void BeginNewDay(int customerCount)
     {
         if (isGameOver) return;
-        if (EvaluateEndOfDayAndTriggerGameOver()) return;
         if (customerCount <= 0)
         {
             Debug.LogWarning("[GameManager] BeginNewDay called with customerCount <= 0. Day start ignored.");
