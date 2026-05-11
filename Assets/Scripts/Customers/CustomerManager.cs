@@ -788,13 +788,15 @@ public class CustomerManager : MonoBehaviour
             List<string> tags = null;
             bool affinityAppliedAtChoice = false;
 
-            Action<DialogueReaction, List<string>> onChoiceSelected = null;
-            onChoiceSelected = (choiceReaction, choiceTags) =>
+            Action<int, string, List<string>> onChoiceSelected = null;
+            onChoiceSelected = (choiceIndex, choiceText, choiceTags) =>
             {
                 if (affinityAppliedAtChoice) return;
                 if (!HasExplicitCurhatOutcomeTag(choiceTags)) return;
 
+                DialogueReaction choiceReaction = DetermineReactionFromChoiceTags(choiceTags);
                 CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
+                Debug.Log($"[CustomerManager] Curhat choice selected idx={choiceIndex} text='{choiceText}' tags={string.Join(",", choiceTags ?? new List<string>())}");
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
                 if (inkDialogController != null)
@@ -863,6 +865,27 @@ public class CustomerManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Menentukan reaksi dari tag pilihan Ink (agree/neutral/disagree).
+    /// Dipakai saat realtime curhat agar fallback reaksi tetap konsisten dengan tag choice.
+    /// </summary>
+    private DialogueReaction DetermineReactionFromChoiceTags(List<string> tags)
+    {
+        if (tags == null || tags.Count == 0)
+            return DialogueReaction.Neutral;
+
+        foreach (var tag in tags)
+        {
+            if (string.IsNullOrEmpty(tag)) continue;
+            var low = tag.Trim().ToLowerInvariant();
+            if (HasReactionTag(low, "disagree")) return DialogueReaction.Disagree;
+            if (HasReactionTag(low, "agree")) return DialogueReaction.Agree;
+            if (HasReactionTag(low, "neutral")) return DialogueReaction.Neutral;
+        }
+
+        return DialogueReaction.Neutral;
     }
 
     private CurhatOutcome DetermineOutcomeFromTags(List<string> tags, DialogueReaction reactionFromInk)
