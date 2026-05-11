@@ -44,6 +44,11 @@ public class CustomerProfile : ScriptableObject
     [Header("Behavior")]
     public int maxFails = 2;
 
+    [Header("Affinity")]
+    [Tooltip("Initial affinity value used when game starts/restarts (0-100).")]
+    [Range(0f, 100f)]
+    public float startingAffinity = 50f;
+
     [Header("Reaction scoring (per-profile override)")]
     [Tooltip("Points awarded when curhat result is SATISFY (positive reaction).")]
     public int pointsOnSatisfy = 5;
@@ -63,18 +68,18 @@ public class CustomerProfile : ScriptableObject
 
     /// <summary>
     /// Nilai affinity runtime NPC ini (0-100). Tidak di-serialize ke asset disk.
-    /// Reset ke 50 setiap kali game dimulai atau di-restart via ResetAffinity().
+    /// Reset ke startingAffinity setiap kali game dimulai atau di-restart via ResetAffinity().
     /// </summary>
     [System.NonSerialized]
     public float affinity = 50f;
 
     /// <summary>
-    /// Reset affinity ke nilai awal (50%).
+    /// Reset affinity ke nilai awal dari Inspector (startingAffinity).
     /// Dipanggil saat game mulai atau di-restart.
     /// </summary>
     public void ResetAffinity()
     {
-        affinity = 50f;
+        affinity = Mathf.Clamp(startingAffinity, 0f, 100f);
     }
 
     /// <summary>

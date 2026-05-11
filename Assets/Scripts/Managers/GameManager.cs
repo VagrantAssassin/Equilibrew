@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// GameManager
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     public GameObject dayTransitionPanel;
     public TextMeshProUGUI dayTransitionDayText;
     public TextMeshProUGUI dayTransitionTargetText;
+    public Button dayTransitionContinueButton;
 
     [Header("Restart behavior")]
     [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
@@ -55,6 +57,7 @@ public class GameManager : MonoBehaviour
     private int scoreCurrencyConverted = 0;
     private bool isGameOver = false;
     private Coroutine dayTransitionCoroutine;
+    private bool dayTransitionContinueRequested = false;
 
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
@@ -67,6 +70,18 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EnsureProgressData();
+
+        if (dayTransitionContinueButton != null)
+        {
+            dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
+            dayTransitionContinueButton.onClick.AddListener(OnDayTransitionContinuePressed);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (dayTransitionContinueButton != null)
+            dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
     }
 
     private void Start()
@@ -156,19 +171,52 @@ public class GameManager : MonoBehaviour
         dayTransitionPanel.SetActive(true);
         if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {Mathf.Max(1, currentDay)}";
         if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target: {cumulativeTargetScore}";
+        dayTransitionContinueRequested = false;
+
+        if (dayTransitionContinueButton != null)
+        {
+            dayTransitionContinueButton.gameObject.SetActive(true);
+            dayTransitionContinueButton.interactable = false;
+        }
 
         float wait = Mathf.Max(0f, durationSeconds);
         if (wait > 0f)
             yield return new WaitForSecondsRealtime(wait);
 
+        if (dayTransitionContinueButton != null)
+        {
+            dayTransitionContinueButton.interactable = true;
+            while (!dayTransitionContinueRequested)
+            {
+                if (dayTransitionContinueButton == null) break;
+                yield return null;
+            }
+        }
+
         HideDayTransitionPanel();
         dayTransitionCoroutine = null;
+    }
+
+    public bool IsDayTransitionVisible()
+    {
+        return dayTransitionPanel != null && dayTransitionPanel.activeInHierarchy;
+    }
+
+    public void OnDayTransitionContinuePressed()
+    {
+        dayTransitionContinueRequested = true;
     }
 
     private void HideDayTransitionPanel()
     {
         if (dayTransitionPanel != null)
             dayTransitionPanel.SetActive(false);
+
+        if (dayTransitionContinueButton != null)
+        {
+            dayTransitionContinueButton.interactable = false;
+            dayTransitionContinueButton.gameObject.SetActive(false);
+        }
     }
 
     private void ConvertScoreToCurrency()

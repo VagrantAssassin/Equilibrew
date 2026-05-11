@@ -60,6 +60,14 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Default fade duration for customer visuals (seconds)")]
     public float customerFadeDuration = 0.25f;
 
+    [Header("Affinity tuning")]
+    [Tooltip("Affinity change saat curhat hasil SATISFY.")]
+    public float affinityGainOnCurhatSatisfy = 10f;
+    [Tooltip("Affinity change saat curhat hasil ANGRY.")]
+    public float affinityPenaltyOnCurhatAngry = -10f;
+    [Tooltip("Affinity change saat pelanggan marah lalu pergi karena mencapai max fail.")]
+    public float affinityPenaltyOnMaxFailLeave = -10f;
+
     [Header("Affinity UI (optional)")]
     [Tooltip("Widget UI yang menampilkan hati affinity pelanggan aktif. Assign di Inspector.")]
     public CustomerAffinityWidget affinityWidget;
@@ -162,9 +170,6 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log($"[CustomerManager] Today will have {todaysProfiles.Count} customers.");
         float dayIntroDelay = Mathf.Max(0f, delayBeforeNextDay);
-        if (GameManager.Instance != null)
-            GameManager.Instance.ShowDayTransition(dayIntroDelay);
-
         startDayCoroutine = StartCoroutine(SpawnFirstCustomerAfterDayIntro(dayIntroDelay));
     }
 
@@ -356,8 +361,17 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator SpawnFirstCustomerAfterDayIntro(float delay)
     {
-        if (delay > 0f)
+        var gm = GameManager.Instance;
+        if (gm != null)
+        {
+            gm.ShowDayTransition(delay);
+            while (gm != null && gm.IsDayTransitionVisible())
+                yield return null;
+        }
+        else if (delay > 0f)
+        {
             yield return new WaitForSecondsRealtime(delay);
+        }
 
         startDayCoroutine = null;
         SpawnNextFromToday();
@@ -420,26 +434,15 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Correct serve!");
-            // reward on correct serve — base score modified by affinity tier
+            // Correct serve: fixed score from GameManager setting (default 10).
             if (GameManager.Instance != null)
             {
-                int baseScore = GameManager.Instance.pointsPerCorrectServe;
-                int affinityModifier = GetAffinityScoreModifier(currentProfile);
-                GameManager.Instance.AddScore(baseScore + affinityModifier, "correct_serve");
-                Debug.Log($"[CustomerManager] Score awarded: {baseScore} + {affinityModifier} (tier={currentProfile?.GetCurrentTier()}, affinity={currentProfile?.affinity}%)");
+                GameManager.Instance.AddScore(GameManager.Instance.pointsPerCorrectServe, "correct_serve");
             }
 
             // start coroutine that will play success story (if any) then curhat
             StartCoroutine(CorrectServeSequence());
             return;
-        }
-
-        // Wrong serve — decrease affinity by 5%
-        if (currentProfile != null)
-        {
-            currentProfile.ChangeAffinity(-5f);
-            Debug.Log($"[CustomerManager] Wrong serve: affinity -5 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
-            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
         }
 
         // Wrong serve
@@ -483,6 +486,13 @@ public class CustomerManager : MonoBehaviour
 
         // ensure panel-open-serve flag is cleared
         allowServeWhilePanelOpen = false;
+
+        if (currentProfile != null)
+        {
+            currentProfile.ChangeAffinity(affinityPenaltyOnMaxFailLeave);
+            Debug.Log($"[CustomerManager] Max fail reached: affinity {affinityPenaltyOnMaxFailLeave} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
+        }
 
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
         {
@@ -735,12 +745,12 @@ public class CustomerManager : MonoBehaviour
             switch (outcome)
             {
                 case CurhatOutcome.Satisfy:
-                    currentProfile.ChangeAffinity(10f);
-                    Debug.Log($"[CustomerManager] Curhat SATISFY: affinity +10 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                    currentProfile.ChangeAffinity(affinityGainOnCurhatSatisfy);
+                    Debug.Log($"[CustomerManager] Curhat SATISFY: affinity {affinityGainOnCurhatSatisfy} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
                     break;
                 case CurhatOutcome.Angry:
-                    currentProfile.ChangeAffinity(-10f);
-                    Debug.Log($"[CustomerManager] Curhat ANGRY: affinity -10 -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                    currentProfile.ChangeAffinity(affinityPenaltyOnCurhatAngry);
+                    Debug.Log($"[CustomerManager] Curhat ANGRY: affinity {affinityPenaltyOnCurhatAngry} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
                     break;
                 default:
                     Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
@@ -749,22 +759,14 @@ public class CustomerManager : MonoBehaviour
             affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
         }
 
-        // Read per-profile overrides if available; otherwise use GameManager defaults
-        int pointsSatisfy = (currentProfile != null) ? currentProfile.pointsOnSatisfy : (GameManager.Instance != null ? GameManager.Instance.pointsPerSatisfyDefault : 5);
-        int pointsNeutral = (currentProfile != null) ? currentProfile.pointsOnNeutral : (GameManager.Instance != null ? GameManager.Instance.pointsPerNeutralDefault : 0);
-
         switch (outcome)
         {
             case CurhatOutcome.Satisfy:
                 Debug.Log($"[CustomerManager] Curhat outcome: SATISFY for {cust.name}");
-                if (GameManager.Instance != null && pointsSatisfy != 0)
-                    GameManager.Instance.AddScore(pointsSatisfy, "curhat_satisfy");
                 break;
 
             case CurhatOutcome.Neutral:
                 Debug.Log($"[CustomerManager] Curhat outcome: NEUTRAL for {cust.name}");
-                if (GameManager.Instance != null && pointsNeutral != 0)
-                    GameManager.Instance.AddScore(pointsNeutral, "curhat_neutral");
                 break;
 
             case CurhatOutcome.Angry:
@@ -793,16 +795,6 @@ public class CustomerManager : MonoBehaviour
     private void OnGameRestart()
     {
         ResetAllAffinities();
-    }
-
-    /// <summary>
-    /// Kembalikan bonus/penalty skor berdasarkan tier affinity profil saat ini.
-    /// Hostile: -5, Friend/BestFriend/Soulmate: +5
-    /// </summary>
-    private int GetAffinityScoreModifier(CustomerProfile profile)
-    {
-        if (profile == null) return 0;
-        return profile.GetCurrentTier() == AffinityTier.Hostile ? -5 : 5;
     }
 
     /// <summary>
