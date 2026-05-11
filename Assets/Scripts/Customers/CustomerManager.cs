@@ -867,6 +867,10 @@ public class CustomerManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Menentukan reaksi dari tag pilihan Ink (agree/neutral/disagree).
+    /// Dipakai saat realtime curhat agar fallback reaksi tetap konsisten dengan tag choice.
+    /// </summary>
     private DialogueReaction DetermineReactionFromChoiceTags(List<string> tags)
     {
         if (tags == null || tags.Count == 0)
