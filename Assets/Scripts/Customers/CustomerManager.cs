@@ -173,6 +173,7 @@ public class CustomerManager : MonoBehaviour
             count = UnityEngine.Random.Range(minC, maxC + 1);
         }
 
+        EnsureFirstCustomerOfDayIsNotImmediateRepeat(pool, count);
         todaysProfiles = pool.GetRange(0, count);
         todaysIndex = 0;
 
@@ -193,6 +194,29 @@ public class CustomerManager : MonoBehaviour
             list[i] = list[j];
             list[j] = tmp;
         }
+    }
+
+    private void EnsureFirstCustomerOfDayIsNotImmediateRepeat(List<CustomerProfile> pool, int todaysCount)
+    {
+        if (pool == null || pool.Count <= 1 || todaysCount <= 0 || lastSpawnedProfile == null)
+            return;
+
+        if (pool[0] != lastSpawnedProfile)
+            return;
+
+        for (int i = 1; i < pool.Count; i++)
+        {
+            if (pool[i] == null || pool[i] == lastSpawnedProfile)
+                continue;
+
+            var originalFirst = pool[0];
+            pool[0] = pool[i];
+            pool[i] = originalFirst;
+            Debug.Log($"[CustomerManager] Reordered start-of-day queue to avoid cross-day immediate repeat: '{lastSpawnedProfile.profileName}'.");
+            return;
+        }
+
+        Debug.LogWarning($"[CustomerManager] Cross-day immediate repeat unavoidable for profile '{lastSpawnedProfile.profileName}'.");
     }
 
     private void SpawnNextFromToday()
@@ -325,7 +349,7 @@ public class CustomerManager : MonoBehaviour
         Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
 
         // Prepare affinity widget display values (will be shown by InkDialogController when dialog opens)
-        affinityWidget?.UpdateDisplay(profile.affinity, profile.GetCurrentTier());
+        UpdateAffinityWidgetDisplay(profile);
 
         // Play ordering phase. Keep panel open if using Ink orderStory (so we can reuse for result/curhat)
         state = ManagerState.Ordering;
@@ -573,7 +597,7 @@ public class CustomerManager : MonoBehaviour
         {
             currentProfile.ChangeAffinity(affinityPenaltyOnMaxFailLeave);
             Debug.Log($"[CustomerManager] Max fail reached: affinity {affinityPenaltyOnMaxFailLeave} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
-            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
+            UpdateAffinityWidgetDisplay(currentProfile);
         }
 
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
@@ -873,7 +897,7 @@ public class CustomerManager : MonoBehaviour
                 Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
                 break;
         }
-        affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
+        UpdateAffinityWidgetDisplay(currentProfile);
     }
 
     private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags, bool affinityAlreadyApplied)
@@ -954,6 +978,21 @@ public class CustomerManager : MonoBehaviour
             case AffinityTier.Friend:     return profile.curhatStoriesFriend;
             default:                      return profile.curhatStoriesHostile;
         }
+    }
+
+    private CustomerAffinityWidget ResolveAffinityWidget()
+    {
+        if (affinityWidget != null)
+            return affinityWidget;
+        if (inkDialogController != null && inkDialogController.affinityWidget != null)
+            return inkDialogController.affinityWidget;
+        return null;
+    }
+
+    private void UpdateAffinityWidgetDisplay(CustomerProfile profile)
+    {
+        if (profile == null) return;
+        ResolveAffinityWidget()?.UpdateDisplay(profile.affinity, profile.GetCurrentTier());
     }
     #endregion
 
@@ -1060,7 +1099,7 @@ public class CustomerManager : MonoBehaviour
             currentRequestedOrderStory = null;
 
             // Hide affinity widget — no active customer
-            affinityWidget?.Hide();
+            ResolveAffinityWidget()?.Hide();
         }
 
         ClearDialogInstance();
