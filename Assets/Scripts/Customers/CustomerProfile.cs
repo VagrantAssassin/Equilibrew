@@ -45,7 +45,7 @@ public class CustomerProfile : ScriptableObject
     public int maxFails = 2;
 
     [Header("Affinity")]
-    [Tooltip("Nilai affinity awal yang dipakai saat game mulai/restart (0-100).")]
+    [Tooltip("Initial affinity value used when game starts/restarts (0-100).")]
     [Range(0f, 100f)]
     public float startingAffinity = 50f;
 
