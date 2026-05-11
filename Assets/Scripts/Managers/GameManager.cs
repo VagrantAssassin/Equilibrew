@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
     public void BeginNewDay(int customerCount)
     {
         if (isGameOver) return;
+        if (EvaluateEndOfDayAndTriggerGameOver()) return;
         if (customerCount <= 0)
         {
             Debug.LogWarning("[GameManager] BeginNewDay called with customerCount <= 0. Day start ignored.");
@@ -169,7 +170,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ShowDayTransitionCoroutine(float durationSeconds)
     {
         dayTransitionPanel.SetActive(true);
-        if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {Mathf.Max(1, currentDay)}";
+        if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {GetDisplayDayNumber()}";
         if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target: {cumulativeTargetScore}";
         dayTransitionContinueRequested = false;
 
@@ -240,7 +241,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateDayText()
     {
-        if (dayText != null) dayText.text = $"Day: {Mathf.Max(1, currentDay)}";
+        if (dayText != null) dayText.text = $"Day: {GetDisplayDayNumber()}";
     }
 
     private void UpdateTargetText()
@@ -260,6 +261,22 @@ public class GameManager : MonoBehaviour
         UpdateDayText();
         UpdateTargetText();
         UpdateCurrencyText();
+    }
+
+    private int GetDisplayDayNumber()
+    {
+        return Mathf.Max(0, currentDay);
+    }
+
+    public bool EvaluateEndOfDayAndTriggerGameOver()
+    {
+        if (isGameOver) return true;
+        if (currentDay <= 0) return false;
+        if (score >= cumulativeTargetScore) return false;
+
+        Debug.LogWarning($"[GameManager] End-of-day check failed. Score={score} Target={cumulativeTargetScore}. Triggering GameOver.");
+        TriggerGameOver();
+        return true;
     }
 
     private void TriggerGameOver()
