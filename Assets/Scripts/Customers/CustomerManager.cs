@@ -209,9 +209,9 @@ public class CustomerManager : MonoBehaviour
             if (pool[i] == null || pool[i] == lastSpawnedProfile)
                 continue;
 
-            var swap = pool[0];
+            var originalFirst = pool[0];
             pool[0] = pool[i];
-            pool[i] = swap;
+            pool[i] = originalFirst;
             Debug.Log($"[CustomerManager] Reordered start-of-day queue to avoid cross-day immediate repeat: '{lastSpawnedProfile.profileName}'.");
             return;
         }
