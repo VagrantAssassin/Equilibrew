@@ -365,8 +365,15 @@ public class CustomerManager : MonoBehaviour
         if (gm != null)
         {
             gm.ShowDayTransition(delay);
-            while (gm != null && gm.IsDayTransitionVisible())
+            while (true)
+            {
+                if (gm == null) break;
+                bool isVisible;
+                try { isVisible = gm.IsDayTransitionVisible(); }
+                catch (MissingReferenceException) { break; }
+                if (!isVisible) break;
                 yield return null;
+            }
         }
         else if (delay > 0f)
         {

@@ -187,7 +187,10 @@ public class GameManager : MonoBehaviour
         {
             dayTransitionContinueButton.interactable = true;
             while (!dayTransitionContinueRequested)
+            {
+                if (dayTransitionContinueButton == null) break;
                 yield return null;
+            }
         }
 
         HideDayTransitionPanel();
