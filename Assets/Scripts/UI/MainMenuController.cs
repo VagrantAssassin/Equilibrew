@@ -24,8 +24,16 @@ public class MainMenuController : MonoBehaviour
     // Public button handlers ------------------------------------------------
     public void PlayGame()
     {
-        // Start scene load; AudioManager will switch BGM on sceneLoaded
-        StartCoroutine(LoadGameAndResetCoroutine());
+        // Reset persistent GameManager first (if already exists), then load game scene.
+        // This prevents day counter being reset after Day 1 already started in Cafe.
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.InitGame();
+            GameManager.Instance.FireOnGameRestart();
+        }
+
+        // Start scene load; AudioManager will switch BGM on sceneLoaded.
+        StartCoroutine(LoadGameCoroutine());
     }
 
     public void CloseGame()
@@ -38,45 +46,15 @@ public class MainMenuController : MonoBehaviour
 #endif
     }
 
-    // Coroutine: load scene, wait until GameManager is present, reset it and fire restart event
-    private IEnumerator LoadGameAndResetCoroutine()
+    // Coroutine: load scene only (GameManager reset is handled before loading when needed).
+    private IEnumerator LoadGameCoroutine()
     {
-        // Start loading the scene asynchronously
+        // Start loading the scene asynchronously.
         var ao = SceneManager.LoadSceneAsync(gameSceneName);
         ao.allowSceneActivation = true;
 
-        // wait until scene load finished
+        // Wait until scene load finished.
         while (!ao.isDone)
             yield return null;
-
-        // Wait one frame for Awake/Start to run in the newly loaded scene
-        yield return null;
-
-        // If GameManager exists, call InitGame and request it to fire restart event
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.InitGame();
-            GameManager.Instance.FireOnGameRestart(); // call helper method
-        }
-        else
-        {
-            // If GameManager is instantiated by scene and not yet available, wait a bit for it
-            float timeout = 2f;
-            float t = 0f;
-            while (GameManager.Instance == null && t < timeout)
-            {
-                t += Time.unscaledDeltaTime;
-                yield return null;
-            }
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.InitGame();
-                GameManager.Instance.FireOnGameRestart();
-            }
-            else
-            {
-                Debug.LogWarning("[MainMenuController] GameManager not found after loading scene '" + gameSceneName + "'. Make sure GameManager exists in the scene or is a persistent prefab.");
-            }
-        }
     }
 }
