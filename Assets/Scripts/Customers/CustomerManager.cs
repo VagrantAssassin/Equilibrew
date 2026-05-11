@@ -794,7 +794,8 @@ public class CustomerManager : MonoBehaviour
                 if (affinityAppliedAtChoice) return;
                 if (!HasExplicitCurhatOutcomeTag(choiceTags)) return;
 
-                CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, DialogueReaction.Neutral);
+                DialogueReaction choiceReaction = DetermineReactionFromChoiceTags(choiceTags);
+                CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
                 Debug.Log($"[CustomerManager] Curhat choice selected idx={choiceIndex} text='{choiceText}' tags={string.Join(",", choiceTags ?? new List<string>())}");
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
@@ -864,6 +865,23 @@ public class CustomerManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private DialogueReaction DetermineReactionFromChoiceTags(List<string> tags)
+    {
+        if (tags == null || tags.Count == 0)
+            return DialogueReaction.Neutral;
+
+        foreach (var tag in tags)
+        {
+            if (string.IsNullOrEmpty(tag)) continue;
+            var low = tag.Trim().ToLowerInvariant();
+            if (HasReactionTag(low, "disagree")) return DialogueReaction.Disagree;
+            if (HasReactionTag(low, "agree")) return DialogueReaction.Agree;
+            if (HasReactionTag(low, "neutral")) return DialogueReaction.Neutral;
+        }
+
+        return DialogueReaction.Neutral;
     }
 
     private CurhatOutcome DetermineOutcomeFromTags(List<string> tags, DialogueReaction reactionFromInk)
