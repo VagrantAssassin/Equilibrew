@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ShowDayTransitionCoroutine(float durationSeconds)
     {
         dayTransitionPanel.SetActive(true);
-        if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {GetDisplayDayNumber()}";
+        if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {Mathf.Max(1, currentDay)}";
         if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target: {cumulativeTargetScore}";
         dayTransitionContinueRequested = false;
 
@@ -241,7 +241,8 @@ public class GameManager : MonoBehaviour
 
     private void UpdateDayText()
     {
-        if (dayText != null) dayText.text = $"Day: {GetDisplayDayNumber()}";
+        if (dayText != null)
+            dayText.text = currentDay <= 0 ? "Day: -" : $"Day: {currentDay}";
     }
 
     private void UpdateTargetText()
@@ -261,11 +262,6 @@ public class GameManager : MonoBehaviour
         UpdateDayText();
         UpdateTargetText();
         UpdateCurrencyText();
-    }
-
-    private int GetDisplayDayNumber()
-    {
-        return Mathf.Max(0, currentDay);
     }
 
     public bool EvaluateEndOfDayAndTriggerGameOver()
