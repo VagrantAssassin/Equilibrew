@@ -41,15 +41,15 @@ public class CustomerManager : MonoBehaviour
 
     [Header("Daily & delays")]
     [Tooltip("Minimum customers per day when not using spawnAllPerDay")]
-    public int minCustomersPerDay = 1;
+    public int minCustomersPerDay = 2;
+    [Tooltip("Maximum customers per day when not using spawnAllPerDay")]
+    public int maxCustomersPerDay = 4;
     [Tooltip("Delay before next day starts (seconds)")]
     public float delayBeforeNextDay = 1f;
     [Tooltip("Delay between customers when advancing (seconds)")]
     public float delayBetweenCustomers = 1f;
     [Tooltip("If true, spawn all profiles for the day (ignores random count). Useful for testing.")]
     public bool spawnAllPerDay = false;
-    [Tooltip("If true, when the day runs out StartNewDay is called immediately. Useful for testing.")]
-    public bool autoRestartDay = true;
 
     [Header("Message durations")]
     public float failureMessageDuration = 1.5f;
@@ -86,6 +86,7 @@ public class CustomerManager : MonoBehaviour
     // allow serve while panel open temporarily (used for ordering flows that don't require user ack,
     // and used after wrongStory (non-ack) finishes so player can attempt again).
     private bool allowServeWhilePanelOpen = false;
+    private Coroutine startDayCoroutine = null;
 
     private void Start()
     {
@@ -122,9 +123,10 @@ public class CustomerManager : MonoBehaviour
     private void StartNewDay()
     {
         if (messageCoroutine != null) { StopCoroutine(messageCoroutine); messageCoroutine = null; }
+        if (startDayCoroutine != null) { StopCoroutine(startDayCoroutine); startDayCoroutine = null; }
 
         state = ManagerState.Idle;
-        Debug.Log($"[CustomerManager] StartNewDay: profiles={(profiles!=null?profiles.Count:0)} minCustomersPerDay={minCustomersPerDay} spawnAllPerDay={spawnAllPerDay} autoRestartDay={autoRestartDay}");
+        Debug.Log($"[CustomerManager] StartNewDay: profiles={(profiles!=null?profiles.Count:0)} minCustomersPerDay={minCustomersPerDay} maxCustomersPerDay={maxCustomersPerDay} spawnAllPerDay={spawnAllPerDay}");
 
         if (profiles == null || profiles.Count == 0)
         {
@@ -144,17 +146,26 @@ public class CustomerManager : MonoBehaviour
         }
         else
         {
-            int minC = Mathf.Max(1, minCustomersPerDay);
-            int maxC = Mathf.Max(minC, pool.Count);
+            if (maxCustomersPerDay < minCustomersPerDay)
+                Debug.LogWarning($"[CustomerManager] maxCustomersPerDay ({maxCustomersPerDay}) is smaller than minCustomersPerDay ({minCustomersPerDay}); effective range will be [{minCustomersPerDay}, {minCustomersPerDay}] before pool clamping.");
+
+            int minC = Mathf.Clamp(minCustomersPerDay, 1, pool.Count);
+            int maxC = Mathf.Clamp(maxCustomersPerDay, minC, pool.Count);
             count = UnityEngine.Random.Range(minC, maxC + 1);
-            count = Mathf.Clamp(count, 1, pool.Count);
         }
 
         todaysProfiles = pool.GetRange(0, count);
         todaysIndex = 0;
 
+        if (GameManager.Instance != null)
+            GameManager.Instance.BeginNewDay(todaysProfiles.Count);
+
         Debug.Log($"[CustomerManager] Today will have {todaysProfiles.Count} customers.");
-        SpawnNextFromToday();
+        float dayIntroDelay = Mathf.Max(0f, delayBeforeNextDay);
+        if (GameManager.Instance != null)
+            GameManager.Instance.ShowDayTransition(dayIntroDelay);
+
+        startDayCoroutine = StartCoroutine(SpawnFirstCustomerAfterDayIntro(dayIntroDelay));
     }
 
     private void Shuffle<T>(List<T> list)
@@ -177,16 +188,8 @@ public class CustomerManager : MonoBehaviour
         if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
         {
             Debug.Log("[CustomerManager] No more customers today.");
-            if (autoRestartDay)
-            {
-                Debug.Log("[CustomerManager] autoRestartDay=true -> Starting next day immediately.");
-                StartNewDay();
-            }
-            else
-            {
-                Debug.Log("[CustomerManager] Scheduling NextDayDelayed.");
-                StartCoroutine(NextDayDelayed());
-            }
+            Debug.Log("[CustomerManager] Scheduling NextDayDelayed.");
+            StartCoroutine(NextDayDelayed());
             return;
         }
 
@@ -346,9 +349,18 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator NextDayDelayed()
     {
-        Debug.Log($"[CustomerManager] NextDayDelayed: waiting {delayBeforeNextDay}s then StartNewDay.");
-        yield return new WaitForSecondsRealtime(delayBeforeNextDay);
+        Debug.Log("[CustomerManager] NextDayDelayed: starting next day.");
+        yield return null;
         StartNewDay();
+    }
+
+    private IEnumerator SpawnFirstCustomerAfterDayIntro(float delay)
+    {
+        if (delay > 0f)
+            yield return new WaitForSecondsRealtime(delay);
+
+        startDayCoroutine = null;
+        SpawnNextFromToday();
     }
     #endregion
 
@@ -467,12 +479,6 @@ public class CustomerManager : MonoBehaviour
                 }
             }
             return;
-        }
-
-        // reached max fails -> customer leaves (penalize player)
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.DecreaseHP(1, "wrong_leave");
         }
 
         // ensure panel-open-serve flag is cleared
@@ -746,7 +752,6 @@ public class CustomerManager : MonoBehaviour
         // Read per-profile overrides if available; otherwise use GameManager defaults
         int pointsSatisfy = (currentProfile != null) ? currentProfile.pointsOnSatisfy : (GameManager.Instance != null ? GameManager.Instance.pointsPerSatisfyDefault : 5);
         int pointsNeutral = (currentProfile != null) ? currentProfile.pointsOnNeutral : (GameManager.Instance != null ? GameManager.Instance.pointsPerNeutralDefault : 0);
-        int hpLossAngry = (currentProfile != null) ? currentProfile.hpLossOnAngry : (GameManager.Instance != null ? GameManager.Instance.hpLossOnAngryDefault : 1);
 
         switch (outcome)
         {
@@ -764,8 +769,6 @@ public class CustomerManager : MonoBehaviour
 
             case CurhatOutcome.Angry:
                 Debug.Log($"[CustomerManager] Curhat outcome: ANGRY for {cust.name}");
-                if (GameManager.Instance != null && hpLossAngry > 0)
-                    GameManager.Instance.DecreaseHP(hpLossAngry, "curhat_angry");
                 break;
         }
 

@@ -1,17 +1,14 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
 /// GameManager
-/// - Manages score, HP and game over state.
-/// - Exposes events for score/hp changes and game lifecycle.
-/// - Updated: heart UI now supports sprite-swap mode (keep hearts visible and swap sprite instead of enabling/disabling).
-/// - Added: public RestartGame() to be used by UI Retry button.
+/// - Manages score and day-based cumulative target.
+/// - Keeps persistent progression data (currency, highscore, longest day, power-up placeholders).
+/// - No HP / max HP mechanic.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -19,111 +16,173 @@ public class GameManager : MonoBehaviour
 
     [Header("Gameplay")]
     public int startingScore = 0;
-    public int maxHP = 3;
     public int pointsPerCorrectServe = 10;
-
     public int pointsPerSatisfyDefault = 5;
     public int pointsPerNeutralDefault = 0;
-    [Tooltip("Default HP loss when curhat yields 'angry' and profile doesn't override.")]
-    public int hpLossOnAngryDefault = 1;
+
+    [Header("Daily Target Formula")]
+    [Tooltip("Base target points contributed by each customer.")]
+    public int targetPerCustomer = 5;
+    [Tooltip("Formula factor uses integer division: (1 + day/dayGrowthDivider).")]
+    public int dayGrowthDivider = 10;
+    [Tooltip("Currency gained for every this many score points.")]
+    public int scoreToCurrencyDivider = 10;
+
+    [Header("Persistent Progress")]
+    public GameProgressData progressData;
 
     [Header("UI (assign in Inspector)")]
     public TextMeshProUGUI scoreText;
-    public Transform heartsParent;
+    public TextMeshProUGUI dayText;
+    public TextMeshProUGUI targetScoreText;
+    public TextMeshProUGUI currencyText;
     public GameObject gameOverPanel;
     public TextMeshProUGUI gameOverScoreText;
     public TextMeshProUGUI gameOverBestText;
 
-    [Header("Hearts - sprite swap (optional)")]
-    [Tooltip("Sprite to show when a heart slot is full (HP present).")]
-    public Sprite heartFullSprite;
-    [Tooltip("Sprite to show when a heart slot is lost/damaged (HP absent).")]
-    public Sprite heartLostSprite;
-    [Tooltip("If true, GameManager will swap sprites on Image components under heartsParent instead of enabling/disabling GameObjects.")]
-    public bool useHeartSpriteSwap = true;
-    [Tooltip("If true and using sprite swap, call SetNativeSize() on Image after sprite assignment.")]
-    public bool setHeartImageNativeSize = false;
-
-    [Header("Highscore key")]
-    public string highscoreKey = "EQ_HIGH_SCORE";
+    [Header("Day Transition UI (optional)")]
+    public GameObject dayTransitionPanel;
+    public TextMeshProUGUI dayTransitionDayText;
+    public TextMeshProUGUI dayTransitionTargetText;
 
     [Header("Restart behavior")]
     [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
     public bool reloadSceneOnRestart = false;
 
-    // runtime
     private int score = 0;
-    private int hp = 0;
-
-    // Game over state flag
+    private int currentDay = 0;
+    private int cumulativeTargetScore = 0;
+    private int scoreCurrencyConverted = 0;
     private bool isGameOver = false;
+    private Coroutine dayTransitionCoroutine;
 
-    // Events (only GameManager may invoke them)
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
     public event Action<int, int> OnScoreChanged;
-    public event Action<int, int> OnHPChanged;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        EnsureProgressData();
     }
 
     private void Start()
     {
+        progressData.Load();
         InitGame();
         UpdateUI();
         HideGameOverPanel();
+        HideDayTransitionPanel();
     }
 
     public void InitGame()
     {
-        // restore time/audio and clear game-over flag
         Time.timeScale = 1f;
         AudioListener.pause = false;
         isGameOver = false;
 
         score = startingScore;
-        hp = Mathf.Clamp(maxHP, 0, 999);
-        UpdateHearts();
-        UpdateScoreText();
+        currentDay = 0;
+        cumulativeTargetScore = 0;
+        scoreCurrencyConverted = 0;
+
+        UpdateUI();
     }
 
-    // AddScore with optional reason (for logging)
     public void AddScore(int points, string reason = null)
     {
         if (points == 0 || isGameOver) return;
         int prev = score;
         score += points;
+
+        SaveHighscoreIfNeeded();
+        ConvertScoreToCurrency();
+
         UpdateScoreText();
+        UpdateCurrencyText();
         OnScoreChanged?.Invoke(score, points);
         Debug.Log($"[GameManager] AddScore: {points} (reason={reason ?? "none"}) -> {prev} -> {score}");
     }
 
     public int GetScore() => score;
-    public int GetHP() => hp;
+    public int GetCurrentDay() => currentDay;
+    public int GetTargetScore() => cumulativeTargetScore;
+    public int GetCurrency() => progressData != null ? progressData.Currency : 0;
+    public int GetHighScore() => progressData != null ? progressData.HighScore : 0;
+    public int GetLongestDay() => progressData != null ? progressData.LongestDay : 0;
 
-    public void DecreaseHP(int count = 1, string reason = "")
+    /// <summary>
+    /// Called by CustomerManager when a new day starts and customer count is known.
+    /// Formula: customers * targetPerCustomer * (1 + day/dayGrowthDivider) using integer division.
+    /// </summary>
+    public void BeginNewDay(int customerCount)
     {
-        if (count <= 0 || isGameOver) return;
-        int prev = hp;
-        hp = Mathf.Max(0, hp - count);
-        UpdateHearts();
-        OnHPChanged?.Invoke(hp, -count);
-        Debug.Log($"[GameManager] DecreaseHP by {count} reason={reason} -> {prev} -> {hp}");
+        if (isGameOver) return;
+        if (customerCount <= 0)
+        {
+            Debug.LogWarning("[GameManager] BeginNewDay called with customerCount <= 0. Day start ignored.");
+            return;
+        }
 
-        if (hp <= 0) TriggerGameOver();
+        currentDay += 1;
+        int safeDivider = Mathf.Max(1, dayGrowthDivider);
+        int multiplier = 1 + (currentDay / safeDivider);
+        int dayTargetIncrease = Mathf.Max(0, customerCount * targetPerCustomer * multiplier);
+        cumulativeTargetScore += dayTargetIncrease;
+
+        if (progressData != null)
+        {
+            progressData.SetLongestDayIfHigher(currentDay);
+            progressData.Save();
+        }
+
+        UpdateDayText();
+        UpdateTargetText();
+        Debug.Log($"[GameManager] Day {currentDay} started. Customers={customerCount} DailyTarget+={dayTargetIncrease} CumulativeTarget={cumulativeTargetScore}");
     }
 
-    public void IncreaseHP(int count = 1)
+    public void ShowDayTransition(float durationSeconds)
     {
-        if (count <= 0 || isGameOver) return;
-        int prev = hp;
-        hp = Mathf.Min(maxHP, hp + count);
-        UpdateHearts();
-        OnHPChanged?.Invoke(hp, count);
+        if (dayTransitionPanel == null) return;
+        if (dayTransitionCoroutine != null) StopCoroutine(dayTransitionCoroutine);
+        dayTransitionCoroutine = StartCoroutine(ShowDayTransitionCoroutine(durationSeconds));
+    }
+
+    private IEnumerator ShowDayTransitionCoroutine(float durationSeconds)
+    {
+        dayTransitionPanel.SetActive(true);
+        if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {Mathf.Max(1, currentDay)}";
+        if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target: {cumulativeTargetScore}";
+
+        float wait = Mathf.Max(0f, durationSeconds);
+        if (wait > 0f)
+            yield return new WaitForSecondsRealtime(wait);
+
+        HideDayTransitionPanel();
+        dayTransitionCoroutine = null;
+    }
+
+    private void HideDayTransitionPanel()
+    {
+        if (dayTransitionPanel != null)
+            dayTransitionPanel.SetActive(false);
+    }
+
+    private void ConvertScoreToCurrency()
+    {
+        if (progressData == null) return;
+
+        int safeDivider = Mathf.Max(1, scoreToCurrencyDivider);
+        int totalConvertible = Mathf.Max(0, score / safeDivider);
+        int delta = totalConvertible - scoreCurrencyConverted;
+        if (delta <= 0) return;
+
+        progressData.AddCurrency(delta);
+        progressData.Save();
+        scoreCurrencyConverted = totalConvertible;
     }
 
     private void UpdateScoreText()
@@ -131,55 +190,28 @@ public class GameManager : MonoBehaviour
         if (scoreText != null) scoreText.text = $"Score: {score}";
     }
 
-    /// <summary>
-    /// UpdateHearts:
-    /// - If useHeartSpriteSwap==true and child has Image, swap sprite to full/lost accordingly (keeps the image visible).
-    /// - Otherwise fallback to legacy behaviour (enable/disable child GameObject).
-    /// </summary>
-    private void UpdateHearts()
+    private void UpdateDayText()
     {
-        if (heartsParent == null) return;
-        int n = heartsParent.childCount;
-        for (int i = 0; i < n; i++)
-        {
-            var child = heartsParent.GetChild(i).gameObject;
-            if (child == null) continue;
+        if (dayText != null) dayText.text = $"Day: {Mathf.Max(1, currentDay)}";
+    }
 
-            if (useHeartSpriteSwap)
-            {
-                var img = child.GetComponent<Image>();
-                if (img != null)
-                {
-                    // swap sprite according to hp
-                    if (i < hp)
-                    {
-                        if (heartFullSprite != null) img.sprite = heartFullSprite;
-                    }
-                    else
-                    {
-                        if (heartLostSprite != null) img.sprite = heartLostSprite;
-                    }
-                    img.enabled = true;
-                    if (setHeartImageNativeSize && img.sprite != null) img.SetNativeSize();
-                }
-                else
-                {
-                    // fallback: if there's no Image component, keep legacy behaviour
-                    child.SetActive(i < hp);
-                }
-            }
-            else
-            {
-                // legacy behaviour: enable/disable whole GameObject
-                child.SetActive(i < hp);
-            }
-        }
+    private void UpdateTargetText()
+    {
+        if (targetScoreText != null) targetScoreText.text = $"Target: {cumulativeTargetScore}";
+    }
+
+    private void UpdateCurrencyText()
+    {
+        if (currencyText != null && progressData != null)
+            currencyText.text = $"Currency: {progressData.Currency}";
     }
 
     private void UpdateUI()
     {
         UpdateScoreText();
-        UpdateHearts();
+        UpdateDayText();
+        UpdateTargetText();
+        UpdateCurrencyText();
     }
 
     private void TriggerGameOver()
@@ -191,95 +223,87 @@ public class GameManager : MonoBehaviour
         SaveHighscoreIfNeeded();
         ShowGameOverPanel();
 
-        // freeze game time and pause audio when game over
         Time.timeScale = 0f;
         AudioListener.pause = true;
-
         OnGameOverEvent?.Invoke();
     }
 
     private void ShowGameOverPanel()
     {
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-            if (gameOverScoreText != null) gameOverScoreText.text = $"Score: {score}";
-            if (gameOverBestText != null)
-            {
-                int best = PlayerPrefs.GetInt(highscoreKey, 0);
-                gameOverBestText.text = $"Best: {best}";
-            }
-        }
+        if (gameOverPanel == null) return;
+
+        gameOverPanel.SetActive(true);
+        if (gameOverScoreText != null) gameOverScoreText.text = $"Score: {score}";
+        if (gameOverBestText != null) gameOverBestText.text = $"Best: {GetHighScore()}";
     }
 
     private void HideGameOverPanel()
     {
         if (gameOverPanel != null)
-        {
             gameOverPanel.SetActive(false);
-        }
     }
 
     private void SaveHighscoreIfNeeded()
     {
-        int best = PlayerPrefs.GetInt(highscoreKey, 0);
-        if (score > best)
+        if (progressData == null) return;
+        int before = progressData.HighScore;
+        progressData.SetHighScoreIfHigher(score);
+        if (progressData.HighScore != before)
         {
-            PlayerPrefs.SetInt(highscoreKey, score);
-            PlayerPrefs.Save();
-            Debug.Log($"[GameManager] New highscore saved: {score}");
+            progressData.Save();
+            Debug.Log($"[GameManager] New highscore saved: {progressData.HighScore}");
         }
     }
 
-    /// <summary>
-    /// Fire game restart event so other systems (UI, managers) can re-init or reset.
-    /// Note: FireOnGameRestart will also reload scene if reloadSceneOnRestart = true.
-    /// </summary>
+    private void EnsureProgressData()
+    {
+        if (progressData != null) return;
+        progressData = ScriptableObject.CreateInstance<GameProgressData>();
+        progressData.name = "RuntimeGameProgressData";
+        Debug.LogWarning("[GameManager] progressData is not assigned in Inspector. Using runtime fallback instance.");
+    }
+
+    // Legacy compatibility API (no-op due to HP removal)
+    public int GetHP() => 0;
+    public void DecreaseHP(int count = 1, string reason = "")
+    {
+        Debug.Log($"[GameManager] DecreaseHP ignored (HP mechanic removed). count={count}, reason={reason}");
+    }
+    public void IncreaseHP(int count = 1)
+    {
+        Debug.Log($"[GameManager] IncreaseHP ignored (HP mechanic removed). count={count}");
+    }
+
     public void FireOnGameRestart()
     {
         Debug.Log("[GameManager] FireOnGameRestart invoked.");
         OnGameRestartEvent?.Invoke();
 
         if (reloadSceneOnRestart)
-        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
     }
 
-    /// <summary>
-    /// Public restart method for UI Retry button.
-    /// - If reloadSceneOnRestart==true -> reload active scene.
-    /// - Else -> hide game over panel, call InitGame() and invoke OnGameRestartEvent.
-    /// Attach this method to Retry button's OnClick in the Inspector.
-    /// </summary>
     public void RestartGame()
     {
         Debug.Log("[GameManager] RestartGame called by UI.");
 
         if (reloadSceneOnRestart)
         {
-            // will reload the scene (and all managers will re-awake)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             return;
         }
 
-        // Otherwise perform in-place re-init
         HideGameOverPanel();
+        HideDayTransitionPanel();
         InitGame();
         OnGameRestartEvent?.Invoke();
     }
 
-    /// <summary>
-    /// Convenience alias for UI, if you prefer more explicit name in Inspector.
-    /// </summary>
     public void RestartGame_FromButton()
     {
         RestartGame();
     }
 
-    /// <summary>
-    /// Fire game restart programmatically (alias kept for compatibility).
-    /// </summary>
     public void FireOnGameRestart_Public()
     {
         FireOnGameRestart();
