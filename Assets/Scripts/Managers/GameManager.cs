@@ -51,6 +51,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("If true, RestartGame will reload the active scene. If false, RestartGame will InitGame() and invoke restart event.")]
     public bool reloadSceneOnRestart = false;
 
+    [Header("Debug")]
+    [Tooltip("Enable verbose diagnostic logs for day/score state transitions.")]
+    public bool verboseLogging = false;
+
     private int score = 0;
     private int currentDay = 0;
     private int cumulativeTargetScore = 0;
@@ -58,6 +62,9 @@ public class GameManager : MonoBehaviour
     private bool isGameOver = false;
     private Coroutine dayTransitionCoroutine;
     private bool dayTransitionContinueRequested = false;
+    // Guard: set to true once BeginNewDay() is first called so we can warn if InitGame() is
+    // invoked unexpectedly while a run is already in progress.
+    private bool _gameHasStarted = false;
 
     public event Action OnGameOverEvent;
     public event Action OnGameRestartEvent;
