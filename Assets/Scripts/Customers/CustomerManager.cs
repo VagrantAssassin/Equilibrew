@@ -413,6 +413,12 @@ public class CustomerManager : MonoBehaviour
         if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
             return null;
 
+        while (todaysIndex < todaysProfiles.Count && todaysProfiles[todaysIndex] == null)
+            todaysIndex++;
+
+        if (todaysIndex >= todaysProfiles.Count)
+            return null;
+
         if (lastSpawnedProfile != null && todaysProfiles[todaysIndex] == lastSpawnedProfile)
         {
             for (int i = todaysIndex + 1; i < todaysProfiles.Count; i++)
@@ -756,12 +762,15 @@ public class CustomerManager : MonoBehaviour
             List<string> tags = null;
             bool affinityAppliedAtChoice = false;
 
-            Action<DialogueReaction, List<string>> onChoiceSelected = (choiceReaction, choiceTags) =>
+            Action<DialogueReaction, List<string>> onChoiceSelected = null;
+            onChoiceSelected = (choiceReaction, choiceTags) =>
             {
                 if (affinityAppliedAtChoice) return;
                 CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
+                if (inkDialogController != null)
+                    inkDialogController.OnChoiceSelected -= onChoiceSelected;
             };
             inkDialogController.OnChoiceSelected += onChoiceSelected;
 
@@ -806,14 +815,26 @@ public class CustomerManager : MonoBehaviour
         // Prefer explicit tag if present; fallback to reaction enum if no tag found.
         if (tags != null)
         {
+            bool hasAngry = false;
+            bool hasSatisfy = false;
+            bool hasNeutral = false;
+
             foreach (var t in tags)
             {
                 if (string.IsNullOrEmpty(t)) continue;
                 var low = t.Trim().ToLowerInvariant();
-                if (low.Contains("reaction:angry") || low.Contains("angry") || low.Contains("disagree")) return CurhatOutcome.Angry;
-                if (low.Contains("reaction:satisfy") || low.Contains("reaction:agree") || low.Contains("satisfy") || low == "agree") return CurhatOutcome.Satisfy;
-                if (low.Contains("reaction:neutral") || low.Contains("neutral")) return CurhatOutcome.Neutral;
+                if (low.Contains("reaction:angry") || low.Contains("reaction:disagree")) return CurhatOutcome.Angry;
+                if (low.Contains("reaction:satisfy") || low.Contains("reaction:agree")) return CurhatOutcome.Satisfy;
+                if (low.Contains("reaction:neutral")) return CurhatOutcome.Neutral;
+
+                if (low == "angry" || low == "disagree") hasAngry = true;
+                else if (low == "satisfy" || low == "agree") hasSatisfy = true;
+                else if (low == "neutral") hasNeutral = true;
             }
+
+            if (hasAngry && !hasSatisfy) return CurhatOutcome.Angry;
+            if (hasSatisfy && !hasAngry) return CurhatOutcome.Satisfy;
+            if (hasNeutral) return CurhatOutcome.Neutral;
         }
 
         // Fallback: use DialogueReaction (legacy)
