@@ -810,6 +810,14 @@ public class CustomerManager : MonoBehaviour
     #region HandleCurhatReaction (extend for game effects)
     private enum CurhatOutcome { Satisfy, Neutral, Angry }
 
+    private bool HasReactionTag(string normalizedTag, string reactionName)
+    {
+        if (string.IsNullOrEmpty(normalizedTag) || string.IsNullOrEmpty(reactionName))
+            return false;
+
+        return normalizedTag.Contains($"reaction:{reactionName}") || normalizedTag == reactionName;
+    }
+
     private CurhatOutcome DetermineOutcomeFromTags(List<string> tags, DialogueReaction reactionFromInk)
     {
         // Prefer explicit tag if present; fallback to reaction enum if no tag found.
@@ -823,9 +831,9 @@ public class CustomerManager : MonoBehaviour
             {
                 if (string.IsNullOrEmpty(t)) continue;
                 var low = t.Trim().ToLowerInvariant();
-                if (low.Contains("reaction:angry") || low.Contains("reaction:disagree")) return CurhatOutcome.Angry;
-                if (low.Contains("reaction:satisfy") || low.Contains("reaction:agree")) return CurhatOutcome.Satisfy;
-                if (low.Contains("reaction:neutral")) return CurhatOutcome.Neutral;
+                if (HasReactionTag(low, "angry") || HasReactionTag(low, "disagree")) return CurhatOutcome.Angry;
+                if (HasReactionTag(low, "satisfy") || HasReactionTag(low, "agree")) return CurhatOutcome.Satisfy;
+                if (HasReactionTag(low, "neutral")) return CurhatOutcome.Neutral;
 
                 if (low == "angry" || low == "disagree") hasAngry = true;
                 else if (low == "satisfy" || low == "agree") hasSatisfy = true;
@@ -834,6 +842,7 @@ public class CustomerManager : MonoBehaviour
 
             if (hasAngry && !hasSatisfy) return CurhatOutcome.Angry;
             if (hasSatisfy && !hasAngry) return CurhatOutcome.Satisfy;
+            // If both angry and satisfy are present, treat as ambiguous and fall back to reaction enum below.
             if (hasNeutral) return CurhatOutcome.Neutral;
         }
 
