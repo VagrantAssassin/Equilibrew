@@ -23,6 +23,8 @@ using TMPro;
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
+    private static readonly string[] CurhatOutcomeReactionTags = { "angry", "disagree", "satisfy", "agree", "neutral" };
+
     [Header("References (assign in Inspector)")]
     public RecipeValidator recipeValidator;
     public CupController cupController;
@@ -790,6 +792,8 @@ public class CustomerManager : MonoBehaviour
             onChoiceSelected = (choiceReaction, choiceTags) =>
             {
                 if (affinityAppliedAtChoice) return;
+                if (!HasExplicitCurhatOutcomeTag(choiceTags)) return;
+
                 CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
@@ -840,6 +844,25 @@ public class CustomerManager : MonoBehaviour
             return false;
 
         return normalizedTag.Contains($"reaction:{reactionName}") || normalizedTag == reactionName;
+    }
+
+    private bool HasExplicitCurhatOutcomeTag(List<string> tags)
+    {
+        if (tags == null || tags.Count == 0)
+            return false;
+
+        foreach (var tag in tags)
+        {
+            if (string.IsNullOrEmpty(tag)) continue;
+            var low = tag.Trim().ToLowerInvariant();
+            foreach (var reactionTag in CurhatOutcomeReactionTags)
+            {
+                if (HasReactionTag(low, reactionTag))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private CurhatOutcome DetermineOutcomeFromTags(List<string> tags, DialogueReaction reactionFromInk)
