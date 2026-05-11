@@ -790,6 +790,27 @@ public class CustomerManager : MonoBehaviour
             onChoiceSelected = (choiceReaction, choiceTags) =>
             {
                 if (affinityAppliedAtChoice) return;
+                bool hasExplicitOutcomeTag = false;
+                if (choiceTags != null)
+                {
+                    foreach (var tag in choiceTags)
+                    {
+                        if (string.IsNullOrEmpty(tag)) continue;
+                        var low = tag.Trim().ToLowerInvariant();
+                        if (HasReactionTag(low, "angry") ||
+                            HasReactionTag(low, "disagree") ||
+                            HasReactionTag(low, "satisfy") ||
+                            HasReactionTag(low, "agree") ||
+                            HasReactionTag(low, "neutral"))
+                        {
+                            hasExplicitOutcomeTag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!hasExplicitOutcomeTag) return;
+
                 CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
