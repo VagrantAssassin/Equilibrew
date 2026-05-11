@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public int pointsPerCorrectServe = 10;
     public int pointsPerSatisfyDefault = 5;
     public int pointsPerNeutralDefault = 0;
+    public int pointsPenaltyOnMaxFail = -10;
 
     [Header("Daily Target Formula")]
     [Tooltip("Base target points contributed by each customer.")]
@@ -58,7 +59,6 @@ public class GameManager : MonoBehaviour
     private int score = 0;
     private int currentDay = 0;
     private int cumulativeTargetScore = 0;
-    private int scoreCurrencyConverted = 0;
     private bool isGameOver = false;
     private Coroutine dayTransitionCoroutine;
     private bool dayTransitionContinueRequested = false;
@@ -106,7 +106,6 @@ public class GameManager : MonoBehaviour
         score = startingScore;
         currentDay = 0;
         cumulativeTargetScore = 0;
-        scoreCurrencyConverted = 0;
 
         UpdateUI();
     }
@@ -227,12 +226,10 @@ public class GameManager : MonoBehaviour
 
         int safeDivider = Mathf.Max(1, scoreToCurrencyDivider);
         int totalConvertible = Mathf.Max(0, score / safeDivider);
-        int delta = totalConvertible - scoreCurrencyConverted;
-        if (delta <= 0) return;
+        if (totalConvertible <= 0) return;
 
-        progressData.AddCurrency(delta);
+        progressData.AddCurrency(totalConvertible);
         progressData.Save();
-        scoreCurrencyConverted = totalConvertible;
     }
 
     private void UpdateScoreText()

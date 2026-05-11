@@ -593,7 +593,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         if (GameManager.Instance != null)
-            GameManager.Instance.AddScore(-10, "max_fail_penalty");
+            GameManager.Instance.AddScore(GameManager.Instance.pointsPenaltyOnMaxFail, "max_fail_penalty");
 
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
         {
