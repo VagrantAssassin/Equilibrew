@@ -68,6 +68,16 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Affinity change saat pelanggan marah lalu pergi karena mencapai max fail.")]
     public float affinityPenaltyOnMaxFailLeave = -10f;
 
+    [Header("Affinity score multiplier (correct serve)")]
+    [Tooltip("Multiplier skor saat tier affinity Hostile.")]
+    public float affinityScoreMultiplierHostile = 0.8f;
+    [Tooltip("Multiplier skor saat tier affinity Friend.")]
+    public float affinityScoreMultiplierFriend = 1f;
+    [Tooltip("Multiplier skor saat tier affinity BestFriend.")]
+    public float affinityScoreMultiplierBestFriend = 1.2f;
+    [Tooltip("Multiplier skor saat tier affinity Soulmate.")]
+    public float affinityScoreMultiplierSoulmate = 1.5f;
+
     [Header("Affinity UI (optional)")]
     [Tooltip("Widget UI yang menampilkan hati affinity pelanggan aktif. Assign di Inspector.")]
     public CustomerAffinityWidget affinityWidget;
@@ -95,6 +105,7 @@ public class CustomerManager : MonoBehaviour
     // and used after wrongStory (non-ack) finishes so player can attempt again).
     private bool allowServeWhilePanelOpen = false;
     private Coroutine startDayCoroutine = null;
+    private CustomerProfile lastSpawnedProfile = null;
 
     private void Start()
     {
@@ -205,7 +216,13 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        var profile = todaysProfiles[todaysIndex++];
+        var profile = TakeNextProfileAvoidingRepeat();
+        if (profile == null)
+        {
+            Debug.LogWarning("[CustomerManager] Failed to select next profile.");
+            StartCoroutine(NextDayDelayed());
+            return;
+        }
 
         if (customerPrefab == null || spawnParent == null)
         {
@@ -369,20 +386,66 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator SpawnFirstCustomerAfterDayIntro(float delay)
     {
+        bool waitedViaTransitionPanel = false;
         var gm = GameManager.Instance;
         if (gm != null)
         {
             gm.ShowDayTransition(delay);
-            while (gm != null && gm.IsDayTransitionVisible())
-                yield return null;
+            if (gm.IsDayTransitionVisible())
+            {
+                waitedViaTransitionPanel = true;
+                while (gm != null && gm.IsDayTransitionVisible())
+                    yield return null;
+            }
         }
-        else if (delay > 0f)
+
+        if (!waitedViaTransitionPanel && delay > 0f)
         {
             yield return new WaitForSecondsRealtime(delay);
         }
 
         startDayCoroutine = null;
         SpawnNextFromToday();
+    }
+
+    private CustomerProfile TakeNextProfileAvoidingRepeat()
+    {
+        if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
+            return null;
+
+        if (lastSpawnedProfile != null && todaysProfiles[todaysIndex] == lastSpawnedProfile)
+        {
+            for (int i = todaysIndex + 1; i < todaysProfiles.Count; i++)
+            {
+                if (todaysProfiles[i] == null || todaysProfiles[i] == lastSpawnedProfile)
+                    continue;
+
+                var swap = todaysProfiles[todaysIndex];
+                todaysProfiles[todaysIndex] = todaysProfiles[i];
+                todaysProfiles[i] = swap;
+                break;
+            }
+        }
+
+        var selected = todaysProfiles[todaysIndex++];
+        if (selected == lastSpawnedProfile)
+            Debug.LogWarning($"[CustomerManager] Immediate repeat unavoidable for profile '{selected?.profileName ?? "null"}'.");
+
+        lastSpawnedProfile = selected;
+        return selected;
+    }
+
+    private float GetAffinityScoreMultiplier(CustomerProfile profile)
+    {
+        if (profile == null) return 1f;
+
+        switch (profile.GetCurrentTier())
+        {
+            case AffinityTier.Soulmate: return affinityScoreMultiplierSoulmate;
+            case AffinityTier.BestFriend: return affinityScoreMultiplierBestFriend;
+            case AffinityTier.Friend: return affinityScoreMultiplierFriend;
+            default: return affinityScoreMultiplierHostile;
+        }
     }
     #endregion
 
@@ -442,10 +505,14 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Correct serve!");
-            // Correct serve: fixed score from GameManager setting (default 10).
+            // Correct serve: base score multiplied by affinity-tier multiplier.
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.AddScore(GameManager.Instance.pointsPerCorrectServe, "correct_serve");
+                int basePoints = GameManager.Instance.pointsPerCorrectServe;
+                float multiplier = GetAffinityScoreMultiplier(currentProfile);
+                int finalPoints = Mathf.FloorToInt(basePoints * multiplier);
+                GameManager.Instance.AddScore(finalPoints, $"correct_serve_x{multiplier:0.##}");
+                Debug.Log($"[CustomerManager] Correct serve score: base={basePoints} multiplier={multiplier:0.##} final={finalPoints}");
             }
 
             // start coroutine that will play success story (if any) then curhat
@@ -686,22 +753,39 @@ public class CustomerManager : MonoBehaviour
             bool done = false;
             DialogueReaction reaction = DialogueReaction.Neutral;
             List<string> tags = null;
+            bool affinityAppliedAtChoice = false;
 
-            // Curhat requires user acknowledgement at end, so block serve while showing
-            allowServeWhilePanelOpen = false;
-
-            // Play curhat reusing panel if one was left open (skipOpenAnimation true).
-            // requireUserToAcknowledgeEnd = true so curhat won't auto-close before player reads it.
-            inkDialogController.PlayCurhat(curhatToPlay, (r, tgs) =>
+            Action<DialogueReaction, List<string>> onChoiceSelected = (choiceReaction, choiceTags) =>
             {
-                reaction = r;
-                tags = tgs;
-                done = true;
-            }, skipOpenAnimation: true, leavePanelOpen: false, requireUserToAcknowledgeEnd: true);
+                if (affinityAppliedAtChoice) return;
+                CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
+                ApplyCurhatAffinityOutcome(choiceOutcome);
+                affinityAppliedAtChoice = true;
+            };
+            inkDialogController.OnChoiceSelected += onChoiceSelected;
 
-            yield return new WaitUntil(() => done);
+            try
+            {
+                // Curhat requires user acknowledgement at end, so block serve while showing
+                allowServeWhilePanelOpen = false;
 
-            HandleCurhatReaction(currentCustomer, reaction, tags);
+                // Play curhat reusing panel if one was left open (skipOpenAnimation true).
+                // requireUserToAcknowledgeEnd = true so curhat won't auto-close before player reads it.
+                inkDialogController.PlayCurhat(curhatToPlay, (r, tgs) =>
+                {
+                    reaction = r;
+                    tags = tgs;
+                    done = true;
+                }, skipOpenAnimation: true, leavePanelOpen: false, requireUserToAcknowledgeEnd: true);
+
+                yield return new WaitUntil(() => done);
+            }
+            finally
+            {
+                inkDialogController.OnChoiceSelected -= onChoiceSelected;
+            }
+
+            HandleCurhatReaction(currentCustomer, reaction, tags, affinityAppliedAtChoice);
         }
         else
         {
@@ -725,8 +809,8 @@ public class CustomerManager : MonoBehaviour
             {
                 if (string.IsNullOrEmpty(t)) continue;
                 var low = t.Trim().ToLowerInvariant();
-                if (low.Contains("reaction:satisfy") || low == "satisfy" || low.Contains("satisfy") || low.Contains("agree")) return CurhatOutcome.Satisfy;
                 if (low.Contains("reaction:angry") || low == "angry" || low.Contains("angry") || low.Contains("disagree")) return CurhatOutcome.Angry;
+                if (low.Contains("reaction:satisfy") || low == "satisfy" || low.Contains("satisfy") || low == "agree" || low.Contains("reaction:agree")) return CurhatOutcome.Satisfy;
                 if (low.Contains("reaction:neutral") || low == "neutral" || low.Contains("neutral")) return CurhatOutcome.Neutral;
             }
         }
@@ -740,32 +824,35 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
-    private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags)
+    private void ApplyCurhatAffinityOutcome(CurhatOutcome outcome)
+    {
+        if (currentProfile == null) return;
+
+        switch (outcome)
+        {
+            case CurhatOutcome.Satisfy:
+                currentProfile.ChangeAffinity(affinityGainOnCurhatSatisfy);
+                Debug.Log($"[CustomerManager] Curhat SATISFY: affinity {affinityGainOnCurhatSatisfy} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                break;
+            case CurhatOutcome.Angry:
+                currentProfile.ChangeAffinity(affinityPenaltyOnCurhatAngry);
+                Debug.Log($"[CustomerManager] Curhat ANGRY: affinity {affinityPenaltyOnCurhatAngry} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                break;
+            default:
+                Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
+                break;
+        }
+        affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
+    }
+
+    private void HandleCurhatReaction(Customer cust, DialogueReaction reaction, List<string> tags, bool affinityAlreadyApplied)
     {
         if (cust == null) return;
 
         // Determine outcome based on tags or fallback reaction
         CurhatOutcome outcome = DetermineOutcomeFromTags(tags, reaction);
-
-        // --- Affinity change based on curhat outcome (affinity system) ---
-        if (currentProfile != null)
-        {
-            switch (outcome)
-            {
-                case CurhatOutcome.Satisfy:
-                    currentProfile.ChangeAffinity(affinityGainOnCurhatSatisfy);
-                    Debug.Log($"[CustomerManager] Curhat SATISFY: affinity {affinityGainOnCurhatSatisfy} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
-                    break;
-                case CurhatOutcome.Angry:
-                    currentProfile.ChangeAffinity(affinityPenaltyOnCurhatAngry);
-                    Debug.Log($"[CustomerManager] Curhat ANGRY: affinity {affinityPenaltyOnCurhatAngry} -> {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
-                    break;
-                default:
-                    Debug.Log($"[CustomerManager] Curhat NEUTRAL: affinity unchanged at {currentProfile.affinity}% ({currentProfile.GetCurrentTier()})");
-                    break;
-            }
-            affinityWidget?.UpdateDisplay(currentProfile.affinity, currentProfile.GetCurrentTier());
-        }
+        if (!affinityAlreadyApplied)
+            ApplyCurhatAffinityOutcome(outcome);
 
         switch (outcome)
         {
@@ -803,6 +890,7 @@ public class CustomerManager : MonoBehaviour
     private void OnGameRestart()
     {
         ResetAllAffinities();
+        lastSpawnedProfile = null;
     }
 
     /// <summary>
