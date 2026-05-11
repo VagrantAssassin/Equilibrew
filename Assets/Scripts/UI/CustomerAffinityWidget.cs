@@ -64,6 +64,14 @@ public class CustomerAffinityWidget : MonoBehaviour
     }
 
     /// <summary>
+    /// Tampilkan widget menggunakan nilai yang sudah di-set sebelumnya (tanpa memperbarui nilai).
+    /// </summary>
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    /// <summary>
     /// Tampilkan widget dan langsung perbarui nilainya.
     /// </summary>
     public void Show(float affinity, AffinityTier tier)
