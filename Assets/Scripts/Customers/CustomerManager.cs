@@ -779,7 +779,7 @@ public class CustomerManager : MonoBehaviour
             bool done = false;
             DialogueReaction reaction = DialogueReaction.Neutral;
             List<string> tags = null;
-            bool affinityAppliedAtChoice = false;
+            bool hasAnyChoiceAffinityApplied = false;
 
             Action<int, string, List<string>> onChoiceSelected = null;
             onChoiceSelected = (choiceIndex, choiceText, choiceTags) =>
@@ -790,7 +790,7 @@ public class CustomerManager : MonoBehaviour
                 CurhatOutcome choiceOutcome = DetermineOutcomeFromTags(choiceTags, choiceReaction);
                 Debug.Log($"[CustomerManager] Curhat choice selected idx={choiceIndex} text='{choiceText}' tags={string.Join(",", choiceTags ?? new List<string>())}");
                 ApplyCurhatAffinityOutcome(choiceOutcome);
-                affinityAppliedAtChoice = true;
+                hasAnyChoiceAffinityApplied = true;
             };
             inkDialogController.OnChoiceSelected += onChoiceSelected;
 
@@ -815,7 +815,7 @@ public class CustomerManager : MonoBehaviour
                 inkDialogController.OnChoiceSelected -= onChoiceSelected;
             }
 
-            HandleCurhatReaction(currentCustomer, reaction, tags, affinityAppliedAtChoice);
+            HandleCurhatReaction(currentCustomer, reaction, tags, hasAnyChoiceAffinityApplied);
         }
         else
         {
