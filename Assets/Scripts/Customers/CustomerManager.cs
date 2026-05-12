@@ -784,7 +784,6 @@ public class CustomerManager : MonoBehaviour
             Action<int, string, List<string>> onChoiceSelected = null;
             onChoiceSelected = (choiceIndex, choiceText, choiceTags) =>
             {
-                if (affinityAppliedAtChoice) return;
                 if (!HasExplicitCurhatOutcomeTag(choiceTags)) return;
 
                 DialogueReaction choiceReaction = DetermineReactionFromChoiceTags(choiceTags);
@@ -792,8 +791,6 @@ public class CustomerManager : MonoBehaviour
                 Debug.Log($"[CustomerManager] Curhat choice selected idx={choiceIndex} text='{choiceText}' tags={string.Join(",", choiceTags ?? new List<string>())}");
                 ApplyCurhatAffinityOutcome(choiceOutcome);
                 affinityAppliedAtChoice = true;
-                if (inkDialogController != null)
-                    inkDialogController.OnChoiceSelected -= onChoiceSelected;
             };
             inkDialogController.OnChoiceSelected += onChoiceSelected;
 
