@@ -1073,8 +1073,13 @@ public class CustomerManager : MonoBehaviour
         foreach (var img in allImages)
         {
             if (img == null) continue;
-            // Root customer object bisa punya Image sendiri yang dipakai untuk layout/anchor, jangan diubah di sini.
-            if (customerObject != null && img.gameObject == customerObject) continue;
+            if (customerObject != null && img.gameObject == customerObject)
+            {
+                var rootColor = img.color;
+                rootColor.a = 0f;
+                img.color = rootColor;
+                continue;
+            }
 
             string lowerName = img.gameObject.name.ToLowerInvariant();
             if (!IsSpritePartSlot(lowerName))
