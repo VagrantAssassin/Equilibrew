@@ -616,7 +616,8 @@ public class CustomerManager : MonoBehaviour
     private IEnumerator CorrectServeSequence()
     {
         // If profile has successStory play it first (require acknowledgement at end), else proceed directly
-        if (currentProfile != null && currentProfile.successStory != null && inkDialogController != null)
+        TextAsset successStoryToPlay = currentProfile != null ? currentProfile.GetRandomSuccessStory() : null;
+        if (successStoryToPlay != null && inkDialogController != null)
         {
             bool done = false;
             DialogueReaction ignored = DialogueReaction.Neutral;
@@ -625,7 +626,7 @@ public class CustomerManager : MonoBehaviour
             // successStory requires acknowledgement from player at end
             // success story should block serve while showing/ack required
             allowServeWhilePanelOpen = false;
-            inkDialogController.PlayCurhat(currentProfile.successStory, (r, tgs) =>
+            inkDialogController.PlayCurhat(successStoryToPlay, (r, tgs) =>
             {
                 ignored = r;
                 done = true;
