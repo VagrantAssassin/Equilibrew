@@ -1038,17 +1038,13 @@ public class CustomerManager : MonoBehaviour
         var shirtSlot = FindFirstSlotByName(allImages, IsShirtSlot);
         var hairSlot = FindFirstSlotByName(allImages, IsHairSlot);
 
-        // Fallback: gunakan 3 image placeholder yang sudah disiapkan di prefab/spawn
-        // (berdasarkan nama mengandung "placeholder"), urut sesuai hierarchy.
+        // Fallback: gunakan placeholder eksplisit yang sudah disiapkan di prefab/spawn.
         if (headSlot == null || shirtSlot == null || hairSlot == null)
         {
-            var placeholderSlots = FindPlaceholderSlots(allImages, customerObject);
-            if (placeholderSlots.Count >= 3)
-            {
-                if (headSlot == null) headSlot = placeholderSlots[0];
-                if (shirtSlot == null) shirtSlot = placeholderSlots[1];
-                if (hairSlot == null) hairSlot = placeholderSlots[2];
-            }
+            TryFindExplicitPlaceholderSlots(allImages, customerObject, out var placeholderHead, out var placeholderShirt, out var placeholderHair);
+            if (headSlot == null && placeholderHead != null) headSlot = placeholderHead;
+            if (shirtSlot == null && placeholderShirt != null) shirtSlot = placeholderShirt;
+            if (hairSlot == null && placeholderHair != null) hairSlot = placeholderHair;
         }
 
         bool usedAnyPartSlot = false;
@@ -1082,11 +1078,18 @@ public class CustomerManager : MonoBehaviour
         return null;
     }
 
-    private List<UnityEngine.UI.Image> FindPlaceholderSlots(UnityEngine.UI.Image[] allImages, GameObject customerObject)
+    private void TryFindExplicitPlaceholderSlots(
+        UnityEngine.UI.Image[] allImages,
+        GameObject customerObject,
+        out UnityEngine.UI.Image headPlaceholder,
+        out UnityEngine.UI.Image shirtPlaceholder,
+        out UnityEngine.UI.Image hairPlaceholder)
     {
-        var result = new List<UnityEngine.UI.Image>();
+        headPlaceholder = null;
+        shirtPlaceholder = null;
+        hairPlaceholder = null;
         if (allImages == null || allImages.Length == 0)
-            return result;
+            return;
 
         foreach (var img in allImages)
         {
@@ -1094,35 +1097,13 @@ public class CustomerManager : MonoBehaviour
             if (customerObject != null && img.gameObject == customerObject) continue;
 
             string lowerName = img.gameObject.name.ToLowerInvariant();
-            bool isKnownPlaceholder =
-                lowerName == "headplaceholder" ||
-                lowerName == "shirtplaceholder" ||
-                lowerName == "hairplaceholder" ||
-                lowerName.StartsWith("placeholder");
-
-            if (isKnownPlaceholder)
-                result.Add(img);
+            if (lowerName == "headplaceholder")
+                headPlaceholder = img;
+            else if (lowerName == "shirtplaceholder")
+                shirtPlaceholder = img;
+            else if (lowerName == "hairplaceholder")
+                hairPlaceholder = img;
         }
-
-        result.Sort((a, b) =>
-        {
-            int depthA = GetTransformDepth(a.transform);
-            int depthB = GetTransformDepth(b.transform);
-            if (depthA != depthB) return depthA.CompareTo(depthB);
-            return a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex());
-        });
-        return result;
-    }
-
-    private int GetTransformDepth(Transform t)
-    {
-        int depth = 0;
-        while (t != null)
-        {
-            depth++;
-            t = t.parent;
-        }
-        return depth;
     }
 
     private bool SetSlotSpriteOrHide(UnityEngine.UI.Image img, Sprite sprite)
