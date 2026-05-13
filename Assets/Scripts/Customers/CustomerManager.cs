@@ -1093,14 +1093,19 @@ public class CustomerManager : MonoBehaviour
             if (img == null) continue;
             if (customerObject != null && img.gameObject == customerObject) continue;
 
-            string n = img.gameObject.name.ToLowerInvariant();
-            if (n.Contains("placeholder"))
+            string lowerName = img.gameObject.name.ToLowerInvariant();
+            bool isKnownPlaceholder =
+                lowerName == "headplaceholder" ||
+                lowerName == "shirtplaceholder" ||
+                lowerName == "hairplaceholder" ||
+                lowerName.StartsWith("placeholder");
+
+            if (isKnownPlaceholder)
                 result.Add(img);
         }
 
         result.Sort((a, b) =>
         {
-            if (a == null || b == null) return 0;
             int depthA = GetTransformDepth(a.transform);
             int depthB = GetTransformDepth(b.transform);
             if (depthA != depthB) return depthA.CompareTo(depthB);
