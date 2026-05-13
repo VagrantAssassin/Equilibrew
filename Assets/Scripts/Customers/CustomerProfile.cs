@@ -66,6 +66,8 @@ public class CustomerProfile : ScriptableObject
     public TextAsset successStory;
     public List<TextAsset> wrongStories = new List<TextAsset>();
     public TextAsset wrongStory;
+    [Tooltip("Leave dialog variants when customer decides to leave. Falls back to leaveStory if empty.")]
+    public List<TextAsset> leaveStories = new List<TextAsset>();
     public TextAsset leaveStory;
 
     [Header("Behavior")]
@@ -168,6 +170,18 @@ public class CustomerProfile : ScriptableObject
         }
 
         return wrongStory;
+    }
+
+    public TextAsset GetRandomLeaveStory()
+    {
+        if (leaveStories != null && leaveStories.Count > 0)
+        {
+            var valid = leaveStories.FindAll(w => w != null);
+            if (valid.Count > 0)
+                return valid[UnityEngine.Random.Range(0, valid.Count)];
+        }
+
+        return leaveStory;
     }
 
     public Sprite GetRandomHeadSprite() => GetRandomSpriteFrom(headSprites);
