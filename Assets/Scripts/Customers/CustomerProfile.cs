@@ -176,7 +176,7 @@ public class CustomerProfile : ScriptableObject
     {
         if (leaveStories != null && leaveStories.Count > 0)
         {
-            var valid = leaveStories.FindAll(w => w != null);
+            var valid = leaveStories.FindAll(story => story != null);
             if (valid.Count > 0)
                 return valid[UnityEngine.Random.Range(0, valid.Count)];
         }
