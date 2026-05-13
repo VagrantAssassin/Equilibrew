@@ -63,6 +63,8 @@ public class CustomerProfile : ScriptableObject
     public List<TextAsset> curhatStoriesSoulmate = new List<TextAsset>();
 
     [Header("Outcome dialogs (optional)")]
+    [Tooltip("Success dialog variants when order is correct. Falls back to successStory if empty.")]
+    public List<TextAsset> successStories = new List<TextAsset>();
     public TextAsset successStory;
     public List<TextAsset> wrongStories = new List<TextAsset>();
     public TextAsset wrongStory;
@@ -170,6 +172,18 @@ public class CustomerProfile : ScriptableObject
         }
 
         return wrongStory;
+    }
+
+    public TextAsset GetRandomSuccessStory()
+    {
+        if (successStories != null && successStories.Count > 0)
+        {
+            var valid = successStories.FindAll(story => story != null);
+            if (valid.Count > 0)
+                return valid[UnityEngine.Random.Range(0, valid.Count)];
+        }
+
+        return successStory;
     }
 
     public TextAsset GetRandomLeaveStory()
