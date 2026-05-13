@@ -89,6 +89,7 @@ public class CustomerManager : MonoBehaviour
     private int todaysIndex = 0;
     private Customer currentCustomer = null;
     private CustomerProfile currentProfile = null;
+    private string currentCustomerDisplayName = "";
     private GameObject activeDialogInstance = null;
     private Coroutine messageCoroutine = null;
 
@@ -96,6 +97,7 @@ public class CustomerManager : MonoBehaviour
     private int currentRequestedIndex = -1;
     private string currentRequestedRecipeName = null;
     private TextAsset currentRequestedOrderStory = null;
+    private TextAsset currentWrongStory = null;
 
     private enum ManagerState { Idle, Ordering, WaitingForServe, ShowingMessage, WaitingBetweenCustomers, DayEnding }
     private ManagerState state = ManagerState.Idle;
@@ -214,11 +216,11 @@ public class CustomerManager : MonoBehaviour
             var originalFirst = pool[0];
             pool[0] = pool[i];
             pool[i] = originalFirst;
-            Debug.Log($"[CustomerManager] Reordered start-of-day queue to avoid cross-day immediate repeat: '{lastSpawnedProfile.profileName}'.");
+            Debug.Log($"[CustomerManager] Reordered start-of-day queue to avoid cross-day immediate repeat: '{lastSpawnedProfile.categoryName}'.");
             return;
         }
 
-        Debug.LogWarning($"[CustomerManager] Cross-day immediate repeat unavoidable for profile '{lastSpawnedProfile.profileName}'.");
+        Debug.LogWarning($"[CustomerManager] Cross-day immediate repeat unavoidable for profile '{lastSpawnedProfile.categoryName}'.");
     }
 
     private void SpawnNextFromToday()
@@ -256,29 +258,19 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
+        profile.ResetAffinity();
+        currentCustomerDisplayName = profile.GetRandomDisplayName();
+
         GameObject go = Instantiate(customerPrefab, spawnParent);
-        go.name = "Customer_" + profile.profileName;
+        go.name = $"Customer_{profile.categoryName}_{currentCustomerDisplayName}";
         var cust = go.GetComponent<Customer>() ?? go.AddComponent<Customer>();
 
         // configure customer
-        cust.maxFails = Mathf.Max(1, profile.maxFails);
+        cust.maxFails = profile.GetRandomMaxFails();
         cust.failCount = 0;
         cust.profile = profile;
 
-        var img = go.GetComponentInChildren<UnityEngine.UI.Image>(true);
-        if (img != null)
-        {
-            if (profile.portrait != null)
-            {
-                img.sprite = profile.portrait;
-                img.color = Color.white;
-            }
-            else
-            {
-                img.sprite = null;
-                img.color = new Color(1, 1, 1, 0f);
-            }
-        }
+        ApplyRandomCustomerVisuals(go, profile);
 
         // Visual fade-in if available (try both controller names)
         var visOld = go.GetComponent("CustomerVisualController");
@@ -303,37 +295,15 @@ public class CustomerManager : MonoBehaviour
             AudioManager.Instance.PlaySFX_NPCSpawn();
         }
 
-        // Selection logic: pick index from preferredRecipeNames, then use orderStories[index]
-        int prefCount = profile.preferredRecipeNames != null ? profile.preferredRecipeNames.Count : 0;
-        int storyCount = profile.orderStories != null ? profile.orderStories.Count : 0;
-
-        if (prefCount <= 0)
+        if (!profile.TryGetRandomOrder(out currentRequestedRecipeName, out currentRequestedOrderStory))
         {
-            Debug.LogWarning("[CustomerManager] Profile has no preferredRecipeNames. Skipping profile: " + profile.profileName);
+            Debug.LogWarning("[CustomerManager] Profile has no order setup. Skipping profile: " + profile.categoryName);
             Destroy(go);
             SpawnNextFromToday();
             return;
         }
-
-        int idx = UnityEngine.Random.Range(0, prefCount);
-        currentRequestedIndex = idx;
-        currentRequestedRecipeName = profile.preferredRecipeNames[idx];
-
-        if (idx < storyCount)
-            currentRequestedOrderStory = profile.orderStories[idx];
-        else
-        {
-            currentRequestedOrderStory = null;
-            Debug.LogWarning($"[CustomerManager] Profile '{profile.profileName}' missing orderStories[{idx}]. Falling back to placeholder.");
-        }
-
-        // Override with tier-specific order story if available (affinity system)
-        List<TextAsset> tierOrderStories = GetOrderStoriesForTier(profile);
-        if (tierOrderStories != null && idx < tierOrderStories.Count && tierOrderStories[idx] != null)
-        {
-            currentRequestedOrderStory = tierOrderStories[idx];
-            Debug.Log($"[CustomerManager] Using tier-specific order story for tier={profile.GetCurrentTier()} affinity={profile.affinity}%");
-        }
+        currentRequestedIndex = -1;
+        currentWrongStory = profile.GetRandomWrongStory();
 
         currentProfile = profile;
 
@@ -348,7 +318,7 @@ public class CustomerManager : MonoBehaviour
         cust.SetRequest(requestedRecipe);
         currentCustomer = cust;
 
-        Debug.Log($"[CustomerManager] Spawned '{profile.profileName}' idx={currentRequestedIndex} recipe='{currentRequestedRecipeName}' hasOrderStory={(currentRequestedOrderStory!=null)}");
+        Debug.Log($"[CustomerManager] Spawned category='{profile.categoryName}' name='{currentCustomerDisplayName}' recipe='{currentRequestedRecipeName}' maxFails={cust.maxFails} affinityStart={profile.affinity}% hasOrderStory={(currentRequestedOrderStory!=null)}");
 
         // Prepare affinity widget display values (will be shown by InkDialogController when dialog opens)
         UpdateAffinityWidgetDisplay(profile);
@@ -361,7 +331,7 @@ public class CustomerManager : MonoBehaviour
         {
             ClearDialogInstance();
             // set speaker name for dialog
-            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
 
             // For ordering we intentionally set leavePanelOpen = true so we can reuse the panel.
             // Ordering normally does not require ack (requireUserToAcknowledgeEnd = false),
@@ -455,14 +425,14 @@ public class CustomerManager : MonoBehaviour
                 var swap = todaysProfiles[todaysIndex];
                 todaysProfiles[todaysIndex] = todaysProfiles[i];
                 todaysProfiles[i] = swap;
-                Debug.Log($"[CustomerManager] Reordered today's queue to avoid immediate repeat: '{lastSpawnedProfile.profileName}' moved away from index {todaysIndex}.");
+                Debug.Log($"[CustomerManager] Reordered today's queue to avoid immediate repeat: '{lastSpawnedProfile.categoryName}' moved away from index {todaysIndex}.");
                 break;
             }
         }
 
         var selected = todaysProfiles[todaysIndex++];
         if (selected == lastSpawnedProfile)
-            Debug.LogWarning($"[CustomerManager] Immediate repeat unavoidable for profile '{selected?.profileName ?? "null"}'.");
+            Debug.LogWarning($"[CustomerManager] Immediate repeat unavoidable for profile '{selected?.categoryName ?? "null"}'.");
 
         lastSpawnedProfile = selected;
         return selected;
@@ -551,14 +521,14 @@ public class CustomerManager : MonoBehaviour
         if (!reached)
         {
             // Not yet leaving: try to play profile.wrongStory if exists
-            if (currentProfile != null && currentProfile.wrongStory != null && inkDialogController != null)
+            if (currentProfile != null && currentWrongStory != null && inkDialogController != null)
             {
                 // Ensure serve is blocked while the wrongStory is actively playing
                 allowServeWhilePanelOpen = false;
 
                 // set speaker name
-                inkDialogController.SetSpeakerName(currentProfile.profileName);
-                StartCoroutine(PlayWrongStoryThenRestore(currentProfile.wrongStory));
+                inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
+                StartCoroutine(PlayWrongStoryThenRestore(currentWrongStory));
             }
             else
             {
@@ -598,7 +568,7 @@ public class CustomerManager : MonoBehaviour
         if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
         {
             // set speaker name
-            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
             StartCoroutine(PlayLeaveStoryThenAdvance(currentProfile.leaveStory));
         }
         else
@@ -637,7 +607,7 @@ public class CustomerManager : MonoBehaviour
         {
             // any story that requires ack or is not an ordering flow should disable allowServeWhilePanelOpen
             allowServeWhilePanelOpen = false;
-            inkDialogController.SetSpeakerName(currentProfile != null ? currentProfile.profileName : "");
+            inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
             inkDialogController.PlayCurhat(story, callback, skipOpenAnim, leaveOpen, requireAck);
         }
     }
@@ -650,7 +620,7 @@ public class CustomerManager : MonoBehaviour
             bool done = false;
             DialogueReaction ignored = DialogueReaction.Neutral;
             // set speaker name
-            inkDialogController.SetSpeakerName(currentProfile.profileName);
+            inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
             // successStory requires acknowledgement from player at end
             // success story should block serve while showing/ack required
             allowServeWhilePanelOpen = false;
@@ -770,7 +740,7 @@ public class CustomerManager : MonoBehaviour
         if (curhatToPlay != null && inkDialogController != null)
         {
             // set speaker name
-            inkDialogController.SetSpeakerName(currentProfile != null ? currentProfile.profileName : "");
+            inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
 
             // wait if controller busy
             while (inkDialogController.IsPlaying)
@@ -976,14 +946,14 @@ public class CustomerManager : MonoBehaviour
 
     #region Affinity helpers
     /// <summary>
-    /// Reset affinity semua profil ke 50%. Dipanggil saat game mulai atau di-restart.
+    /// Reset affinity semua profil ke nilai random awal sesuai konfigurasi profile.
     /// </summary>
     private void ResetAllAffinities()
     {
         if (profiles == null) return;
         foreach (var p in profiles)
             if (p != null) p.ResetAffinity();
-        Debug.Log("[CustomerManager] All affinities reset to 50%.");
+        Debug.Log("[CustomerManager] All profile affinities reset.");
     }
 
     /// <summary>Handler untuk GameManager.OnGameRestartEvent.</summary>
@@ -1039,6 +1009,87 @@ public class CustomerManager : MonoBehaviour
         if (profile == null) return;
         ResolveAffinityWidget()?.UpdateDisplay(profile.affinity, profile.GetCurrentTier());
     }
+
+    private string GetCurrentSpeakerName()
+    {
+        if (!string.IsNullOrWhiteSpace(currentCustomerDisplayName))
+            return currentCustomerDisplayName;
+        if (currentProfile != null && !string.IsNullOrWhiteSpace(currentProfile.categoryName))
+            return currentProfile.categoryName;
+        return "";
+    }
+
+    private void ApplyRandomCustomerVisuals(GameObject customerObject, CustomerProfile profile)
+    {
+        if (customerObject == null || profile == null)
+            return;
+
+        var allImages = customerObject.GetComponentsInChildren<UnityEngine.UI.Image>(true);
+        if (allImages == null || allImages.Length == 0)
+            return;
+
+        var headSprite = profile.GetRandomHeadSprite();
+        var hairSprite = profile.GetRandomHairSprite();
+        var shirtSprite = profile.GetRandomShirtSprite();
+
+        bool usedAnyPartSlot = false;
+        foreach (var img in allImages)
+        {
+            if (img == null) continue;
+
+            string lowName = img.gameObject.name.ToLowerInvariant();
+            if (IsHeadSlot(lowName))
+            {
+                usedAnyPartSlot |= TrySetSprite(img, headSprite);
+            }
+            else if (IsHairSlot(lowName))
+            {
+                usedAnyPartSlot |= TrySetSprite(img, hairSprite);
+            }
+            else if (IsShirtSlot(lowName))
+            {
+                usedAnyPartSlot |= TrySetSprite(img, shirtSprite);
+            }
+        }
+
+        if (!usedAnyPartSlot)
+        {
+            var fallbackImage = allImages[0];
+            Sprite fallbackSprite = shirtSprite ?? hairSprite ?? headSprite ?? profile.portrait;
+            if (fallbackImage != null && fallbackSprite != null)
+                TrySetSprite(fallbackImage, fallbackSprite);
+            else if (fallbackImage != null)
+            {
+                fallbackImage.sprite = null;
+                fallbackImage.color = new Color(1, 1, 1, 0f);
+            }
+        }
+    }
+
+    private bool TrySetSprite(UnityEngine.UI.Image img, Sprite sprite)
+    {
+        if (img == null || sprite == null)
+            return false;
+
+        img.sprite = sprite;
+        img.color = Color.white;
+        return true;
+    }
+
+    private bool IsHeadSlot(string name)
+    {
+        return name.Contains("head") || name.Contains("kepala");
+    }
+
+    private bool IsHairSlot(string name)
+    {
+        return name.Contains("hair") || name.Contains("rambut");
+    }
+
+    private bool IsShirtSlot(string name)
+    {
+        return name.Contains("shirt") || name.Contains("baju") || name.Contains("body") || name.Contains("cloth");
+    }
     #endregion
 
     #region Dialog helper (legacy placeholder)
@@ -1067,7 +1118,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         // Auto set speaker/name on legacy dialog instance if it has a child named "Name" or "SpeakerName"
-        SetNameOnDialogInstance(activeDialogInstance, currentProfile != null ? currentProfile.profileName : "");
+        SetNameOnDialogInstance(activeDialogInstance, GetCurrentSpeakerName());
     }
 
     private void ClearDialogInstance()
@@ -1139,9 +1190,11 @@ public class CustomerManager : MonoBehaviour
             // clear references immediately (so gameplay can continue)
             currentCustomer = null;
             currentProfile = null;
+            currentCustomerDisplayName = "";
             currentRequestedIndex = -1;
             currentRequestedRecipeName = null;
             currentRequestedOrderStory = null;
+            currentWrongStory = null;
 
             // Hide affinity widget — no active customer
             ResolveAffinityWidget()?.Hide();
