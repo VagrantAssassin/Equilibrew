@@ -1076,7 +1076,8 @@ public class CustomerManager : MonoBehaviour
             if (customerObject != null && img.gameObject == customerObject)
             {
                 var rootColor = img.color;
-                img.color = new Color(rootColor.r, rootColor.g, rootColor.b, 0f);
+                rootColor.a = 0f;
+                img.color = rootColor;
                 continue;
             }
 
