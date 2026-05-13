@@ -1030,6 +1030,8 @@ public class CustomerManager : MonoBehaviour
         if (allImages == null || allImages.Length == 0)
             return;
 
+        ResetSpawnSpriteAlpha(allImages, customerObject);
+
         var headSprite = profile.GetRandomHeadSprite();
         var hairSprite = profile.GetRandomHairSprite();
         var shirtSprite = profile.GetRandomShirtSprite();
@@ -1060,6 +1062,25 @@ public class CustomerManager : MonoBehaviour
                 TrySetSprite(fallbackImage, fallbackSprite);
             else if (fallbackImage != null)
                 SetSlotSpriteOrHide(fallbackImage, null);
+        }
+    }
+
+    private void ResetSpawnSpriteAlpha(UnityEngine.UI.Image[] allImages, GameObject customerObject)
+    {
+        if (allImages == null || allImages.Length == 0)
+            return;
+
+        foreach (var img in allImages)
+        {
+            if (img == null) continue;
+            if (customerObject != null && img.gameObject == customerObject) continue;
+
+            string lowerName = img.gameObject.name.ToLowerInvariant();
+            if (!IsHeadSlot(lowerName) && !IsShirtSlot(lowerName) && !IsHairSlot(lowerName) && !lowerName.Contains("placeholder"))
+                continue;
+
+            var c = img.color;
+            img.color = new Color(c.r, c.g, c.b, 0f);
         }
     }
 
