@@ -1034,38 +1034,170 @@ public class CustomerManager : MonoBehaviour
         var hairSprite = profile.GetRandomHairSprite();
         var shirtSprite = profile.GetRandomShirtSprite();
 
-        bool usedAnyPartSlot = false;
-        foreach (var img in allImages)
-        {
-            if (img == null) continue;
+        var headSlot = FindFirstSlotByName(allImages, IsHeadSlot);
+        var shirtSlot = FindFirstSlotByName(allImages, IsShirtSlot);
+        var hairSlot = FindFirstSlotByName(allImages, IsHairSlot);
 
-            string lowName = img.gameObject.name.ToLowerInvariant();
-            if (IsHeadSlot(lowName))
+        // Backward compatibility: if prefab masih punya 1 Image saja, auto-buat 3 slot part.
+        if (headSlot == null || shirtSlot == null || hairSlot == null)
+        {
+            var template = allImages[0];
+            EnsureAutoPartSlots(template, out headSlot, out shirtSlot, out hairSlot);
+            if (template != null)
             {
-                usedAnyPartSlot |= TrySetSprite(img, headSprite);
-            }
-            else if (IsHairSlot(lowName))
-            {
-                usedAnyPartSlot |= TrySetSprite(img, hairSprite);
-            }
-            else if (IsShirtSlot(lowName))
-            {
-                usedAnyPartSlot |= TrySetSprite(img, shirtSprite);
+                template.sprite = null;
+                template.color = new Color(1f, 1f, 1f, 0f);
+                template.raycastTarget = false;
             }
         }
+
+        bool usedAnyPartSlot = false;
+        usedAnyPartSlot |= SetSlotSpriteOrHide(headSlot, headSprite);
+        usedAnyPartSlot |= SetSlotSpriteOrHide(shirtSlot, shirtSprite);
+        usedAnyPartSlot |= SetSlotSpriteOrHide(hairSlot, hairSprite);
+
+        ApplyPartLayerOrder(headSlot, shirtSlot, hairSlot);
 
         if (!usedAnyPartSlot)
         {
-            var fallbackImage = allImages[0];
-            Sprite fallbackSprite = shirtSprite ?? hairSprite ?? headSprite ?? profile.portrait;
+            var fallbackImage = shirtSlot ?? hairSlot ?? headSlot ?? allImages[0];
+            Sprite fallbackSprite = profile.portrait;
             if (fallbackImage != null && fallbackSprite != null)
                 TrySetSprite(fallbackImage, fallbackSprite);
             else if (fallbackImage != null)
-            {
-                fallbackImage.sprite = null;
-                fallbackImage.color = new Color(1, 1, 1, 0f);
-            }
+                SetSlotSpriteOrHide(fallbackImage, null);
         }
+    }
+
+    private UnityEngine.UI.Image FindFirstSlotByName(UnityEngine.UI.Image[] allImages, Func<string, bool> slotMatcher)
+    {
+        if (allImages == null || slotMatcher == null)
+            return null;
+
+        foreach (var img in allImages)
+        {
+            if (img == null) continue;
+            if (slotMatcher(img.gameObject.name.ToLowerInvariant()))
+                return img;
+        }
+
+        return null;
+    }
+
+    private void EnsureAutoPartSlots(
+        UnityEngine.UI.Image template,
+        out UnityEngine.UI.Image headSlot,
+        out UnityEngine.UI.Image shirtSlot,
+        out UnityEngine.UI.Image hairSlot)
+    {
+        headSlot = null;
+        shirtSlot = null;
+        hairSlot = null;
+        if (template == null) return;
+
+        const string rootName = "AutoCustomerParts";
+        const string headName = "Head";
+        const string shirtName = "Shirt";
+        const string hairName = "Hair";
+
+        var templateRect = template.rectTransform;
+        var parent = templateRect.parent as RectTransform;
+        if (parent == null) return;
+
+        RectTransform rootRect = null;
+        var existingRoot = parent.Find(rootName);
+        if (existingRoot != null)
+            rootRect = existingRoot as RectTransform;
+        if (rootRect == null)
+        {
+            var rootObj = new GameObject(rootName, typeof(RectTransform));
+            rootRect = rootObj.GetComponent<RectTransform>();
+            rootRect.SetParent(parent, false);
+        }
+
+        CopyRect(templateRect, rootRect);
+        rootRect.SetSiblingIndex(templateRect.GetSiblingIndex());
+
+        headSlot = GetOrCreateAutoSlot(rootRect, headName, template);
+        shirtSlot = GetOrCreateAutoSlot(rootRect, shirtName, template);
+        hairSlot = GetOrCreateAutoSlot(rootRect, hairName, template);
+
+        ApplyPartLayerOrder(headSlot, shirtSlot, hairSlot);
+    }
+
+    private UnityEngine.UI.Image GetOrCreateAutoSlot(RectTransform parent, string childName, UnityEngine.UI.Image template)
+    {
+        if (parent == null || template == null) return null;
+
+        RectTransform childRect = null;
+        var existing = parent.Find(childName);
+        if (existing != null)
+            childRect = existing as RectTransform;
+
+        UnityEngine.UI.Image image;
+        if (childRect == null)
+        {
+            var go = new GameObject(childName, typeof(RectTransform), typeof(UnityEngine.CanvasRenderer), typeof(UnityEngine.UI.Image));
+            childRect = go.GetComponent<RectTransform>();
+            childRect.SetParent(parent, false);
+            image = go.GetComponent<UnityEngine.UI.Image>();
+        }
+        else
+        {
+            image = childRect.GetComponent<UnityEngine.UI.Image>() ?? childRect.gameObject.AddComponent<UnityEngine.UI.Image>();
+        }
+
+        CopyRect(template.rectTransform, childRect);
+        image.material = template.material;
+        image.maskable = template.maskable;
+        image.raycastTarget = false;
+        SetSlotSpriteOrHide(image, null);
+        return image;
+    }
+
+    private void CopyRect(RectTransform from, RectTransform to)
+    {
+        if (from == null || to == null) return;
+
+        to.anchorMin = from.anchorMin;
+        to.anchorMax = from.anchorMax;
+        to.pivot = from.pivot;
+        to.anchoredPosition = from.anchoredPosition;
+        to.sizeDelta = from.sizeDelta;
+        to.localScale = from.localScale;
+        to.localRotation = from.localRotation;
+    }
+
+    private void ApplyPartLayerOrder(UnityEngine.UI.Image headSlot, UnityEngine.UI.Image shirtSlot, UnityEngine.UI.Image hairSlot)
+    {
+        if (headSlot == null || shirtSlot == null || hairSlot == null)
+            return;
+
+        var headParent = headSlot.transform.parent;
+        if (headParent == null || shirtSlot.transform.parent != headParent || hairSlot.transform.parent != headParent)
+            return;
+
+        int minIndex = Mathf.Min(headSlot.transform.GetSiblingIndex(), shirtSlot.transform.GetSiblingIndex(), hairSlot.transform.GetSiblingIndex());
+        headSlot.transform.SetSiblingIndex(minIndex);       // paling belakang
+        shirtSlot.transform.SetSiblingIndex(minIndex + 1);  // tengah
+        hairSlot.transform.SetSiblingIndex(minIndex + 2);   // paling depan
+    }
+
+    private bool SetSlotSpriteOrHide(UnityEngine.UI.Image img, Sprite sprite)
+    {
+        if (img == null)
+            return false;
+
+        if (sprite == null)
+        {
+            img.sprite = null;
+            img.color = new Color(1f, 1f, 1f, 0f);
+            return false;
+        }
+
+        img.sprite = sprite;
+        img.color = Color.white;
+        return true;
     }
 
     private bool TrySetSprite(UnityEngine.UI.Image img, Sprite sprite)
