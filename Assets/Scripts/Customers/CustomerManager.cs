@@ -1038,16 +1038,16 @@ public class CustomerManager : MonoBehaviour
         var shirtSlot = FindFirstSlotByName(allImages, IsShirtSlot);
         var hairSlot = FindFirstSlotByName(allImages, IsHairSlot);
 
-        // Backward compatibility: if prefab masih punya 1 Image saja, auto-buat 3 slot part.
+        // Fallback: gunakan 3 image placeholder yang sudah disiapkan di prefab/spawn
+        // (berdasarkan nama mengandung "placeholder"), urut sesuai hierarchy.
         if (headSlot == null || shirtSlot == null || hairSlot == null)
         {
-            var template = allImages[0];
-            EnsureAutoPartSlots(template, out headSlot, out shirtSlot, out hairSlot);
-            if (template != null)
+            var placeholderSlots = FindPlaceholderSlots(allImages, customerObject);
+            if (placeholderSlots.Count >= 3)
             {
-                template.sprite = null;
-                template.color = new Color(1f, 1f, 1f, 0f);
-                template.raycastTarget = false;
+                if (headSlot == null) headSlot = placeholderSlots[0];
+                if (shirtSlot == null) shirtSlot = placeholderSlots[1];
+                if (hairSlot == null) hairSlot = placeholderSlots[2];
             }
         }
 
@@ -1055,8 +1055,6 @@ public class CustomerManager : MonoBehaviour
         usedAnyPartSlot |= SetSlotSpriteOrHide(headSlot, headSprite);
         usedAnyPartSlot |= SetSlotSpriteOrHide(shirtSlot, shirtSprite);
         usedAnyPartSlot |= SetSlotSpriteOrHide(hairSlot, hairSprite);
-
-        ApplyPartLayerOrder(headSlot, shirtSlot, hairSlot);
 
         if (!usedAnyPartSlot)
         {
@@ -1084,103 +1082,42 @@ public class CustomerManager : MonoBehaviour
         return null;
     }
 
-    private void EnsureAutoPartSlots(
-        UnityEngine.UI.Image template,
-        out UnityEngine.UI.Image headSlot,
-        out UnityEngine.UI.Image shirtSlot,
-        out UnityEngine.UI.Image hairSlot)
+    private List<UnityEngine.UI.Image> FindPlaceholderSlots(UnityEngine.UI.Image[] allImages, GameObject customerObject)
     {
-        headSlot = null;
-        shirtSlot = null;
-        hairSlot = null;
-        if (template == null) return;
+        var result = new List<UnityEngine.UI.Image>();
+        if (allImages == null || allImages.Length == 0)
+            return result;
 
-        const string rootName = "AutoCustomerParts";
-        const string headName = "Head";
-        const string shirtName = "Shirt";
-        const string hairName = "Hair";
-
-        var templateRect = template.rectTransform;
-        var parent = templateRect.parent as RectTransform;
-        if (parent == null) return;
-
-        RectTransform rootRect = null;
-        var existingRoot = parent.Find(rootName);
-        if (existingRoot != null)
-            rootRect = existingRoot as RectTransform;
-        if (rootRect == null)
+        foreach (var img in allImages)
         {
-            var rootObj = new GameObject(rootName, typeof(RectTransform));
-            rootRect = rootObj.GetComponent<RectTransform>();
-            rootRect.SetParent(parent, false);
+            if (img == null) continue;
+            if (customerObject != null && img.gameObject == customerObject) continue;
+
+            string n = img.gameObject.name.ToLowerInvariant();
+            if (n.Contains("placeholder"))
+                result.Add(img);
         }
 
-        CopyRect(templateRect, rootRect);
-        rootRect.SetSiblingIndex(templateRect.GetSiblingIndex());
-
-        headSlot = GetOrCreateAutoSlot(rootRect, headName, template);
-        shirtSlot = GetOrCreateAutoSlot(rootRect, shirtName, template);
-        hairSlot = GetOrCreateAutoSlot(rootRect, hairName, template);
-
-        ApplyPartLayerOrder(headSlot, shirtSlot, hairSlot);
-    }
-
-    private UnityEngine.UI.Image GetOrCreateAutoSlot(RectTransform parent, string childName, UnityEngine.UI.Image template)
-    {
-        if (parent == null || template == null) return null;
-
-        RectTransform childRect = null;
-        var existing = parent.Find(childName);
-        if (existing != null)
-            childRect = existing as RectTransform;
-
-        UnityEngine.UI.Image image;
-        if (childRect == null)
+        result.Sort((a, b) =>
         {
-            var go = new GameObject(childName, typeof(RectTransform), typeof(UnityEngine.CanvasRenderer), typeof(UnityEngine.UI.Image));
-            childRect = go.GetComponent<RectTransform>();
-            childRect.SetParent(parent, false);
-            image = go.GetComponent<UnityEngine.UI.Image>();
-        }
-        else
+            if (a == null || b == null) return 0;
+            int depthA = GetTransformDepth(a.transform);
+            int depthB = GetTransformDepth(b.transform);
+            if (depthA != depthB) return depthA.CompareTo(depthB);
+            return a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex());
+        });
+        return result;
+    }
+
+    private int GetTransformDepth(Transform t)
+    {
+        int depth = 0;
+        while (t != null)
         {
-            image = childRect.GetComponent<UnityEngine.UI.Image>() ?? childRect.gameObject.AddComponent<UnityEngine.UI.Image>();
+            depth++;
+            t = t.parent;
         }
-
-        CopyRect(template.rectTransform, childRect);
-        image.material = template.material;
-        image.maskable = template.maskable;
-        image.raycastTarget = false;
-        SetSlotSpriteOrHide(image, null);
-        return image;
-    }
-
-    private void CopyRect(RectTransform from, RectTransform to)
-    {
-        if (from == null || to == null) return;
-
-        to.anchorMin = from.anchorMin;
-        to.anchorMax = from.anchorMax;
-        to.pivot = from.pivot;
-        to.anchoredPosition = from.anchoredPosition;
-        to.sizeDelta = from.sizeDelta;
-        to.localScale = from.localScale;
-        to.localRotation = from.localRotation;
-    }
-
-    private void ApplyPartLayerOrder(UnityEngine.UI.Image headSlot, UnityEngine.UI.Image shirtSlot, UnityEngine.UI.Image hairSlot)
-    {
-        if (headSlot == null || shirtSlot == null || hairSlot == null)
-            return;
-
-        var headParent = headSlot.transform.parent;
-        if (headParent == null || shirtSlot.transform.parent != headParent || hairSlot.transform.parent != headParent)
-            return;
-
-        int minIndex = Mathf.Min(headSlot.transform.GetSiblingIndex(), shirtSlot.transform.GetSiblingIndex(), hairSlot.transform.GetSiblingIndex());
-        headSlot.transform.SetSiblingIndex(minIndex);       // paling belakang
-        shirtSlot.transform.SetSiblingIndex(minIndex + 1);  // tengah
-        hairSlot.transform.SetSiblingIndex(minIndex + 2);   // paling depan
+        return depth;
     }
 
     private bool SetSlotSpriteOrHide(UnityEngine.UI.Image img, Sprite sprite)
