@@ -565,11 +565,12 @@ public class CustomerManager : MonoBehaviour
         if (GameManager.Instance != null)
             GameManager.Instance.AddScore(GameManager.Instance.pointsPenaltyOnMaxFail, "max_fail_penalty");
 
-        if (currentProfile != null && currentProfile.leaveStory != null && inkDialogController != null)
+        TextAsset leaveStoryToPlay = currentProfile != null ? currentProfile.GetRandomLeaveStory() : null;
+        if (leaveStoryToPlay != null && inkDialogController != null)
         {
             // set speaker name
             inkDialogController.SetSpeakerName(GetCurrentSpeakerName());
-            StartCoroutine(PlayLeaveStoryThenAdvance(currentProfile.leaveStory));
+            StartCoroutine(PlayLeaveStoryThenAdvance(leaveStoryToPlay));
         }
         else
         {
