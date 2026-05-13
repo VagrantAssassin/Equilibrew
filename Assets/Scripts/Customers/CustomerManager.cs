@@ -1030,7 +1030,7 @@ public class CustomerManager : MonoBehaviour
         if (allImages == null || allImages.Length == 0)
             return;
 
-        ResetSpawnSpriteAlpha(allImages, customerObject);
+        InitializeSpriteSlotsTransparent(allImages, customerObject);
 
         var headSprite = profile.GetRandomHeadSprite();
         var hairSprite = profile.GetRandomHairSprite();
@@ -1065,7 +1065,7 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
-    private void ResetSpawnSpriteAlpha(UnityEngine.UI.Image[] allImages, GameObject customerObject)
+    private void InitializeSpriteSlotsTransparent(UnityEngine.UI.Image[] allImages, GameObject customerObject)
     {
         if (allImages == null || allImages.Length == 0)
             return;
@@ -1073,15 +1073,21 @@ public class CustomerManager : MonoBehaviour
         foreach (var img in allImages)
         {
             if (img == null) continue;
+            // Root customer object bisa punya Image sendiri yang dipakai untuk layout/anchor, jangan diubah di sini.
             if (customerObject != null && img.gameObject == customerObject) continue;
 
             string lowerName = img.gameObject.name.ToLowerInvariant();
-            if (!IsHeadSlot(lowerName) && !IsShirtSlot(lowerName) && !IsHairSlot(lowerName) && !lowerName.Contains("placeholder"))
+            if (!IsSpritePartSlot(lowerName))
                 continue;
 
             var c = img.color;
             img.color = new Color(c.r, c.g, c.b, 0f);
         }
+    }
+
+    private bool IsSpritePartSlot(string lowerName)
+    {
+        return IsHeadSlot(lowerName) || IsShirtSlot(lowerName) || IsHairSlot(lowerName) || lowerName.Contains("placeholder");
     }
 
     private UnityEngine.UI.Image FindFirstSlotByName(UnityEngine.UI.Image[] allImages, Func<string, bool> slotMatcher)
