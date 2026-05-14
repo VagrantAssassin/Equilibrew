@@ -12,22 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
   m_Name: Clara
   m_EditorClassIdentifier: 
-  profileName: Clara
+  categoryName: Clara
+  possibleNames: []
   portrait: {fileID: 21300000, guid: e721e8932786692479bcf4db6dbafe45, type: 3}
+  headSprites:
+  - {fileID: 21300000, guid: e721e8932786692479bcf4db6dbafe45, type: 3}
+  hairSprites:
+  - {fileID: 21300000, guid: 0d47dcb574814574ca62f414b0a073ce, type: 3}
+  shirtSprites:
+  - {fileID: 21300000, guid: ad7fbf34d66fd1f4d8543656b01341ab, type: 3}
+  orderOptions: []
   preferredRecipeNames:
   - Lavender Tea
   - Golden Jasmine Tea
   orderStories:
   - {fileID: 4900000, guid: 260605e049fb58946bd31e7264701023, type: 3}
   - {fileID: 4900000, guid: 5d2fed525b3b48a45a57918df5a11be5, type: 3}
+  orderStoriesHostile: []
+  orderStoriesFriend: []
+  orderStoriesBestFriend: []
+  orderStoriesSoulmate: []
   curhatStories:
   - {fileID: 4900000, guid: 0f1b4116cbd72c94fae635c972fc3e2c, type: 3}
-  - {fileID: 4900000, guid: ef59ddb2103ba204e99e35bcbcd301d9, type: 3}
-  - {fileID: 4900000, guid: 180d60f7ea3b2a34897a3e2f3e1385d5, type: 3}
+  curhatStoriesHostile: []
+  curhatStoriesFriend: []
+  curhatStoriesBestFriend: []
+  curhatStoriesSoulmate: []
+  successStories: []
   successStory: {fileID: 4900000, guid: 73245ab838b10ba42a6d322ad0dd2e70, type: 3}
+  wrongStories: []
   wrongStory: {fileID: 4900000, guid: 2377a8a850042254c9835eba4571de57, type: 3}
+  leaveStories: []
   leaveStory: {fileID: 4900000, guid: f7c71d93f3c9bb34da006be0eeb54fcd, type: 3}
+  minMaxFails: 1
+  maxMaxFails: 3
   maxFails: 2
+  minStartingAffinity: 30
+  maxStartingAffinity: 70
+  startingAffinity: 50
   pointsOnSatisfy: 10
   pointsOnNeutral: 5
   hpLossOnAngry: 1

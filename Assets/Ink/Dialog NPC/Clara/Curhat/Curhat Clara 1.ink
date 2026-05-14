@@ -7,9 +7,17 @@ its so annoyning kan?
     Mami I juga bilang gitu, tidak ada yang mengerti hobi I
     well, I mau shopping saja, bye #reaction:neutral
 
-+ Iya dadi kamu menyebalkan
-    Heh, kamu gausah hina-hina dadi I ya
-    I pergi saja #reaction:angry
++ Iya dadi kamu menyebalkan #reaction:angry
+    Heh, kamu gausah hina-hina dadi I ya 
+    I pergi saja 
+    ++ jangan pergi dulu #reaction:angry
+        apa sih caper banget
+        +++ nanti dulu #reaction:angry
+            ah sudah lah, selamat tinggal
+        +++ nanti dulu #reaction:angry
+        +++ nanti dulu #reaction:angry
+    ++ jangan pergi dulu #reaction:angry
+    ++ jangan pergi dulu #reaction:angry
 
 + Iya, harusnya dadimu mendukung hobimu
     Yes, thats true, dadi tidak mau mendengarkan hobi 
