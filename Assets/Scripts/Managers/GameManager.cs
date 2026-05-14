@@ -82,6 +82,8 @@ public class GameManager : MonoBehaviour
             dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
             dayTransitionContinueButton.onClick.AddListener(OnDayTransitionContinuePressed);
         }
+
+        HideDayTransitionPanel();
     }
 
     private void OnDestroy()
@@ -94,7 +96,6 @@ public class GameManager : MonoBehaviour
     {
         UpdateUI();
         HideGameOverPanel();
-        HideDayTransitionPanel();
     }
 
     public void InitGame()
@@ -171,27 +172,28 @@ public class GameManager : MonoBehaviour
     {
         dayTransitionPanel.SetActive(true);
         if (dayTransitionDayText != null) dayTransitionDayText.text = $"Day {Mathf.Max(1, currentDay)}";
-        if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target: {cumulativeTargetScore}";
+        if (dayTransitionTargetText != null) dayTransitionTargetText.text = $"Target Score: {cumulativeTargetScore}";
         dayTransitionContinueRequested = false;
 
         if (dayTransitionContinueButton != null)
         {
             dayTransitionContinueButton.gameObject.SetActive(true);
-            dayTransitionContinueButton.interactable = false;
+            dayTransitionContinueButton.interactable = true;
         }
-
-        float wait = Mathf.Max(0f, durationSeconds);
-        if (wait > 0f)
-            yield return new WaitForSecondsRealtime(wait);
 
         if (dayTransitionContinueButton != null)
         {
-            dayTransitionContinueButton.interactable = true;
             while (!dayTransitionContinueRequested)
             {
                 if (dayTransitionContinueButton == null) break;
                 yield return null;
             }
+        }
+        else
+        {
+            float wait = Mathf.Max(0f, durationSeconds);
+            if (wait > 0f)
+                yield return new WaitForSecondsRealtime(wait);
         }
 
         HideDayTransitionPanel();
@@ -245,7 +247,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateTargetText()
     {
-        if (targetScoreText != null) targetScoreText.text = $"Target: {cumulativeTargetScore}";
+        if (targetScoreText != null) targetScoreText.text = $"Target Score: {cumulativeTargetScore}";
     }
 
     private void UpdateCurrencyText()
