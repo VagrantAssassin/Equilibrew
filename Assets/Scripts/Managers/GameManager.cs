@@ -183,8 +183,10 @@ public class GameManager : MonoBehaviour
 
         if (dayTransitionContinueButton != null)
         {
-            while (!dayTransitionContinueRequested)
+            while (!dayTransitionContinueRequested && dayTransitionContinueButton != null)
+            {
                 yield return null;
+            }
         }
         else
         {
