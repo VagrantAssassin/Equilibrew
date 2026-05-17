@@ -4382,8 +4382,8 @@ MonoBehaviour:
   inkDialogController: {fileID: 1982367254}
   profiles:
   - {fileID: 11400000, guid: 3a244cf85ccc4e041b02f71d64e43a99, type: 2}
-  minCustomersPerDay: 1
-  maxCustomersPerDay: 1
+  minCustomersPerDay: 2
+  maxCustomersPerDay: 4
   delayBeforeNextDay: 2
   delayBetweenCustomers: 1
   spawnAllPerDay: 0
@@ -4767,7 +4767,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &876105633
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8106,8 +8106,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 540, y: 138}
-  m_SizeDelta: {x: 68.55, y: 68.55}
+  m_AnchoredPosition: {x: 160, y: 300}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1616946787
 PrefabInstance:
@@ -8829,7 +8829,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1695297878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10598,8 +10598,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

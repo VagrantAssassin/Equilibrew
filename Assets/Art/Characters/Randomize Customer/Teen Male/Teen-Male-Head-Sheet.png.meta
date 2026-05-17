@@ -8,6 +8,15 @@ TextureImporter:
   - first:
       213: 5701184206565103554
     second: Teen-Male-Head-Sheet_1
+  - first:
+      213: 2431733543444563700
+    second: Teen-Male-Head-Sheet_2
+  - first:
+      213: 5357706763562903926
+    second: Teen-Male-Head-Sheet_3
+  - first:
+      213: -167403999371530517
+    second: Teen-Male-Head-Sheet_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -155,10 +164,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: c3fe88e3012ccf949b597d2ba1a3f1fe
-      internalID: -833839029
+      spriteID: 3553925060e14d0a0800000000000000
+      internalID: -6857823321373199021
       vertices: []
       indices: 
       edges: []
@@ -177,10 +186,76 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: a0ffda7deb43f8d43a463d165848a237
-      internalID: -1052506394
+      spriteID: 2c7516764dcae1f40800000000000000
+      internalID: 5701184206565103554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Head-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f64a6d16c04fb120800000000000000
+      internalID: 2431733543444563700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Head-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 679efd44ae56a5a40800000000000000
+      internalID: 5357706763562903926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Head-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beeea7313f24dadf0800000000000000
+      internalID: -167403999371530517
       vertices: []
       indices: 
       edges: []
@@ -189,7 +264,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cba020c77067f084aa4f041abc0cd5d4
+    spriteID: 3aac29bfade0dfb41b5a633ac1f3a137
     internalID: 0
     vertices: []
     indices: 
@@ -199,8 +274,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Teen-Male-Head-Sheet_0: -833839029
-      Teen-Male-Head-Sheet_1: -1052506394
+      Teen-Male-Head-Sheet_0: -6857823321373199021
+      Teen-Male-Head-Sheet_1: 5701184206565103554
+      Teen-Male-Head-Sheet_2: 2431733543444563700
+      Teen-Male-Head-Sheet_3: 5357706763562903926
+      Teen-Male-Head-Sheet_4: -167403999371530517
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

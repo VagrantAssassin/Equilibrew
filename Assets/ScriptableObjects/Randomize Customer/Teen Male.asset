@@ -20,23 +20,28 @@ MonoBehaviour:
   - Paul
   portrait: {fileID: 0}
   headSprites:
-  - {fileID: -833839029, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
-  - {fileID: -1052506394, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: -6857823321373199021, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 5701184206565103554, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 2431733543444563700, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 5357706763562903926, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: -167403999371530517, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
   hairSprites:
-  - {fileID: -332074610, guid: 882c0508d78f977439707237717e35d2, type: 3}
-  - {fileID: 1912526038, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -399089000398347022, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -4975085458248475570, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -4684745689622556582, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -9109497111480904628, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -6804496488894052172, guid: 882c0508d78f977439707237717e35d2, type: 3}
   shirtSprites:
-  - {fileID: 1645295616, guid: 34e321dff74808c419a525720adcc16a, type: 3}
-  - {fileID: -1497787793, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: -142032821187138785, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 1680582777852753098, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: -5007652721394007382, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 1162294198698783302, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 6563518197093426195, guid: 34e321dff74808c419a525720adcc16a, type: 3}
   orderOptions: []
   preferredRecipeNames:
   - Green Tea
-  - Black Tea
-  - Mint Tea
-  - Milk Tea
-  - Lavender Tea
-  - Apple Tea
-  orderStories: []
+  orderStories:
+  - {fileID: 4900000, guid: 481f6710a30747f44a4d11ba1cbca07e, type: 3}
   orderStoriesHostile: []
   orderStoriesFriend: []
   orderStoriesBestFriend: []
@@ -65,11 +70,11 @@ MonoBehaviour:
   - {fileID: 4900000, guid: 0ab83df04d78a084e99d407e08f5b83f, type: 3}
   - {fileID: 4900000, guid: 686d479a73d62664387413c18668195a, type: 3}
   leaveStory: {fileID: 0}
-  minMaxFails: 1
+  minMaxFails: 2
   maxMaxFails: 3
   maxFails: 2
-  minStartingAffinity: 30
-  maxStartingAffinity: 70
+  minStartingAffinity: 40
+  maxStartingAffinity: 50
   startingAffinity: 50
   pointsOnSatisfy: 5
   pointsOnNeutral: 0

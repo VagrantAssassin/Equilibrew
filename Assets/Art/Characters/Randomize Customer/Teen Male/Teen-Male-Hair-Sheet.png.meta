@@ -11,6 +11,18 @@ TextureImporter:
   - first:
       213: -4684745689622556582
     second: Teen-Male-Hair-Sheet_2
+  - first:
+      213: -9109497111480904628
+    second: Teen-Male-Hair-Sheet_3
+  - first:
+      213: -6804496488894052172
+    second: Teen-Male-Hair-Sheet_4
+  - first:
+      213: 6782438844461416609
+    second: Teen-Male-Hair-Sheet_5
+  - first:
+      213: 6100639659594682462
+    second: Teen-Male-Hair-Sheet_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -158,10 +170,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: e9c8b41fda4df4b47a1eec06660384e0
-      internalID: -332074610
+      spriteID: 2f4ad792ba6267af0800000000000000
+      internalID: -399089000398347022
       vertices: []
       indices: 
       edges: []
@@ -180,10 +192,76 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: d9aec9318b706f3488cec957752428f2
-      internalID: 1912526038
+      spriteID: e4c53e58222f4fab0800000000000000
+      internalID: -4975085458248475570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Hair-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a50510bbd907cfeb0800000000000000
+      internalID: -4684745689622556582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Hair-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c44dbbb24a0949180800000000000000
+      internalID: -9109497111480904628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teen-Male-Hair-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 120
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b8c310ce729191a0800000000000000
+      internalID: -6804496488894052172
       vertices: []
       indices: 
       edges: []
@@ -192,7 +270,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 196d2417c3fe4834c95b11df0d3601fc
+    spriteID: 42f271bde477fcf4381aa5951db6eef5
     internalID: 0
     vertices: []
     indices: 
@@ -202,8 +280,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Teen-Male-Hair-Sheet_0: -332074610
-      Teen-Male-Hair-Sheet_1: 1912526038
+      Teen-Male-Hair-Sheet_0: -399089000398347022
+      Teen-Male-Hair-Sheet_1: -4975085458248475570
+      Teen-Male-Hair-Sheet_2: -4684745689622556582
+      Teen-Male-Hair-Sheet_3: -9109497111480904628
+      Teen-Male-Hair-Sheet_4: -6804496488894052172
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
