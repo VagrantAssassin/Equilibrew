@@ -109,7 +109,6 @@ public class CustomerManager : MonoBehaviour
     // and used after wrongStory (non-ack) finishes so player can attempt again).
     private bool allowServeWhilePanelOpen = false;
     private Coroutine startDayCoroutine = null;
-    private CustomerProfile lastSpawnedProfile = null;
 
     private void Start()
     {
@@ -159,8 +158,18 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        var pool = new List<CustomerProfile>(profiles);
-        Shuffle(pool);
+        var pool = new List<CustomerProfile>();
+        foreach (var profile in profiles)
+            if (profile != null)
+                pool.Add(profile);
+
+        if (pool.Count == 0)
+        {
+            Debug.LogWarning("[CustomerManager] All assigned customer profiles are null.");
+            todaysProfiles.Clear();
+            todaysIndex = 0;
+            return;
+        }
 
         int count;
         if (spawnAllPerDay)
@@ -170,15 +179,27 @@ public class CustomerManager : MonoBehaviour
         else
         {
             if (maxCustomersPerDay < minCustomersPerDay)
-                Debug.LogWarning($"[CustomerManager] maxCustomersPerDay ({maxCustomersPerDay}) is smaller than minCustomersPerDay ({minCustomersPerDay}); effective range will be [{minCustomersPerDay}, {minCustomersPerDay}] before pool clamping.");
+                Debug.LogWarning($"[CustomerManager] maxCustomersPerDay ({maxCustomersPerDay}) is smaller than minCustomersPerDay ({minCustomersPerDay}); effective range will be [{minCustomersPerDay}, {minCustomersPerDay}].");
 
-            int minC = Mathf.Clamp(minCustomersPerDay, 1, pool.Count);
-            int maxC = Mathf.Clamp(maxCustomersPerDay, minC, pool.Count);
+            int minC = Mathf.Max(1, minCustomersPerDay);
+            int maxC = Mathf.Max(minC, maxCustomersPerDay);
             count = UnityEngine.Random.Range(minC, maxC + 1);
         }
 
-        EnsureFirstCustomerOfDayIsNotImmediateRepeat(pool, count);
-        todaysProfiles = pool.GetRange(0, count);
+        if (spawnAllPerDay)
+        {
+            Shuffle(pool);
+            todaysProfiles = new List<CustomerProfile>(pool);
+        }
+        else
+        {
+            todaysProfiles = new List<CustomerProfile>(count);
+            for (int i = 0; i < count; i++)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, pool.Count);
+                todaysProfiles.Add(pool[randomIndex]);
+            }
+        }
         todaysIndex = 0;
 
         if (GameManager.Instance != null)
@@ -198,29 +219,6 @@ public class CustomerManager : MonoBehaviour
             list[i] = list[j];
             list[j] = tmp;
         }
-    }
-
-    private void EnsureFirstCustomerOfDayIsNotImmediateRepeat(List<CustomerProfile> pool, int todaysCount)
-    {
-        if (pool == null || pool.Count <= 1 || todaysCount <= 0 || lastSpawnedProfile == null)
-            return;
-
-        if (pool[0] != lastSpawnedProfile)
-            return;
-
-        for (int i = 1; i < pool.Count; i++)
-        {
-            if (pool[i] == null || pool[i] == lastSpawnedProfile)
-                continue;
-
-            var originalFirst = pool[0];
-            pool[0] = pool[i];
-            pool[i] = originalFirst;
-            Debug.Log($"[CustomerManager] Reordered start-of-day queue to avoid cross-day immediate repeat: '{lastSpawnedProfile.categoryName}'.");
-            return;
-        }
-
-        Debug.LogWarning($"[CustomerManager] Cross-day immediate repeat unavoidable for profile '{lastSpawnedProfile.categoryName}'.");
     }
 
     private void SpawnNextFromToday()
@@ -244,7 +242,7 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        var profile = TakeNextProfileAvoidingRepeat();
+        var profile = TakeNextProfile();
         if (profile == null)
         {
             Debug.LogWarning("[CustomerManager] Failed to select next profile.");
@@ -404,7 +402,7 @@ public class CustomerManager : MonoBehaviour
         SpawnNextFromToday();
     }
 
-    private CustomerProfile TakeNextProfileAvoidingRepeat()
+    private CustomerProfile TakeNextProfile()
     {
         if (todaysProfiles == null || todaysIndex >= todaysProfiles.Count)
             return null;
@@ -415,27 +413,7 @@ public class CustomerManager : MonoBehaviour
         if (todaysIndex >= todaysProfiles.Count)
             return null;
 
-        if (lastSpawnedProfile != null && todaysProfiles[todaysIndex] == lastSpawnedProfile)
-        {
-            for (int i = todaysIndex + 1; i < todaysProfiles.Count; i++)
-            {
-                if (todaysProfiles[i] == null || todaysProfiles[i] == lastSpawnedProfile)
-                    continue;
-
-                var swap = todaysProfiles[todaysIndex];
-                todaysProfiles[todaysIndex] = todaysProfiles[i];
-                todaysProfiles[i] = swap;
-                Debug.Log($"[CustomerManager] Reordered today's queue to avoid immediate repeat: '{lastSpawnedProfile.categoryName}' moved away from index {todaysIndex}.");
-                break;
-            }
-        }
-
-        var selected = todaysProfiles[todaysIndex++];
-        if (selected == lastSpawnedProfile)
-            Debug.LogWarning($"[CustomerManager] Immediate repeat unavoidable for profile '{selected?.categoryName ?? "null"}'.");
-
-        lastSpawnedProfile = selected;
-        return selected;
+        return todaysProfiles[todaysIndex++];
     }
 
     private float GetAffinityScoreMultiplier(CustomerProfile profile)
@@ -962,7 +940,6 @@ public class CustomerManager : MonoBehaviour
     private void OnGameRestart()
     {
         ResetAllAffinities();
-        lastSpawnedProfile = null;
     }
 
     /// <summary>
