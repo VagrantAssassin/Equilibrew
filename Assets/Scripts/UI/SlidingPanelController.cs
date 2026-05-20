@@ -91,7 +91,7 @@ public class SlidingPanelController : MonoBehaviour
 
     public void Show()
     {
-        if (isOpen && animCoroutine == null) return;
+        if (isOpen) return;
         if (animCoroutine != null) StopCoroutine(animCoroutine);
         animCoroutine = StartCoroutine(AnimateTo(shownAnchoredPos));
         isOpen = true;
@@ -101,7 +101,7 @@ public class SlidingPanelController : MonoBehaviour
 
     public void Hide()
     {
-        if (!isOpen && animCoroutine == null) return;
+        if (!isOpen) return;
         if (animCoroutine != null) StopCoroutine(animCoroutine);
         animCoroutine = StartCoroutine(AnimateTo(hiddenAnchoredPos));
         isOpen = false;
