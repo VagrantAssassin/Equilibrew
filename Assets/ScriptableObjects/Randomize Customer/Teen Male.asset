@@ -16,8 +16,19 @@ MonoBehaviour:
   possibleNames:
   - Kevin
   - Clyde
-  - Elliot
+  - Clark
   - Paul
+  - Law
+  - Chris
+  - Finn
+  - Mich
+  - Carl
+  - Hal
+  - Barry
+  - Bruce
+  - Tony
+  - Steve
+  - Arthur
   portrait: {fileID: 0}
   headSprites:
   - {fileID: -6857823321373199021, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
@@ -37,44 +48,70 @@ MonoBehaviour:
   - {fileID: -5007652721394007382, guid: 34e321dff74808c419a525720adcc16a, type: 3}
   - {fileID: 1162294198698783302, guid: 34e321dff74808c419a525720adcc16a, type: 3}
   - {fileID: 6563518197093426195, guid: 34e321dff74808c419a525720adcc16a, type: 3}
-  orderOptions: []
-  preferredRecipeNames:
-  - Green Tea
-  orderStories:
-  - {fileID: 4900000, guid: 481f6710a30747f44a4d11ba1cbca07e, type: 3}
+  orderOptions:
+  - recipeName: Green Tea
+    orderStory: {fileID: 4900000, guid: 58d0fa88c310c8c4983e94c2a01511f6, type: 3}
+  - recipeName: Black Tea
+    orderStory: {fileID: 4900000, guid: a5190f15ab8fa374fa933216dc931030, type: 3}
+  - recipeName: Lavender  Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Jasmine Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Milk Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Mint Milk Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Matcha Latte
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Honey Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Golden Jasmine Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Apple Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Green Apple Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Mint Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  preferredRecipeNames: []
+  orderStories: []
   orderStoriesHostile: []
   orderStoriesFriend: []
   orderStoriesBestFriend: []
   orderStoriesSoulmate: []
   curhatStories:
-  - {fileID: 4900000, guid: 0f1b4116cbd72c94fae635c972fc3e2c, type: 3}
-  - {fileID: 4900000, guid: ce0da65c29b844846a8ee8e35f195cc4, type: 3}
-  - {fileID: 4900000, guid: cea86a031e9b6ee4b8521af4da1d97bb, type: 3}
-  - {fileID: 4900000, guid: b9a1714060419f946b17f7f132ebee72, type: 3}
-  - {fileID: 4900000, guid: 548cb2d409931594b868ec96a400eebb, type: 3}
-  - {fileID: 4900000, guid: 1b9f3214ecfb6314f85dcf31643a19bb, type: 3}
-  - {fileID: 4900000, guid: fb3ac91e56fc8f448be67fce601b59aa, type: 3}
+  - {fileID: 4900000, guid: 094f3a5df3ce6994f917b9545690117c, type: 3}
+  - {fileID: 4900000, guid: 74c1c69b1775b52479fc5f3b56115fb1, type: 3}
+  - {fileID: 4900000, guid: 49dfdb860d6866546ae104852a312767, type: 3}
+  - {fileID: 4900000, guid: f75a1fef12e44c848907020b54461afb, type: 3}
+  - {fileID: 4900000, guid: e34c6b83b8d71eb48a0cd83ae9b35c03, type: 3}
+  - {fileID: 4900000, guid: 647f2302588e020408ee0ec672e06117, type: 3}
+  - {fileID: 4900000, guid: c19facbcf17243d40b62827f38626750, type: 3}
+  - {fileID: 4900000, guid: 98e21d52bb39a9d4b91764a2d017bbc1, type: 3}
+  - {fileID: 4900000, guid: 3448498f16bd2994e8085e700f4bada4, type: 3}
+  - {fileID: 4900000, guid: dbc02af45b754974aa7f2a9e261c80a0, type: 3}
   curhatStoriesHostile: []
   curhatStoriesFriend: []
   curhatStoriesBestFriend: []
   curhatStoriesSoulmate: []
   successStories:
-  - {fileID: 4900000, guid: aff9feb87a91d8e48884c30eae93aa29, type: 3}
-  - {fileID: 4900000, guid: 9f9b8f7715b551c4b86b9eb8322a8f0c, type: 3}
+  - {fileID: 4900000, guid: 29ff7ccdba88b8842a66d5f07d4c1c4a, type: 3}
+  - {fileID: 4900000, guid: 770503931ac55244fb2369c4d0438acb, type: 3}
+  - {fileID: 4900000, guid: 3c6866a063cf48341a4eadde4cec9e28, type: 3}
+  - {fileID: 4900000, guid: 69e012c3d9a20ab4b8732fbae1484681, type: 3}
+  - {fileID: 4900000, guid: 9194b3fc9724e4a45b137f8ee83e3b2a, type: 3}
   successStory: {fileID: 0}
   wrongStories:
-  - {fileID: 4900000, guid: c2c3e32830f23bb48b1aaccff9d3dbb2, type: 3}
-  - {fileID: 4900000, guid: bb30a713b3a0f7842a09b25436afecd4, type: 3}
+  - {fileID: 4900000, guid: bed57ddb54bddd7479abca19c3c2c07d, type: 3}
   wrongStory: {fileID: 0}
   leaveStories:
-  - {fileID: 4900000, guid: 0ab83df04d78a084e99d407e08f5b83f, type: 3}
-  - {fileID: 4900000, guid: 686d479a73d62664387413c18668195a, type: 3}
+  - {fileID: 4900000, guid: ef3209296c924f944a229f577a073306, type: 3}
   leaveStory: {fileID: 0}
   minMaxFails: 2
   maxMaxFails: 3
   maxFails: 2
-  minStartingAffinity: 40
-  maxStartingAffinity: 50
+  minStartingAffinity: 35
+  maxStartingAffinity: 55
   startingAffinity: 50
   pointsOnSatisfy: 5
   pointsOnNeutral: 0
