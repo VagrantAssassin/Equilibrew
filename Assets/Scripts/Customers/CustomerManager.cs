@@ -84,6 +84,10 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Widget UI yang menampilkan hati affinity pelanggan aktif. Assign di Inspector.")]
     public CustomerAffinityWidget affinityWidget;
 
+    [Header("Ingredient Panel UX (optional)")]
+    [Tooltip("Sliding panel ingredient yang akan auto-open saat customer datang dan auto-close saat serve benar.")]
+    public SlidingPanelController ingredientPanelController;
+
     // runtime
     private List<CustomerProfile> todaysProfiles = new List<CustomerProfile>();
     private int todaysIndex = 0;
@@ -112,6 +116,8 @@ public class CustomerManager : MonoBehaviour
 
     private void Start()
     {
+        ResolveIngredientPanelController();
+
         if (cupController != null)
         {
             cupController.OnServe -= OnServeReceived;
@@ -315,6 +321,7 @@ public class CustomerManager : MonoBehaviour
         }
         cust.SetRequest(requestedRecipe);
         currentCustomer = cust;
+        AutoOpenIngredientPanelIfNeeded();
 
         Debug.Log($"[CustomerManager] Spawned category='{profile.categoryName}' name='{currentCustomerDisplayName}' recipe='{currentRequestedRecipeName}' maxFails={cust.maxFails} affinityStart={profile.affinity}% hasOrderStory={(currentRequestedOrderStory!=null)}");
 
@@ -486,6 +493,7 @@ public class CustomerManager : MonoBehaviour
         if (ok)
         {
             Debug.Log("[CustomerManager] Correct serve! Score will be granted after curhat ends.");
+            AutoCloseIngredientPanelIfNeeded();
             // start coroutine that will play success story (if any) then curhat
             StartCoroutine(CorrectServeSequence());
             return;
@@ -570,6 +578,26 @@ public class CustomerManager : MonoBehaviour
     {
         yield return null;
         serveLocked = false;
+    }
+
+    private void ResolveIngredientPanelController()
+    {
+        if (ingredientPanelController == null)
+            ingredientPanelController = FindObjectOfType<SlidingPanelController>();
+    }
+
+    private void AutoOpenIngredientPanelIfNeeded()
+    {
+        ResolveIngredientPanelController();
+        if (ingredientPanelController != null)
+            ingredientPanelController.Show();
+    }
+
+    private void AutoCloseIngredientPanelIfNeeded()
+    {
+        ResolveIngredientPanelController();
+        if (ingredientPanelController != null)
+            ingredientPanelController.Hide();
     }
 
     private IEnumerator AdvanceAfterDelay(float delay)
