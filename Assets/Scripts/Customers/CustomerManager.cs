@@ -589,14 +589,14 @@ public class CustomerManager : MonoBehaviour
     private void AutoOpenIngredientPanelIfNeeded()
     {
         ResolveIngredientPanelController();
-        if (ingredientPanelController != null && !ingredientPanelController.IsOpen())
+        if (ingredientPanelController != null)
             ingredientPanelController.Show();
     }
 
     private void AutoCloseIngredientPanelIfNeeded()
     {
         ResolveIngredientPanelController();
-        if (ingredientPanelController != null && ingredientPanelController.IsOpen())
+        if (ingredientPanelController != null)
             ingredientPanelController.Hide();
     }
 
