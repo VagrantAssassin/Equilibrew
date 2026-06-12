@@ -1,0 +1,1 @@
+Ah gajadi deh kak, cape dikerjain terus.

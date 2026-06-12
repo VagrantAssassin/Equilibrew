@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61b70a8dc42cea4ca8ace133cf7649b, type: 3}
+  m_Name: Old Female
+  m_EditorClassIdentifier: 
+  categoryName: Teen Male
+  possibleNames:
+  - Kevin
+  - Clyde
+  - Clark
+  - Paul
+  - Law
+  - Chris
+  - Finn
+  - Mich
+  - Carl
+  - Hal
+  - Barry
+  - Bruce
+  - Tony
+  - Steve
+  - Arthur
+  portrait: {fileID: 0}
+  headSprites:
+  - {fileID: -6857823321373199021, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 5701184206565103554, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 2431733543444563700, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: 5357706763562903926, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  - {fileID: -167403999371530517, guid: 35c81f9dd14892041bbe821fb5577c65, type: 3}
+  hairSprites:
+  - {fileID: -399089000398347022, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -4975085458248475570, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -4684745689622556582, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -9109497111480904628, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  - {fileID: -6804496488894052172, guid: 882c0508d78f977439707237717e35d2, type: 3}
+  shirtSprites:
+  - {fileID: -142032821187138785, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 1680582777852753098, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: -5007652721394007382, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 1162294198698783302, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  - {fileID: 6563518197093426195, guid: 34e321dff74808c419a525720adcc16a, type: 3}
+  orderOptions:
+  - recipeName: Green Tea
+    orderStory: {fileID: 4900000, guid: 58d0fa88c310c8c4983e94c2a01511f6, type: 3}
+  - recipeName: Black Tea
+    orderStory: {fileID: 4900000, guid: a5190f15ab8fa374fa933216dc931030, type: 3}
+  - recipeName: Lavender Tea
+    orderStory: {fileID: 4900000, guid: fdc14015b03062e40bbe89a0d0433d07, type: 3}
+  - recipeName: Jasmine Tea
+    orderStory: {fileID: 4900000, guid: fdc72318dc3586c429a39c8a1b99e24e, type: 3}
+  - recipeName: Milk Tea
+    orderStory: {fileID: 4900000, guid: 7b8a206289bf25743a7c69581e408688, type: 3}
+  - recipeName: Mint Milk Tea
+    orderStory: {fileID: 4900000, guid: 8c4bd0a573594ed4ebdf947210bbac10, type: 3}
+  - recipeName: Matcha Latte
+    orderStory: {fileID: 4900000, guid: 8a28246facc568146a2c2bb9dbfeeadb, type: 3}
+  - recipeName: Honey Tea
+    orderStory: {fileID: 4900000, guid: beb16c9daa2503644a62ca8c3cbf31c6, type: 3}
+  - recipeName: Golden Jasmine Tea
+    orderStory: {fileID: 4900000, guid: 341148ce5e6922d41ab61a8eccac516c, type: 3}
+  - recipeName: Apple Tea
+    orderStory: {fileID: 4900000, guid: a449574894ac4e648bfe84afa6b4cf8d, type: 3}
+  - recipeName: Green Apple Tea
+    orderStory: {fileID: 4900000, guid: 0e7463c55a9a6b9459c843b24f752801, type: 3}
+  - recipeName: Mint Tea
+    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  preferredRecipeNames: []
+  orderStories: []
+  orderStoriesHostile: []
+  orderStoriesFriend: []
+  orderStoriesBestFriend: []
+  orderStoriesSoulmate: []
+  curhatStories:
+  - {fileID: 4900000, guid: 094f3a5df3ce6994f917b9545690117c, type: 3}
+  - {fileID: 4900000, guid: 74c1c69b1775b52479fc5f3b56115fb1, type: 3}
+  - {fileID: 4900000, guid: 49dfdb860d6866546ae104852a312767, type: 3}
+  - {fileID: 4900000, guid: f75a1fef12e44c848907020b54461afb, type: 3}
+  - {fileID: 4900000, guid: e34c6b83b8d71eb48a0cd83ae9b35c03, type: 3}
+  - {fileID: 4900000, guid: 647f2302588e020408ee0ec672e06117, type: 3}
+  - {fileID: 4900000, guid: c19facbcf17243d40b62827f38626750, type: 3}
+  - {fileID: 4900000, guid: 98e21d52bb39a9d4b91764a2d017bbc1, type: 3}
+  - {fileID: 4900000, guid: 3448498f16bd2994e8085e700f4bada4, type: 3}
+  - {fileID: 4900000, guid: dbc02af45b754974aa7f2a9e261c80a0, type: 3}
+  curhatStoriesHostile: []
+  curhatStoriesFriend: []
+  curhatStoriesBestFriend: []
+  curhatStoriesSoulmate: []
+  successStories:
+  - {fileID: 4900000, guid: 29ff7ccdba88b8842a66d5f07d4c1c4a, type: 3}
+  - {fileID: 4900000, guid: 770503931ac55244fb2369c4d0438acb, type: 3}
+  - {fileID: 4900000, guid: 3c6866a063cf48341a4eadde4cec9e28, type: 3}
+  - {fileID: 4900000, guid: 69e012c3d9a20ab4b8732fbae1484681, type: 3}
+  - {fileID: 4900000, guid: 9194b3fc9724e4a45b137f8ee83e3b2a, type: 3}
+  successStory: {fileID: 0}
+  wrongStories:
+  - {fileID: 4900000, guid: bed57ddb54bddd7479abca19c3c2c07d, type: 3}
+  - {fileID: 4900000, guid: 630b7315ed7d3aa449adc24b3ce6a267, type: 3}
+  - {fileID: 4900000, guid: f2b55e9df8b894f468a7a3fe7192b760, type: 3}
+  - {fileID: 4900000, guid: a4887cf1aa0fdc14dbb6c28e55af60c6, type: 3}
+  - {fileID: 4900000, guid: 77c1a9b38f29ddd44974161406610780, type: 3}
+  wrongStory: {fileID: 0}
+  leaveStories:
+  - {fileID: 4900000, guid: ef3209296c924f944a229f577a073306, type: 3}
+  - {fileID: 4900000, guid: 6e6ab67e072ab5b4ca035a8da9b3780a, type: 3}
+  - {fileID: 4900000, guid: b94c37cd4b220e94d8507e47786f0020, type: 3}
+  - {fileID: 4900000, guid: 7e7070462a7c21d47af7489a0f5bb551, type: 3}
+  - {fileID: 4900000, guid: 828c2b5e08e158e4e82f225bd8015731, type: 3}
+  leaveStory: {fileID: 0}
+  minMaxFails: 2
+  maxMaxFails: 4
+  maxFails: 2
+  minStartingAffinity: 35
+  maxStartingAffinity: 55
+  startingAffinity: 50
+  pointsOnSatisfy: 5
+  pointsOnNeutral: 0
+  hpLossOnAngry: 1
+  background: 

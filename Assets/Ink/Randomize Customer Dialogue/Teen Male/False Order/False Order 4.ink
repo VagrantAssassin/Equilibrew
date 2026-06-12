@@ -1,0 +1,1 @@
+Duh kak, saya ga pesen ini

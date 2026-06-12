@@ -439,8 +439,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -75}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -85.04, y: -75}
+  m_SizeDelta: {x: 429.92, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &30764857
 MonoBehaviour:
@@ -4383,6 +4383,7 @@ MonoBehaviour:
   dialogPrefab: {fileID: 3281566745362165758, guid: df24e216159753340b0b66a3fca0be98, type: 3}
   inkDialogController: {fileID: 1982367254}
   profiles:
+  - {fileID: 11400000, guid: 3264fb90ee731d74f8c09d9201ae510e, type: 2}
   - {fileID: 11400000, guid: 3a244cf85ccc4e041b02f71d64e43a99, type: 2}
   minCustomersPerDay: 2
   maxCustomersPerDay: 4
@@ -4401,6 +4402,7 @@ MonoBehaviour:
   affinityScoreMultiplierBestFriend: 1.2
   affinityScoreMultiplierSoulmate: 1.5
   affinityWidget: {fileID: 1615018610}
+  ingredientPanelController: {fileID: 0}
 --- !u!4 &739586004
 Transform:
   m_ObjectHideFlags: 0
@@ -9015,9 +9017,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.0486618
+    y: 0.05109489
     width: 1
-    height: 0.90054744
+    height: 0.8991788
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60

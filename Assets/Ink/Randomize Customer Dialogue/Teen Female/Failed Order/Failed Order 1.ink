@@ -1,0 +1,1 @@
+Ah saya pergi aja, jualannya nggak jelas.

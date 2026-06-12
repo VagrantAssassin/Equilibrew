@@ -1,0 +1,1 @@
+Saya tidak pesan ini kak.
