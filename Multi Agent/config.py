@@ -47,7 +47,10 @@ CRITIC_THRESHOLD = int(os.getenv("CRITIC_THRESHOLD", "70"))
 MOOD_AWAL  = int(os.getenv("MOOD_AWAL", "50"))
 MOOD_MIN   = 0
 MOOD_MAX   = 100
-MOOD_DELTA = {"satisfy": +10, "neutral": 0, "angry": -10}
+# Delta lebih besar agar perubahan mood terasa signifikan dalam 3-5 ronde
+# satisfy:  +20 (puas banget), +15 (puas), +10 (oke aja)
+# angry:    -25 (marah besar), -20 (kesal), -15 (sebal)
+MOOD_DELTA = {"satisfy": +15, "neutral": 0, "angry": -20}
 
 # ── SESI CURHAT ───────────────────────────────────────────────────────────────
 RONDE_MIN = int(os.getenv("RONDE_MIN", "3"))
@@ -55,7 +58,8 @@ RONDE_MAX = int(os.getenv("RONDE_MAX", "5"))
 
 # ── DATA GAME ─────────────────────────────────────────────────────────────────
 GAYA_BAHASA = {
-    "remaja"    : "santai, gaul, pakai kata seperti 'kak', 'bro', 'sih', 'dong', 'tuh'",
+    "anak-anak" : "polos, lucu, pakai kata sederhana, kadang salah ucap, suka bilang 'dong', 'nih'",
+    "remaja"    : "santai, gaul, pakai kata seperti 'kak', 'sih', 'dong', 'tuh', 'kan'. Panggil pemain 'kak'.",
     "dewasa"    : "lugas, sopan tapi natural, kadang sedikit formal",
     "orang tua" : "formal, bijak, sering pakai 'nak', kalimat panjang dan reflektif",
 }

@@ -71,7 +71,8 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // GameManager is a child of Manager/, so DontDestroyOnLoad must target the root
+        DontDestroyOnLoad(transform.root.gameObject);
 
         EnsureProgressData();
         progressData.Load();
@@ -84,12 +85,87 @@ public class GameManager : MonoBehaviour
         }
 
         HideDayTransitionPanel();
+
+        // Re-bind stale UI references when a new scene loads (DontDestroyOnLoad persists but scene objects don't)
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         if (dayTransitionContinueButton != null)
             dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Only rebind UI for the Cafe gameplay scene (MainMenu has its own UI)
+        if (scene.name != "Cafe") return;
+
+        // Find Canvas root for Transform.Find() lookups
+        var canvasObj = GameObject.Find("Canvas");
+        if (canvasObj == null) return;
+        var canvasT = canvasObj.transform;
+
+        // Re-bind HUD text fields using exact hierarchy paths (NOT FindObjectOfType!)
+        if (scoreText == null)
+        {
+            var t = canvasT.Find("IngredientPanel/Game UI/Score/Score Text");
+            if (t != null) scoreText = t.GetComponent<TextMeshProUGUI>();
+        }
+        if (dayText == null)
+        {
+            var t = canvasT.Find("IngredientPanel/Game UI/Days/Score Text");
+            if (t != null) dayText = t.GetComponent<TextMeshProUGUI>();
+        }
+        if (targetScoreText == null)
+        {
+            var t = canvasT.Find("IngredientPanel/Game UI/Target/Score Text");
+            if (t != null) targetScoreText = t.GetComponent<TextMeshProUGUI>();
+        }
+        // currencyText: no dedicated UI element in scene — leave null to skip UpdateCurrencyText
+
+        // Re-bind GameOver panel and its children
+        if (gameOverPanel == null)
+        {
+            var t = canvasT.Find("GameOverPanel");
+            if (t != null)
+            {
+                gameOverPanel = t.gameObject;
+                var scoreT = t.Find("Score Text");
+                if (scoreT != null) gameOverScoreText = scoreT.GetComponent<TextMeshProUGUI>();
+                var bestT = t.Find("Best Score Text");
+                if (bestT != null) gameOverBestText = bestT.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        // Re-bind Day Transition panel and its children
+        if (dayTransitionPanel == null)
+        {
+            var t = canvasT.Find("TransitionPanel");
+            if (t != null)
+            {
+                dayTransitionPanel = t.gameObject;
+                var daysT = t.Find("Days");
+                if (daysT != null) dayTransitionDayText = daysT.GetComponent<TextMeshProUGUI>();
+                var targetT = t.Find("Target");
+                if (targetT != null) dayTransitionTargetText = targetT.GetComponent<TextMeshProUGUI>();
+                var continueObj = t.Find("Continue");
+                if (continueObj != null)
+                {
+                    dayTransitionContinueButton = continueObj.GetComponent<UnityEngine.UI.Button>();
+                    if (dayTransitionContinueButton != null)
+                    {
+                        dayTransitionContinueButton.onClick.RemoveListener(OnDayTransitionContinuePressed);
+                        dayTransitionContinueButton.onClick.AddListener(OnDayTransitionContinuePressed);
+                    }
+                }
+            }
+        }
+
+        HideGameOverPanel();
+        HideDayTransitionPanel();
+        UpdateUI();
     }
 
     private void Start()
@@ -108,6 +184,8 @@ public class GameManager : MonoBehaviour
         currentDay = 0;
         cumulativeTargetScore = 0;
 
+        HideGameOverPanel();
+        HideDayTransitionPanel();
         UpdateUI();
     }
 
@@ -344,8 +422,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        HideGameOverPanel();
-        HideDayTransitionPanel();
         InitGame();
         OnGameRestartEvent?.Invoke();
     }

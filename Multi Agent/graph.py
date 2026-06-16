@@ -169,6 +169,8 @@ def update_mood(state: dict) -> dict:
         "nada"          : nada,
         "mood_sebelum"  : mood_lama,
         "mood_sesudah"  : mood_baru,
+        "reaksi_npc"    : state.get("reaksi_npc", ""),
+        "tema"          : state.get("tema", ""),
     })
 
     return {

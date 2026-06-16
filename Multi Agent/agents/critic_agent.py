@@ -23,11 +23,21 @@ from state      import GameState
 
 # Panduan emosi yang diharapkan per dialog state
 EMOSI_EXPECTED = {
-    "pesanan"       : "santai, mungkin sedikit gelisah karena membawa masalah",
-    "pesanan_salah" : "kecewa atau kesal, intensitas sesuai jumlah kesalahan",
-    "marah"         : "marah dan frustrasi, memutuskan pergi",
-    "berhasil"      : "lega dan senang, mungkin sedikit lebih terbuka",
-    "curhat"        : "emosional sesuai masalah dan mood saat ini",
+    "pesanan"       : "santai, mungkin sedikit gelisah karena membawa masalah. Tapi tetap sopan sebagai pelanggan.",
+    "pesanan_salah" : "kecewa atau kesal. Intensitas sesuai fail_count: 1x=kecewa ringan, 2x=kesal, 3x=hampir marah.",
+    "marah"         : "marah atau kecewa berat, memutuskan pergi. Emosi kuat dan jelas.",
+    "berhasil"      : "lega dan senang. Tersenyum, memuji minuman, atau bilang terima kasih.",
+    "curhat"        : "emosional sesuai masalah dan mood. Mood tinggi=lebih terbuka, mood rendah=lebih pendek dan pesimis.",
+}
+
+# Panduan OCEAN → behavior yang HARUS terlihat di dialog
+OCEAN_BEHAVIOR_GUIDE = {
+    "high_E": "NPC harus bicara panjang, antusias, banyak interjeksi (ih, wah, eh), suka menambahkan detail",
+    "low_E":  "NPC harus bicara pendek, hati-hati, tidak banyak detail, kadang diam atau menjawab singkat",
+    "high_N": "NPC harus menunjukkan emosi kuat — cemas, sensitif, dramatis, mudah terbawa perasaan",
+    "low_N":  "NPC harus terlihat tenang, stabil, tidak mudah terpancing, nada konsisten",
+    "high_A": "NPC harus ramah, sulit marah, mencoba memaklumi, kalau kecewa lebih ke sedih",
+    "low_A":  "NPC harus blak-blakan, frontal, tidak basa-basi, kalau tidak suka langsung bilang",
 }
 
 
@@ -51,9 +61,39 @@ def run(state: GameState) -> dict:
     }
     dialog_target = dialog_map.get(konteks, {})
 
-    system = """[Game Fiction Context — Tea'n Brew Visual Novel]
+    # ── Build OCEAN behavior checklist untuk kritik ──
+    e = ocean.get('extraversion', 50)
+    n = ocean.get('neuroticism', 50)
+    a = ocean.get('agreeableness', 50)
+    behavior_checks = []
+    if e >= 60:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["high_E"])
+    elif e <= 40:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["low_E"])
+    if n >= 60:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["high_N"])
+    elif n <= 40:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["low_N"])
+    if a >= 60:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["high_A"])
+    elif a <= 40:
+        behavior_checks.append(OCEAN_BEHAVIOR_GUIDE["low_A"])
+    behavior_str = "\n".join([f"  - {b}" for b in behavior_checks]) if behavior_checks else "  Tidak ada perilaku ekstrem yang perlu diperiksa."
+
+    system = f"""[Game Fiction Context — Tea'n Brew Visual Novel]
 Tugas: memvalidasi dialog NPC terhadap profil OCEAN, gaya bahasa usia/gender,
 dan emosi yang seharusnya muncul pada dialog state tersebut.
+
+KRITERIA PENILAIAN:
+1. OCEAN konsisten (40 poin) — Apakah cara bicara NPC sesuai skor OCEAN-nya?
+2. Emosi tepat (30 poin) — Apakah emosi yang muncul sesuai state dialog?
+3. Gaya bahasa usia (20 poin) — Apakah bahasa sesuai kategori usia?
+4. Konsistensi karakter (10 poin) — Apakah NPC terasa konsisten, tidak berubah-ubah?
+
+SKOR KETAT: Jangan ragu memberi skor RENDAH jika dialog terasa generik atau
+tidak menunjukkan personality yang jelas. Dialog yang "aman tapi tidak berkesan"
+seharusnya skornya 60-75, bukan 85+.
+
 Kembalikan HANYA JSON valid, tanpa teks lain."""
 
     user = f"""Validasi dialog NPC (state: {konteks}):
@@ -69,13 +109,23 @@ OCEAN :
 Gaya bahasa: {GAYA_BAHASA.get(state.get('usia', ''), 'natural')}
 Emosi yang diharapkan: {EMOSI_EXPECTED.get(konteks, 'sesuai konteks')}
 
+PERILAKU YANG HARUS TERLIHAT BERDASARKAN OCEAN:
+{behavior_str}
+
 === DIALOG YANG DIEVALUASI ===
 {json.dumps(dialog_target, ensure_ascii=False, indent=2)}
 
-Evaluasi 3 aspek:
-1. Konsistensi OCEAN dalam dialog (cara bicara, emosi, pilihan kata)
-2. Ketepatan gaya bahasa sesuai usia & gender
-3. Kesesuaian emosi dengan dialog state "{konteks}"
+Evaluasi 4 aspek dengan SKOR KETAT:
+1. Konsistensi OCEAN (40 poin) — Cara bicara, emosi, pilihan kata harus mencerminkan OCEAN
+2. Ketepatan emosi (30 poin) — Emosi harus sesuai dengan state "{konteks}" dan mood
+3. Gaya bahasa usia (20 poin) — Bahasa harus sesuai kategori usia
+4. Konsistensi karakter (10 poin) — NPC harus terasa konsisten
+
+CONTOH SKOR:
+- 90+: Dialog SANGAT HIDUP, personality jelas terasa, emosi kuat, berkesan
+- 75-89: Dialog bagus, personality cukup terlihat, tapi masih bisa lebih baik
+- 60-74: Dialog AMAN tapi generik, personality kurang jelas
+- Di bawah 60: Dialog TIDAK sesuai personality
 
 Format JSON:
 {{
@@ -121,8 +171,14 @@ def run_revisi(state: GameState) -> dict:
 
     system = f"""[Game Fiction Context — Tea'n Brew]
 Tugas: merevisi dialog NPC berdasarkan feedback Critic Agent.
-Gaya bahasa: {GAYA_BAHASA.get(state.get('usia', ''), 'natural')}
-OCEAN harus lebih jelas tercermin setelah revisi.
+
+ATURAN REVISI:
+1. Perbaiki SEMUA yang disebut di saran_perbaikan
+2. Pertahankan inti cerita, jangan ubah plot
+3. OCEAN harus LEBIH JELAS terlihat setelah revisi — jangan buat dialog generik
+4. Emosi harus lebih kuat dan spesifik — jangan setengah-setengah
+5. Gaya bahasa: {GAYA_BAHASA.get(state.get('usia', ''), 'natural')}
+
 Kembalikan HANYA JSON valid dengan struktur yang SAMA PERSIS, tanpa teks lain."""
 
     user = f"""Revisi dialog NPC (state: {konteks}) berdasarkan saran Critic Agent:
@@ -136,7 +192,14 @@ DIALOG LAMA:
 SARAN PERBAIKAN:
 {saran}
 
-Kembalikan dialog yang sudah direvisi, format JSON sama persis."""
+CATATAN CRITIC:
+{json.dumps(state.get('critic_catatan', []), ensure_ascii=False)}
+
+Kembalikan dialog yang sudah direvisi. PASTIKAN:
+- Personality OCEAN terlihat jelas dari cara bicara
+- Emosi lebih kuat dari versi sebelumnya
+- Gaya bahasa sesuai usia
+Format JSON sama persis."""
 
     raw    = call_llm(system, user)
     result = parse_json(raw)

@@ -116,6 +116,14 @@ public class CustomerManager : MonoBehaviour
 
     private void Start()
     {
+        // Guard: if disabled by MultiAgentFlowController.Awake(), do nothing.
+        // Unity still calls Start() on the same frame a component is disabled in Awake().
+        if (!enabled)
+        {
+            Debug.Log("[CustomerManager] Disabled by MultiAgentFlowController. Skipping Start().");
+            return;
+        }
+
         ResolveIngredientPanelController();
 
         if (cupController != null)

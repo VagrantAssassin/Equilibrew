@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using Ink.Runtime;
+using PilihanJawaban = MultiAgentBridge.PilihanJawaban;
 
 /// <summary>
 /// InkDialogController (fixed)
@@ -62,6 +63,7 @@ public class InkDialogController : MonoBehaviour
     {
         if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
         if (choiceContainer != null) choiceContainer.SetActive(false);
+        if (continueButton != null) continueButton.gameObject.SetActive(false);
     }
 
     // NEW: expose whether dialog panel is currently visible/open
@@ -507,5 +509,529 @@ public class InkDialogController : MonoBehaviour
             if (t != null) return t;
         }
         return null;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // DYNAMIC TEXT MODE — untuk Multi-Agent integration (tanpa Ink story)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// PlayDynamicText — tampilkan text langsung (dari LLM) tanpa Ink story.
+    /// Mendukung typewriter, panel animation, acknowledge button.
+    /// 
+    /// Digunakan oleh MultiAgentFlowController untuk menampilkan dialog
+    /// yang di-generate oleh Python Multi-Agent system.
+    /// </summary>
+    public void PlayDynamicText(string text, Action onCompleteCallback, bool leavePanelOpen = false, bool requireAcknowledge = false)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            Debug.LogWarning("[InkDialogController] PlayDynamicText called with empty text.");
+            onCompleteCallback?.Invoke();
+            return;
+        }
+        if (isPlaying)
+        {
+            Debug.LogWarning("[InkDialogController] Already playing. Ignoring PlayDynamicText.");
+            onCompleteCallback?.Invoke();
+            return;
+        }
+        StartCoroutine(PlayDynamicTextCoroutine(text, onCompleteCallback, leavePanelOpen, requireAcknowledge));
+    }
+
+    private IEnumerator PlayDynamicTextCoroutine(string text, Action onCompleteCallback, bool leavePanelOpen, bool requireAcknowledge)
+    {
+        isPlaying = true;
+
+        // Split text into sentences for per-sentence display
+        var sentences = SplitIntoSentences(text);
+        if (sentences.Count == 0)
+        {
+            isPlaying = false;
+            onCompleteCallback?.Invoke();
+            yield break;
+        }
+
+        // Get or create panel root
+        GameObject panelRoot = dialogPanelRoot;
+
+        if (runtimeDialogInstance != null)
+        {
+            panelRoot = runtimeDialogInstance;
+        }
+        else if (panelRoot == null)
+        {
+            if (dialogPrefab == null || dialogAnchor == null)
+            {
+                Debug.LogError("[InkDialogController] No dialogPanelRoot and no dialogPrefab/dialogAnchor.");
+                isPlaying = false;
+                onCompleteCallback?.Invoke();
+                yield break;
+            }
+            runtimeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
+            panelRoot = runtimeDialogInstance;
+
+            // Apply cached speaker name
+            if (!string.IsNullOrEmpty(cachedSpeakerName))
+                SetSpeakerName(cachedSpeakerName);
+        }
+
+        // Show panel with animation (animate open only on first appearance)
+        bool shouldAnimateOpen = !panelRoot.activeSelf || (runtimeDialogInstance != null && !runtimeKeptOpen);
+        panelRoot.SetActive(true);
+        affinityWidget?.Show();
+
+        if (shouldAnimateOpen)
+        {
+            panelRoot.transform.localScale = Vector3.one * panelStartScale;
+            if (affinityWidget != null)
+            {
+                affinityWidget.transform.localScale = Vector3.one * panelStartScale;
+                StartCoroutine(ScaleTransform(affinityWidget.transform, panelStartScale, 1f, panelScaleDuration));
+            }
+            yield return StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
+        }
+
+        // Find body text
+        TextMeshProUGUI bodyText = panelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        // Find or create continue button
+        Button contBtn = continueButton;
+        if (contBtn == null)
+        {
+            var contT = panelRoot.transform.Find("ContinueButton");
+            if (contT != null) contBtn = contT.GetComponent<Button>();
+        }
+
+        bool createdDynamicContinue = false;
+        if (contBtn == null)
+        {
+            var panelBtn = panelRoot.GetComponent<Button>();
+            if (panelBtn == null)
+                panelBtn = panelRoot.AddComponent<Button>();
+            contBtn = panelBtn;
+            createdDynamicContinue = true;
+
+            var panelColors = contBtn.colors;
+            panelColors.normalColor = Color.clear;
+            panelColors.highlightedColor = Color.clear;
+            panelColors.pressedColor = new Color(1, 1, 1, 0.1f);
+            contBtn.colors = panelColors;
+            contBtn.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
+        }
+
+        // Hide choice container during sentence display
+        if (choiceContainer != null) choiceContainer.SetActive(false);
+
+        // ── Display sentences one by one ──
+        for (int i = 0; i < sentences.Count; i++)
+        {
+            bool isLast = (i == sentences.Count - 1);
+
+            // Show sentence with typewriter
+            if (bodyText != null)
+            {
+                if (useTypewriter)
+                    yield return StartCoroutine(TypewriterEffect(bodyText, sentences[i]));
+                else
+                    bodyText.text = sentences[i];
+            }
+
+            // Last sentence without acknowledge requirement → auto-advance after read delay
+            if (isLast && !requireAcknowledge)
+            {
+                float autoReadDelay = Mathf.Max(1.5f, sentences[i].Length / 40f);
+                yield return new WaitForSecondsRealtime(autoReadDelay);
+            }
+            // Otherwise wait for player click to continue
+            else if (contBtn != null)
+            {
+                contBtn.gameObject.SetActive(true);
+                contBtn.interactable = true;
+                bool ack = false;
+                UnityAction onPress = () => ack = true;
+                contBtn.onClick.AddListener(onPress);
+                while (!ack) yield return null;
+                contBtn.onClick.RemoveListener(onPress);
+                if (!createdDynamicContinue)
+                    contBtn.gameObject.SetActive(false);
+                else
+                    contBtn.interactable = false;
+            }
+            else
+            {
+                float readDelay = Mathf.Max(1.5f, sentences[i].Length / 40f);
+                yield return new WaitForSecondsRealtime(readDelay);
+            }
+        }
+
+        // Close panel or leave open
+        if (leavePanelOpen)
+        {
+            runtimeKeptOpen = true;
+        }
+        else
+        {
+            yield return StartCoroutine(AnimateClosePanel(panelRoot));
+        }
+
+        isPlaying = false;
+        onCompleteCallback?.Invoke();
+    }
+
+    /// <summary>
+    /// ShowChoicesOnPanel — tampilkan pilihan jawaban menggunakan choice buttons yang ada
+    /// (Choice_Agree, Choice_Neutral, Choice_Disagree).
+    /// 
+    /// Dipanggil setelah dialog NPC selesai ditampilkan (per-sentence).
+    /// Player memilih salah satu → callback(jawaban, nada).
+    /// </summary>
+    public void ShowChoicesOnPanel(PilihanJawaban[] pilihan, Action<string, string> onChoiceSelected)
+    {
+        if (pilihan == null || pilihan.Length == 0)
+        {
+            onChoiceSelected?.Invoke("", "neutral");
+            return;
+        }
+
+        GameObject panelRoot = runtimeDialogInstance ?? dialogPanelRoot;
+        if (panelRoot == null)
+        {
+            Debug.LogWarning("[InkDialogController] No panel for ShowChoicesOnPanel.");
+            onChoiceSelected?.Invoke("", "neutral");
+            return;
+        }
+
+        // Keep panel open
+        panelRoot.SetActive(true);
+
+        // Hide continue button while choices are displayed
+        if (continueButton != null) continueButton.gameObject.SetActive(false);
+
+        // Check if choiceContainer is actually visible in hierarchy
+        // (may be inside an inactive parent like InkDialogPanel)
+        bool containerUsable = choiceContainer != null && choiceContainer.activeInHierarchy;
+
+        // Use existing choice buttons from InkDialogController
+        List<Button> buttons = new List<Button>();
+        if (containerUsable && choiceButtons != null && choiceButtons.Count > 0)
+        {
+            foreach (var b in choiceButtons)
+                if (b != null) buttons.Add(b);
+        }
+        else if (containerUsable)
+        {
+            buttons.AddRange(choiceContainer.GetComponentsInChildren<Button>(true));
+        }
+
+        // Show choice container (only if parent hierarchy is active)
+        if (containerUsable) choiceContainer.SetActive(true);
+
+        // Configure each button
+        int count = Mathf.Min(buttons.Count, pilihan.Length);
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            var btn = buttons[i];
+            btn.onClick.RemoveAllListeners();
+            btn.gameObject.SetActive(i < count);
+            btn.interactable = i < count;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            var btn = buttons[i];
+            var pil = pilihan[i];
+
+            var tmp = btn.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp != null)
+            {
+                string icon = pil.nada == "satisfy" ? "💚" : pil.nada == "angry" ? "🔴" : "💛";
+                tmp.text = icon + " " + pil.teks;
+            }
+
+            string capturedTeks = pil.teks;
+            string capturedNada = pil.nada;
+            btn.onClick.AddListener(() =>
+            {
+                // Hide choices
+                if (containerUsable && choiceContainer != null) choiceContainer.SetActive(false);
+                foreach (var b in buttons) { b.onClick.RemoveAllListeners(); b.gameObject.SetActive(false); }
+                onChoiceSelected?.Invoke(capturedTeks, capturedNada);
+            });
+        }
+
+        if (count == 0 || !containerUsable)
+        {
+            Debug.LogWarning($"[InkDialogController] No usable choice buttons (count={count}, containerUsable={containerUsable}). Using fallback.");
+            // Fallback: create temporary choice buttons under runtimeDialogInstance
+            StartFallbackChoiceCoroutine(pilihan, onChoiceSelected);
+        }
+    }
+
+    /// <summary>
+    /// Split text into sentences for per-sentence dialog display.
+    /// Handles Indonesian punctuation (. ! ?) and edge cases.
+    /// </summary>
+    /// <summary>
+    /// Fallback: create temporary choice buttons when no configured buttons exist.
+    /// Prevents auto-select which causes NPC to respond without player input.
+    /// </summary>
+    private void StartFallbackChoiceCoroutine(PilihanJawaban[] pilihan, Action<string, string> onChoiceSelected)
+    {
+        // Find the Canvas to parent the choice panel
+        Canvas canvas = null;
+        var panelRoot = runtimeDialogInstance ?? dialogPanelRoot;
+        if (panelRoot != null)
+            canvas = panelRoot.GetComponentInParent<Canvas>();
+
+        // Create a standalone choice panel under the Canvas (not under dialog)
+        GameObject choicePanel = new GameObject("FallbackChoicePanel");
+        CanvasGroup cg = choicePanel.AddComponent<CanvasGroup>();
+        cg.alpha = 1f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+
+        RectTransform panelRt = choicePanel.AddComponent<RectTransform>();
+        if (canvas != null)
+            panelRt.SetParent(canvas.transform, false);
+
+        // Semi-transparent dark background
+        Image panelBg = choicePanel.AddComponent<Image>();
+        panelBg.color = new Color(0.05f, 0.05f, 0.1f, 0.85f);
+
+        // Position: bottom center of screen
+        panelRt.anchorMin = new Vector2(0.15f, 0.02f);
+        panelRt.anchorMax = new Vector2(0.85f, 0.38f);
+        panelRt.offsetMin = Vector2.zero;
+        panelRt.offsetMax = Vector2.zero;
+
+        // Vertical layout for buttons
+        VerticalLayoutGroup vlg = choicePanel.AddComponent<VerticalLayoutGroup>();
+        vlg.spacing = 8f;
+        vlg.padding = new RectOffset(10, 10, 10, 10);
+        vlg.childAlignment = TextAnchor.MiddleCenter;
+        vlg.childForceExpandWidth = true;
+        vlg.childForceExpandHeight = false;
+        vlg.childControlWidth = true;
+        vlg.childControlHeight = true;
+
+        // Add title
+        GameObject titleGo = new GameObject("Title");
+        titleGo.transform.SetParent(choicePanel.transform, false);
+        RectTransform titleRt = titleGo.AddComponent<RectTransform>();
+        TextMeshProUGUI titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
+        titleTmp.text = "Pilih jawabanmu:";
+        titleTmp.fontSize = 16;
+        titleTmp.alignment = TextAlignmentOptions.Center;
+        titleTmp.color = new Color(0.8f, 0.8f, 0.8f);
+        LayoutElement titleLe = titleGo.AddComponent<LayoutElement>();
+        titleLe.preferredHeight = 25f;
+        titleLe.flexibleWidth = 1f;
+
+        // Create a button for each choice
+        for (int i = 0; i < pilihan.Length; i++)
+        {
+            var pil = pilihan[i];
+            string icon = pil.nada == "satisfy" ? "💚" : pil.nada == "angry" ? "🔴" : "💛";
+            string nadaLabel = pil.nada == "satisfy" ? "[Satisfy]" : pil.nada == "angry" ? "[Angry]" : "[Neutral]";
+
+            GameObject btnGo = new GameObject($"Choice_{i}");
+            btnGo.transform.SetParent(choicePanel.transform, false);
+
+            RectTransform btnRt = btnGo.AddComponent<RectTransform>();
+
+            // Button background
+            Image btnImg = btnGo.AddComponent<Image>();
+            btnImg.color = new Color(0.15f, 0.15f, 0.25f, 0.95f);
+
+            Button btn = btnGo.AddComponent<Button>();
+            ColorBlock cb = btn.colors;
+            cb.normalColor = new Color(0.15f, 0.15f, 0.25f, 0.95f);
+            cb.highlightedColor = new Color(0.25f, 0.35f, 0.55f, 1f);
+            cb.pressedColor = new Color(0.1f, 0.2f, 0.4f, 1f);
+            btn.colors = cb;
+
+            // Layout element for sizing
+            LayoutElement le = btnGo.AddComponent<LayoutElement>();
+            le.preferredHeight = 55f;
+            le.flexibleWidth = 1f;
+
+            // Text container (HorizontalLayoutGroup for icon + text)
+            GameObject textContainer = new GameObject("TextContainer");
+            textContainer.transform.SetParent(btnGo.transform, false);
+            RectTransform tcRt = textContainer.AddComponent<RectTransform>();
+            // Stretch to fill button
+            tcRt.anchorMin = Vector2.zero;
+            tcRt.anchorMax = Vector2.one;
+            tcRt.offsetMin = new Vector2(10, 0);
+            tcRt.offsetMax = new Vector2(-10, 0);
+            HorizontalLayoutGroup hlg = textContainer.AddComponent<HorizontalLayoutGroup>();
+            hlg.spacing = 8f;
+            hlg.childAlignment = TextAnchor.MiddleLeft;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = true;
+
+            // Nada label
+            GameObject nadaGo = new GameObject("Nada");
+            nadaGo.transform.SetParent(textContainer.transform, false);
+            TextMeshProUGUI nadaTmp = nadaGo.AddComponent<TextMeshProUGUI>();
+            nadaTmp.text = $"{icon} {nadaLabel}";
+            nadaTmp.fontSize = 14;
+            nadaTmp.alignment = TextAlignmentOptions.Left;
+            nadaTmp.color = pil.nada == "satisfy" ? new Color(0.3f, 0.9f, 0.4f) :
+                           pil.nada == "angry" ? new Color(0.9f, 0.3f, 0.3f) :
+                           new Color(0.9f, 0.9f, 0.4f);
+            LayoutElement nadaLe = nadaGo.AddComponent<LayoutElement>();
+            nadaLe.preferredWidth = 90f;
+
+            // Choice text
+            GameObject txtGo = new GameObject("Text");
+            txtGo.transform.SetParent(textContainer.transform, false);
+            TextMeshProUGUI tmp = txtGo.AddComponent<TextMeshProUGUI>();
+            tmp.text = pil.teks;
+            tmp.fontSize = 15;
+            tmp.alignment = TextAlignmentOptions.Left;
+            tmp.color = Color.white;
+            tmp.enableWordWrapping = true;
+
+            string capturedTeks = pil.teks;
+            string capturedNada = pil.nada;
+            btn.onClick.AddListener(() =>
+            {
+                // Cleanup: destroy entire choice panel
+                Destroy(choicePanel);
+                onChoiceSelected?.Invoke(capturedTeks, capturedNada);
+            });
+        }
+
+        // Add a skip button at the bottom
+        GameObject skipGo = new GameObject("SkipButton");
+        skipGo.transform.SetParent(choicePanel.transform, false);
+        RectTransform skipRt = skipGo.AddComponent<RectTransform>();
+        Image skipImg = skipGo.AddComponent<Image>();
+        skipImg.color = new Color(0.2f, 0.2f, 0.2f, 0.7f);
+        Button skipBtn = skipGo.AddComponent<Button>();
+        skipBtn.colors = new ColorBlock {
+            normalColor = new Color(0.2f, 0.2f, 0.2f, 0.7f),
+            highlightedColor = new Color(0.3f, 0.3f, 0.3f, 0.9f),
+            pressedColor = new Color(0.15f, 0.15f, 0.15f, 0.8f)
+        };
+        LayoutElement skipLe = skipGo.AddComponent<LayoutElement>();
+        skipLe.preferredHeight = 30f;
+        skipLe.flexibleWidth = 1f;
+
+        GameObject skipTxtGo = new GameObject("Text");
+        skipTxtGo.transform.SetParent(skipGo.transform, false);
+        TextMeshProUGUI skipTmp = skipTxtGo.AddComponent<TextMeshProUGUI>();
+        skipTmp.text = "Lewati";
+        skipTmp.fontSize = 13;
+        skipTmp.alignment = TextAlignmentOptions.Center;
+        skipTmp.color = new Color(0.6f, 0.6f, 0.6f);
+
+        skipBtn.onClick.AddListener(() =>
+        {
+            Destroy(choicePanel);
+            // Default to neutral if skipped
+            onChoiceSelected?.Invoke("", "neutral");
+        });
+
+        // Fade in animation
+        StartCoroutine(FadeInPanel(cg));
+    }
+
+    private IEnumerator FadeInPanel(CanvasGroup cg)
+    {
+        if (cg == null) yield break;
+        cg.alpha = 0f;
+        float duration = 0.2f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
+            yield return null;
+        }
+        cg.alpha = 1f;
+    }
+
+    private List<string> SplitIntoSentences(string text)
+    {
+        var result = new List<string>();
+        if (string.IsNullOrWhiteSpace(text)) return result;
+
+        text = text.Trim();
+        // Split on sentence-ending punctuation followed by whitespace or end
+        var parts = System.Text.RegularExpressions.Regex.Split(text, @"(?<=[.!?])\s+");
+
+        foreach (var part in parts)
+        {
+            var trimmed = part.Trim();
+            if (!string.IsNullOrEmpty(trimmed))
+                result.Add(trimmed);
+        }
+
+        if (result.Count == 0)
+            result.Add(text);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Animate panel close (scale down, hide, cleanup).
+    /// </summary>
+    private IEnumerator AnimateClosePanel(GameObject panelRoot)
+    {
+        if (panelRoot == null) yield break;
+
+        Transform t = panelRoot.transform;
+        if (affinityWidget != null)
+            StartCoroutine(ScaleTransform(affinityWidget.transform, 1f, panelStartScale, panelScaleDuration));
+        yield return StartCoroutine(ScaleTransform(t, 1f, panelStartScale, panelScaleDuration));
+
+        affinityWidget?.Hide();
+
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(false);
+
+        if (runtimeDialogInstance != null)
+        {
+            Destroy(runtimeDialogInstance);
+            runtimeDialogInstance = null;
+            runtimeKeptOpen = false;
+        }
+        else
+        {
+            if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// ForceClose — paksa tutup dialog panel.
+    /// Digunakan saat customer pergi atau sesi berakhir.
+    /// </summary>
+    public void ForceClose()
+    {
+        StopAllCoroutines();
+        isPlaying = false;
+        runtimeKeptOpen = false;
+
+        if (runtimeDialogInstance != null)
+        {
+            Destroy(runtimeDialogInstance);
+            runtimeDialogInstance = null;
+        }
+
+        if (dialogPanelRoot != null)
+            dialogPanelRoot.SetActive(false);
+
+        affinityWidget?.Hide();
+
+        if (choiceContainer != null)
+            choiceContainer.SetActive(false);
+
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(false);
+
+        Debug.Log("[InkDialogController] ForceClose complete.");
     }
 }

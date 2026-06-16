@@ -59,6 +59,16 @@ _client = OpenAI(
 )
 
 
+def _in_server_context() -> bool:
+    """Deteksi apakah kode berjalan di dalam FastAPI/uvicorn server (bukan CLI).
+    Jika di server, jangan panggil sys.exit() karena akan kill thread."""
+    import threading
+    for t in threading.enumerate():
+        if "uvicorn" in t.name.lower() or "fastapi" in t.name.lower():
+            return True
+    return False
+
+
 def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: bool = True) -> str:
     """
     Panggil LLM menggunakan OpenAI SDK.
@@ -103,12 +113,18 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 _params["max_tokens"] = MAX_TOKENS
 
             completion = _client.chat.completions.create(**_params)
-            return completion.choices[0].message.content.strip()
+            content = completion.choices[0].message.content
+            if content is None:
+                # LLM returned null content (content filter, refusal, or proxy issue)
+                print(f"  [LLM WARNING] Percobaan {attempt+1}/{retries+1}: content=None dari LLM, retry...")
+                last_error = ValueError("LLM returned None content")
+                continue  # retry dengan prompt lebih netral
+            return content.strip()
 
         except AuthenticationError as e:
             print(f"\n[LLM ERROR] API Key tidak valid atau ditolak.")
             print(f"  Detail: {e}")
-            if fatal:
+            if fatal and not _in_server_context():
                 sys.exit(1)
             raise
 
@@ -120,7 +136,7 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 last_error = e
                 continue  # retry dengan prompt netral
             print(f"\n[LLM ERROR] {e}")
-            if fatal:
+            if fatal and not _in_server_context():
                 sys.exit(1)
             raise
 
@@ -131,7 +147,7 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 last_error = e
                 continue
             print(f"\n[LLM ERROR] {type(e).__name__}: {e}")
-            if fatal:
+            if fatal and not _in_server_context():
                 sys.exit(1)
             raise
 
@@ -139,7 +155,7 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
     msg = f"Semua {retries+1} percobaan gagal karena content filter."
     print(f"\n[LLM ERROR] {msg}")
     print(f"  Error terakhir: {last_error}")
-    if fatal:
+    if fatal and not _in_server_context():
         sys.exit(1)
     raise RuntimeError(msg) from last_error
 
