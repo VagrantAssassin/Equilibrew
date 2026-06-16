@@ -10,7 +10,7 @@ using UnityEditor;
 /// Menu: Tools > Equilibrew > Setup Multi-Agent System
 /// 
 /// Yang dilakukan:
-/// 1. Buat MultiAgentBridge (DontDestroyOnLoad)
+/// 1. Buat MultiAgentBridge (scene-bound, no DDOL)
 /// 2. Buat MultiAgentCustomerAdapter
 /// 3. Buat MultiAgentFlowController
 /// 4. Buat CurhatChoiceUI (Canvas panel)
@@ -24,10 +24,8 @@ public static class MultiAgentSetup
     {
         Debug.Log("[MultiAgentSetup] Starting setup...");
         
-        // 1. MultiAgentBridge (DontDestroyOnLoad)
+        // 1. MultiAgentBridge (scene-bound, no DDOL)
         var bridge = FindOrCreate<MultiAgentBridge>("MultiAgentBridge");
-        // Mark as DontDestroyOnLoad
-        bridge.gameObject.isStatic = false;
         
         // 2. MultiAgentCustomerAdapter
         var adapter = FindOrCreate<MultiAgentCustomerAdapter>("MultiAgentCustomerAdapter");

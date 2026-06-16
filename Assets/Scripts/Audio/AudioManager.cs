@@ -71,7 +71,8 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // No DontDestroyOnLoad — scene-bound. AudioManager is recreated each scene load.
+        // BGM auto-switches via sceneLoaded subscription below.
 
         // Ensure bgmSource exists
         if (bgmSource == null)

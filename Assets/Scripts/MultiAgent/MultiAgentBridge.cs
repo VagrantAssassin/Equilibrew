@@ -37,8 +37,8 @@ public class MultiAgentBridge : MonoBehaviour
             return;
         }
         Instance = this;
-        // May be a child of another root — target the root object
-        DontDestroyOnLoad(transform.root.gameObject);
+        // No DontDestroyOnLoad — scene-bound. Bridge is recreated each scene load.
+        // GameManager handles persistent progress via PlayerPrefs.
     }
 
     // ── Data Models ──────────────────────────────────────────────────────────
