@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Tea'n Brew Multi-Agent System — Python Dependencies
+#
+# Cara install (di virtual environment):
+#   python -m venv venv
+#   .\venv\Scripts\Activate.ps1        (Windows PowerShell)
+#   pip install -r requirements.txt
+#
+# Catatan:
+#   - Versi dipin dari environment yang sudah terverifikasi jalan (Python 3.12.7)
+#   - requests hanya dipakai untuk script eksperimen (experiment_dialogue.py),
+#     tidak wajib untuk server, tapi disertakan agar semua tool bisa dipakai.
+# ─────────────────────────────────────────────────────────────────────────────
+
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+pydantic==2.12.5
+langgraph==1.2.1
+openai==1.107.3
+python-dotenv==0.21.0
+requests==2.32.5

@@ -1,0 +1,542 @@
+[
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "...Bukan ini lagi, kak. Aku udah dua kali bilang teh, tapi masih salah juga. Ya udah, aku pergi aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "...Kak, salah lagi. Aku capek nunggu. Aku pergi dulu."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "Kak, ini udah yang ketiga. Aku capek nunggu, teh aja susah banget...\" Dito cemberut, ngetuk-ngetuk meja pelan, lalu berdiri sambil memalingkan muka. \"Udah, aku pergi aja.\""
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "Ih, kak, teh doang lho… udah dua kali salah. Dito capek nunggu, ya udah, nggak jadi deh!"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "...Kak, salah lagi. Aku udah nggak mau nunggu lagi. Hm. Aku pergi dulu, ya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "...Iya deh, kak. Aku udah bilang teh dari tadi, tapi tetap salah terus. Nggak jadi, aku pulang aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "...Kak, aku udah bilang teh. Kok masih salah lagi sih..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "...Kak, aku udah bilang teh. Dua kali salah juga. Haa... yaudah, aku pergi aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "...Kak, aku udah bilang teh. Tapi malah salah lagi. Bima pergi dulu ya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "...Bukan teh, kak. Udah dua kali, lho. Aku pergi aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "Kak... serius, aku udah bilang teh dari tadi, kok masih salah terus sih? Aku jadi capek banget, ih... yaudah deh, aku nggak jadi pesen lagi. Aku pergi ya, kak."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "...Kak, Nina udah bilang teh. Dua kali salah juga. Ya udah, Nina pergi aja, capek..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "Kak... ini teh, lho. Aku udah bilang dari tadi, dan ini salah terus... ih serius deh, aku capek banget... \n\nUdah, nggak apa-apa, kak. Aku pergi dulu aja..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "Kak... aku udah bilang teh. Dua kali salah juga. Nia nggak mau nunggu lagi, ya. *mengernyit, diam sebentar, lalu pergi*"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "...Kak, udah deh. Aku capek nungguin teh-nya, salah terus. Nggak jadi, aku pergi aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "...Kak, Nara udah bilang teh. Tapi salah lagi. Hm—nggak jadi deh, Nara pergi aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "Kak, ini teh dari tadi kok nggak datang-datang sih?! Aku udah nunggu dua kali, terus salah lagi… capek, lho! Yaudah deh, aku pulang aja, nggak mau nunggu di sini lagi."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "Nadira cemberut, memalingkan wajah. \"Bukan ini lagi, kak... aku udah bilang teh.\" Dia diam sebentar, lalu berdiri dan pergi tanpa menoleh."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "...Kak, aku udah bilang teh dua kali, terus tadi juga salah. Aku capek nunggu, maaf ya. Aku pergi dulu."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "Kak, ini teh aja kok bisa salah lagi sih? Aku udah bilang dari tadi, capek tau... huff. Nggak jadi, aku pulang aja. Nggak usah dibikinin lagi."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "\"Kak, ini teh aja kok tiga kali masih salah... aku udah bilang dari tadi, capek juga loh,\" Dika ngomel pelan sambil ngelus tengkuk, suaranya mulai meninggi ke arah sekitar. \"Udah deh, nggak usah dibikin ribet lagi, aku pergi aja dulu. Yaudah deh kak, bantuin mikir dong... lain kali jangan gini lagi ya.\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "Aduh, kak, ini teh doang loh, masa salah lagi sih? Aku udah bilang dua kali, capek juga kalau harus ngulang terus, yang lain aja deh yang dengerin. Ya udah, aku pergi dulu, kak — lain kali lebih teliti aja, atau kalau bingung tanya dulu, biar nggak gini terus."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "...Ya udah, kak. Tiga kali juga masih salah, capek aku. Bima ngedumel pelan sambil nyengir kecut, lalu ngelirik sebentar sebelum pergi. \"Teh doang, kok susah banget sih.\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "Ih, ya ampun, teh doang masa salah lagi, kak? Udah dua kali tuh, serius deh... gue capek nungguin. Ya udah, gue cabut aja, kak, lain kali kalau belum siap jangan dipaksa dulu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "Ih, kak... aku tadi udah bilang teh, dua kali malah salah terus. Aku kesel banget, serius, tapi ya udah, gue capek juga... kalau kak masih mau bantu, kasih yang bener aja, jangan yang aneh-aneh lagi. Aku pergi dulu, kak, biar nggak makin emosi."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "Waduh, ini teh masih aja belum datang, kak? Aku udah nunggu dua kali salah, masa yang terakhir juga bikin lama gini sih. Yaudah deh, aku cabut aja, capek nunggu terus—nggak jadi, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "Dio nyender sambil masang muka masam, ngedumel pelan. \"...Udah, kak. Gue capek nungguin dan tadi juga udah salah dua kali.\" Dia lihat sebentar, lalu berdiri. \"Gue pergi aja dulu.\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "Eh, serius deh, kak—udah dua kali salah, sekarang masih aja nggak bener. Gue capek, sumpah, teh doang masa ribet banget sih... ya udah, gue pergi aja. ...Maaf, kak, gue lagi capek banget, jadi gue beneran kesel."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "...Ya udah deh, kak. Aku bingung aja dari tadi, teh-nya kok bisa terus salah, sih. Nggak apa-apa, aku pergi dulu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "Ih serius, kak... aku minta teh dari tadi, udah salah dua kali juga. Ya udah deh, kak, aku capek banget, parah... aku pergi aja."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "Ih serius ya, kak... aku udah bilang teh dari tadi, dua kali salah lagi. Aku capek banget, parah, udah nggak mau nunggu lagi, sumpek tahu nggak sih... *mendengus* yaudah, aku pergi aja deh."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "Teh doang, kak... dua kali masih kebalik juga? Aku udah coba sabar, tapi ini kayak nunggu hujan di musim kemarau, nggak turun-turun. Yaudah deh, aku cabut aja, keburu mood-ku ikutan dingin—makasih, kak, kalau udah rapi nanti lain kali kabarin aja."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "...Kak, teh aja udah aku bilang dari tadi. Aku tuh bingung banget sih, dua kali salah terus gitu... yaudah, aku pergi dulu ya."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "Kak, serius ya... aku udah bilang teh dua kali, dan masih aja salah. Aku capek banget, parah, beneran bikin aku mau nangis aja gitu... udah lah, aku pergi dulu. Jangan panggil aku kalau masih gitu, tapi... ya kalau nanti udah sepi, ngobrol aja, kak, aku lagi kesel banget."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "…Kak, udah dua kali, loh. Aku capek nungguin teh yang nggak datang-datang, jadi ya sudahlah. Aku pergi dulu, sebelum mood-ku keburu tumpah kayak cangkir retak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "Kak, ini udah yang ketiga kalinya... aku pesen teh doang, serius, teh. Aku capek banget harus nunggu terus begini, padahal aku udah bilang dari tadi, ih... yaudah deh, aku pergi aja. Nggak apa-apa, kak, makasih..."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "Hah... kak, udah dua kali, ini bukan teh. Aku capek, serius. \"...\" Nggak apa-apa, aku pergi dulu ya."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "Teh aja, kak... tadi aku udah bilang dua kali, lho. \"Makasih, kak,\" tapi aku nggak jadi deh, aku mau pergi dulu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "...Teh aja kok, kak. Aku udah nunggu dari tadi, ya udah deh, nggak usah. Makasih, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "Kak... serius deh, aku udah bilang teh dari tadi, tapi masih salah lagi. Aku tuh udah nyoba sabar, tapi sekarang capek banget, ih... maaf ya, aku nggak jadi duduk lama-lama di sini.\n\nAku pergi dulu, kak. Lain kali kalau aku balik, tolong jangan salah lagi, ya..."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "...Sudah, kak. Saya nggak jadi pesan lagi. Saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "\"...Bukan ini, kak.\" Arga menarik napas panjang, menatap teh yang salah sajian itu dengan muka masam. \"Sudah, saya pergi saja.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "...Bukan ini lagi, kak. Saya sudah dua kali bilang teh, tapi tetap salah. Sudah, tidak usah repot—saya pergi."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "Kak, saya sudah bilang teh. Ini yang terakhir kali saya ulang. Saya minta waktu sebentar, saya lagi tidak enak hati—saya pergi dulu."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "... \". Sudah dua kali, kak. Saya nggak jadi pesan lagi.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "Kak, saya sudah bilang teh. Sekali salah masih saya maklumi, ini sudah kelewat. Tidak usah repot—saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "Sudah, kak. Saya nggak perlu nunggu lebih lama buat teh yang dari tadi nggak datang. Saya pergi sekarang—lain kali, kalau nggak siap, bilang saja dari awal."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "...Sudah cukup, kak. Saya tidak mau nunggu lagi. Tolong bereskan saja pesanan yang benar, atau saya pergi."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "...Sudah. Saya nggak mau nunggu lagi, kak. Teh saja bisa salah terus, ya jelas saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "Fajar menarik napas panjang, menatap cangkir kosong itu lama. \"Kak, ini sudah yang ketiga. Saya pesan teh, bukan yang lain. Tolong jelaskan, sebenarnya yang susah di mana?\" Ia diam sejenak, wajahnya makin masam. \"Sudah, saya pergi saja.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 1,
+    "dialog": {
+      "dialog_marah": "Huft... kak, saya udah bilang teh. Dua kali salah, terus sekarang juga masih keliru... capek banget rasanya. Saya pergi dulu ya, saya perlu waktu sebentar buat nenangin diri."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 2,
+    "dialog": {
+      "dialog_marah": "...Kak, saya sudah bilang teh. Ini yang ketiga kalinya. Saya capek menunggu, jadi saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 3,
+    "dialog": {
+      "dialog_marah": "...Kak, ini udah yang ketiga kalinya. Aku capek banget, serius. \n\nAku nggak jadi minum. Biar saja, aku pergi."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 4,
+    "dialog": {
+      "dialog_marah": "\"...\" Nadya menarik napas panjang, menatap gelas itu sekilas, lalu menggeser kursinya. \"Tidak usah, kak. Saya pergi saja.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 5,
+    "dialog": {
+      "dialog_marah": "Mira menarik napas panjang, menatap cangkir yang salah itu sebentar, lalu berkata pelan, \"Kak, ini sudah yang ketiga kalinya. Saya pesan teh, bukan yang lain.\" Dia merapikan tasnya, bangkit dengan muka masam, dan pergi tanpa menambah kata lagi."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 6,
+    "dialog": {
+      "dialog_marah": "...Kak, ini sudah tiga kali. Saya pesan teh, bukan yang lain. Sudah, tidak usah diteruskan—saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 7,
+    "dialog": {
+      "dialog_marah": "...Kak, ini sudah yang ketiga. Saya tunggu di sini terlalu lama.\n[menarik napas panjang] Tidak usah, saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 8,
+    "dialog": {
+      "dialog_marah": "Hah... kak, saya udah bilang teh. Ini udah dua kali salah, dan jujur saya capek banget. Tolong kasih kepastian sekarang: bisa beres atau nggak? Kalau nggak, saya pergi aja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 9,
+    "dialog": {
+      "dialog_marah": "…Kak, saya sudah bilang teh. Ini yang terakhir kali. Terima kasih, saya pergi saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "marah",
+    "ke": 10,
+    "dialog": {
+      "dialog_marah": "Mira menarik napas panjang, lalu menatap kak dengan wajah masam. \"Sudah, saya tidak mau tunggu lagi. Lain kali tolong lebih teliti.\""
+    }
+  }
+]

@@ -1,0 +1,1562 @@
+[
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak. Beliau lihat nilai matematikaku turun, terus langsung bilang aku kurang serius. Padahal semalam aku sudah belajar lumayan lama, jadi rasanya ya... capek juga. Yang paling bikin kepikiran itu soal pecahan campuran, aku udah coba, tapi pas di ulangan malah mentok terus. Aku jadi ngerasa usaha aku tadi itu kayak nggak kelihatan sama sekali.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kesel, Dino. Udah belajar tapi tetap kena marah, pasti rasanya nyesek.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau begitu, nanti coba lihat lagi bagian pecahan campurannya pelan-pelan. Mungkin yang bikin salah cuma satu langkah.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, kalau nilai turun ya berarti kurang latihan. Nggak usah dipikirin terus.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Kak, tadi aku baru sadar tabunganku kepakai buat beli buku gambar. Soalnya kemarin aku lihat toko, terus pengin banget punya yang baru, jadi aku ambil aja. Tapi pas ingat besok harus setor iuran acara kelas, aku langsung kepikiran terus. Aku jadi takut guru marah kalau aku belum bayar, soalnya pernah lihat teman lain dimarahin juga.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Aku paham, kak. Pasti bikin kepikiran banget pas sadar uangnya kepakai buat yang lain.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Oh, jadi uangnya habis di buku gambar ya. Besok iurannya memang harus siap, sih.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, lain kali jangan langsung dipakai buat beli ini itu kalau masih ada kewajiban.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Kak, tadi pagi aku sempat dimarahin ibu gara-gara uang jajanku kepakai buat beli mainan kecil. Aku waktu itu mikirnya cuma, \"ah, beli sedikit nggak apa-apa,\" tapi ternyata malah jadi masalah. Yang bikin aku kepikiran sekarang, besok kan aku harus bayar iuran lomba kelas, jadi aku bingung sendiri. Aku pengin bilang ke ibu kalau aku cuma khilaf, tapi di sisi lain aku juga takut karena memang aku yang salah.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu ngerasa kepikiran, Bima. Pasti nggak enak dimarahi terus masih harus mikirin iuran besok.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu ceritain pelan-pelan aja ke ibumu nanti. Kalau memang salah, ya memang harus diakui dulu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, lain kali jangan beli-beli dulu kalau masih ada urusan penting. Sekarang jadi repot sendiri kan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak. Beliau tahu uang hasil jualan kemarin kepake buat beli kartu game, jadi aku nggak bisa ngeles lagi. Aku sih ngerti ibu kesal, cuma rasanya tetap nggak enak banget. Sekarang aku jadi kepikiran terus, soalnya setoran besok belum ada gantinya.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran. Pasti rasanya berat banget kena marah soal itu.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu lagi pusing ya. Ceritain aja pelan-pelan, biar aku paham.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, lain kali jangan dipakai buat begitu lagi. Sekarang fokus aja dulu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak. Soalnya uang tabungan kelas yang harusnya aku bawa ke sekolah malah ketinggalan di laci rumah. Aku baru inget pas udah di sekolah, jadi rasanya langsung salah sendiri. Padahal besok udah harus dikumpulin buat beli buku prakarya, jadi ibu kelihatan kesal banget waktu tahu. Aku sih cuma bisa diam aja, soalnya memang aku yang lupa.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu jadi kepikiran, apalagi ini soal uang kelas. Pasti bikin nggak enak banget ya.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu emang kamu harus lebih hati-hati simpan barang penting, biar nggak kejadian lagi.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau lupa sampai bikin repot gitu, dimarahin juga bukan hal aneh.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku kena omel ayah, kak. Beliau bilang nilainya turun terus, jadi aku disuruh lebih serius. Aku sebenarnya sudah belajar dua malam, tapi pas ketemu soal pecahan, aku tetap bingung. Jadinya aku diam saja waktu dimarahin, soalnya aku juga nggak enak kalau ngelawan, tapi di dalam hati aku kesal karena aku sudah berusaha.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kok kalau kamu kesal, Bima. Kamu sudah usaha, jadi pasti berat rasanya dimarahin begitu.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Hmm, berarti kamu lagi bingung di bagian pecahan ya. Kadang emang kalau satu topik belum kebuka, yang lain jadi ikut susah.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya namanya juga nilai turun, pasti dimarahin. Tapi ya udah, tinggal belajar lagi aja.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Tadi pagi ayahku sempat marah, kak. Katanya buku PR matematika aku ketinggalan di rumah, padahal besok harus dikumpulin. Aku jadi kepikiran terus, soalnya aku juga takut kalau nilainya jadi jelek gara-gara itu. Sekarang aku cuma pengin besok nggak makin kacau.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran, itu memang bikin cemas.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, coba tenang dulu dan lihat lagi apa yang masih bisa disiapkan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, lain kali jangan sampai lupa lagi dari awal.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin orang tua, kak. Katanya aku harus lebih hati-hati, soalnya buku PR matematika yang mau dikumpulin besok ketinggalan di rumah nenek. Yang bikin aku kepikiran, di buku itu ada beberapa latihan yang belum sempat aku salin, jadi aku jadi langsung panik sendiri.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran, apalagi kalau masih ada latihan yang belum sempat disalin.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya sudah, coba tenang dulu. Nanti pikirin pelan-pelan biar nggak tambah panik.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Iya sih, tapi lain kali jangan sampai ceroboh lagi.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ayah, kak. Soalnya aku lupa bawa uang buat daftar les renang, padahal hari ini kan terakhir. Guru juga udah bilang besok kelompok baru mulai latihan, jadi aku jadi kepikiran terus. Aku sebenarnya mau bilang aku cuma kepleset lupa, tapi pas ayah ngomel, aku malah diem aja. Sekarang aku bingung, mau ngomong lagi ke ayah atau yaudah diam aja sekalian.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kok kamu kepikiran. Pasti rasanya nggak enak banget habis dimarahin pas lagi buru-buru gitu.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu masih bisa coba ngomong baik-baik ke ayah nanti. Biar jelas aja sekarang masalahnya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, lain kali jangan lupa lagi. Hal begini memang bikin ribet kalau diabaikan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ayah sama ibu, kak. Katanya aku harusnya lebih hati-hati, padahal aku yakin tadi udah siapin semuanya. Sekarang aku malah kepikiran, besok dibilang wali kelas, terus aku harus ngomong apa ke teman-teman di kelas. Aku juga bingung, mau bilang jujur soal ini atau pura-pura lupa dulu aja.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran, Bimo. Pasti rasanya nggak enak dimarahin terus masih harus mikirin besok.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, kamu memang harus siap jelasin ke wali kelas nanti. Biar nggak makin rumit.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, bilang aja lupa. Biar cepat selesai, nggak usah dipikirin terus.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Kak, tadi di kelas aku malah dituduh sama teman sebangku aku. Dia bilang aku yang ambil uang tabungan kelas, padahal aku nggak ngapa-ngapain. Jadi sekarang aku bingung, soalnya besok kita harus setor iuran buat beli hadiah ulang tahun guru. Aku jadi kepikiran terus, takut teman-teman malah percaya dia. Soalnya uangnya juga belum ketemu sampai sekarang.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kamu kepikiran, apalagi kalau langsung dituduh gitu. Pasti rasanya nggak enak banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Itu memang bikin repot. Ceritain aja pelan-pelan ke orang yang kamu percaya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau dia nuduh tanpa bukti, ya itu ngeselin banget. Pantes kamu jadi kesal.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Kak, tadi aku baru sadar buku gambarku masih ketinggalan di rumah sepupuku. Rasanya kayak ada batu kecil di dada, soalnya besok aku harus presentasi di kelas, dan aku udah kebayang guru nanya-nanya terus. Aku jadi kepikiran waktu terakhir pulang dari sana, aku masukin barang-barang seadanya ke tas, terus sekarang malah yang pentingnya nggak kebawa. Aku takut dimarahi, apalagi kalau guru lihat tugasku belum lengkap... jadi agak susah tenang.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kok kalau kamu panik, itu pasti bikin kepikiran banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Iya, itu memang bikin repot. Kamu pasti jadi nggak bisa fokus ya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kamu aja sih, masa barang penting bisa ketinggalan begitu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Kak, aku tadi pagi panik banget gara-gara pensil warnaku hilang. Padahal besok aku harus majuin gambar di depan kelas, jadi lihat kertas yang masih belum selesai itu rasanya kayak dikejar bayangan sendiri. Aku sempat nyari ke tas, meja, sampai tumpukan buku, tapi tetap nggak ketemu. Yang bikin aku makin ribet, aku jadi susah fokus dan tanganku malah kaku sendiri.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar banget kalau kamu jadi panik. Kehilangan barang pas lagi butuh memang bikin semuanya terasa makin berat.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Coba pelan-pelan dulu, siapa tahu pensil warnanya masih ada di tempat yang nggak kamu sangka.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya ampun, cuma pensil warna doang kok sampai segitunya.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Kak, tadi aku baru ingat besok harus setor bayar buku latihan di sekolah. Tapi uang tabunganku malah kepakai buat beli obat adikku, soalnya dia sempat demam dan di rumah lagi nggak ada persediaan. Aku jadi agak takut nanti guru marah atau ngomong depan kelas, padahal aku nggak sengaja bikin telat. Sekarang aku cuma bisa mikir, besok harus bilang apa ya biar nggak makin salah paham...",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kok kamu kepikiran begitu, apalagi kamu pakai uangnya buat adikmu.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu coba jelasin aja ke guru besok, bilang yang jujur apa adanya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau gitu, harusnya dari awal kamu jangan pakai uangnya buat yang lain dulu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Kak, tadi malam Bu Sari minta aku main lagu yang belum sempat aku hafal benar. Aku bilang iya saja, soalnya takut kelihatan nggak siap di depan kelas. Tapi sejak itu tangan aku malah gemetar terus, jadi aku jadi makin kepikiran.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau Nara jadi takut. Rasanya berat ya, sudah disuruh main tapi belum benar-benar siap.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau belum hafal, mungkin bilang terus terang ke guru nanti. Lebih baik daripada dipaksakan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, jangan dipikirin terus. Tampil saja nanti, paling juga kelar.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahi ibu, kak... soalnya buku gambar buat lomba sekolahku kena tumpahan susu. Yang bikin aku kesal, gambarnya itu sebenarnya sudah hampir selesai, dan menurutku yang paling bagus cuma itu. Sekarang jadi kotor, dan aku bingung harus pilih: marah karena kesal, atau diam aja terus coba perbaiki sebelum dikumpulin besok. Rasanya kayak lagi pegang kertas yang tipis banget, sekali salah sentuh bisa robek lagi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kesal. Sudah susah payah bikin gambar, terus rusak begitu saja pasti bikin hati ikut jatuh.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kedengarannya memang bikin pusing. Kalau masih sempat, mungkin kamu bisa coba lihat bagian yang masih bisa diselamatkan dulu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya ampun, cuma kena susu doang kok segitunya. Bikin lagi aja, jangan drama terus.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak... soalnya aku diam-diam pakai uang tabungan kelas buat beli kipas mini. Teman-temanku bilang itu lucu, terus aku ikut-ikutan pengin punya juga, padahal harusnya uang itu buat setor besok. Sekarang aku jadi kepikiran terus, takut kalau nanti di sekolah atau di rumah ada yang nanya-nanya. Aku juga ngerasa bodoh sih, karena sebenarnya aku tahu itu bukan keputusan yang bagus dari awal.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Aku ngerti, pasti rasanya nggak enak banget waktu dimarahin dan jadi kepikiran terus.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya sudah, lain kali jangan ikut-ikutan teman kalau itu memang buat urusan penting.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Itu sih memang salah sendiri, kenapa juga uang buat sekolah dipakai begitu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak. Dia lihat kartu laporan matematikaku, terus banyak coretan merahnya, jadi aku langsung disuruh duduk dan dengerin omelan dulu. Aku sebenarnya udah takut dari awal, soalnya aku juga tahu nilainya memang belum bagus. Yang bikin aku kepikiran terus itu besok aku masih harus ikut les, tapi aku jadi ngeri kalau nanti ibu beneran melarang aku main sama teman-teman lagi. Aku jadi campur aduk, malu, sedih, terus juga takut banget.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Ih, pasti rasanya kesel dan kepikiran terus ya, Nara. Aku ngerti sih kenapa kamu jadi takut.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu cerita aja pelan-pelan, Nara. Kalau mau, aku dengerin dulu tanpa dipotong.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, nilainya dibenerin aja dulu. Kalau dimarahin juga pasti ada alasannya.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak... soalnya baju seragamku kena saus, terus aku juga lupa bilang kalau besok harus bawa uang iuran kelas. Aku jadi kepikiran terus, takut nanti pas di rumah dimarahin lagi. Padahal aku nggak sengaja, tapi rasanya tetep bikin deg-degan banget.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar banget kamu kepikiran. Kedengerannya kamu lagi capek dan takut dimarahin lagi.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Hmm, itu memang bikin ribet. Kamu lagi takut pulang rumah, ya?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, bilang aja dari awal tadi. Sekarang kan jadi makin repot.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin Ibu, kak... soalnya seragamku jadi kotor habis jatuh pas upacara. Padahal aku jatuh itu karena ada kakak kelas manggil, terus aku jadi panik dan nggak fokus. Aku cuma diem aja waktu dimarahin, tapi rasanya sedih banget, karena aku udah nggak sengaja. Aku masih kepikiran sampai sekarang.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kamu sedih, Nisa. Kamu udah kaget duluan, terus masih dimarahin lagi.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Hmm, memang jadi nggak enak ya kalau kejadian begitu. Terus kamu habis itu ngapain?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, kalau panik ya jangan gampang kaget gitu. Seragam kotor kan jadi masalah.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Tadi pagi di rumah rame banget, kak. Aku dimarahin orang tua karena nilai matematika aku jeblok lagi, dan jujur itu bikin kepala aku langsung penuh. Aku udah coba jawab biasa aja, tapi tetap aja rasanya nyesek, apalagi mereka ngomongnya panjang banget. Yang bikin aku makin kepikiran, besok aku harus ikut tryout masuk kampus, sementara latihan soalnya sendiri masih kacau dan aku belum berani bilang ke mereka. Aku sih pengin kelihatan oke aja, tapi makin sore malah makin kepikiran terus, takutnya nanti pas besok malah makin berantakan.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Pasti berat banget ya, kak, udah dimarahin di rumah terus masih harus mikirin tryout besok. Wajar kalau jadi kepikiran terus.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya kalau emang belum siap, paling coba tenang dulu aja, kak. Nanti juga ada jalan buat ngadepinnya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, jangan dipikirin terus. Nilai jelek mah biasa, tinggal jalanin tryout-nya aja.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Kak, gue lagi pusing banget soalnya tabungan yang harusnya dipakai buat bayar study tour besok pagi malah kepake buat beli charger baru. Tadi charger HP gue rusak pas lagi dipake, dan gue nggak punya pilihan lain karena HP gue juga masih dipakai buat urusan sekolah. Yang bikin gue makin cemas, duitnya lumayan kurang sekarang, jadi gue harus nutup itu malam ini juga. Gue udah ngomong sama temen gue, Raka, tapi dia juga cuma bisa bantu dengerin doang sejauh ini. Jujur, gue lagi ngerasa nggak enak banget sama diri sendiri, soalnya ini kesalahan gue juga.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kak kalau kamu jadi panik. Situasinya emang bikin serba salah, apalagi kalau udah nyangkut buat besok pagi.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, coba tenang dulu kak. Biar jelas, kamu kurangnya berapa dan masih ada yang bisa diminta bantu nggak dari keluarga atau temen?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, lain kali jangan nekat pake tabungan buat hal mendadak gitu. Sekarang mah ya ribet sendiri, kan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Tadi pagi gue kena marah bapak, kak... ya gara-gara gue ketahuan nggak masuk les matematika. Gue malah cabut buat ikut audisi tim futsal sekolah, dan pas bapak tahu, suasananya langsung dingin banget. Yang bikin gue kepikiran bukan cuma omelannya, tapi sekarang gue jadi ngerasa kayak bikin hubungan di rumah makin renggang. Di satu sisi gue pengin buktiin kalau gue serius sama futsal, tapi di sisi lain gue juga nggak enak karena nyakitin bapak sendiri. Sekarang gue malah bingung, ini harus balik minta maaf dulu atau tetap ngejar audisi yang cuma hari ini itu.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kalau kamu kepikiran, apalagi kalau yang marah bapak sendiri. Rasanya pasti kayak dua jalan yang sama-sama berat.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu lagi bingung antara urusan keluarga sama audisi ya. Itu memang nggak gampang, kak.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya, kalau udah ketahuan bolos ya pasti dimarahin dong. Tinggal pilih aja mau fokus yang mana, nggak usah dipikir ribet.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Tadi pagi gue dimarahin bokap, kak. Dia liat nilai simulasi UTBK gue turun, terus langsung ngeluarin omongan soal futsal juga. Yang bikin gue kepikiran tuh bukan cuma marahnya, tapi karena dia ngingetin waktu dulu gue sering dibilang “jangan kebanyakan main dulu” kalau udah mulai kelihatan capek belajar. Sekarang rasanya kayak itu kejadian beneran, dan gue jadi panik sendiri gara-gara try out minggu depan. Gue jadi susah fokus, soalnya kepikiran terus kalau hasilnya masih jelek, beneran disuruh stop futsal.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu kepikiran, apalagi kalau yang ngomong itu bokap dan nyentuh hal yang kamu suka juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya udah, yang penting sekarang siapin aja try out-nya. Jangan kebanyakan mikir yang lain dulu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau baru dimarahin gitu terus panik terus ya capek sendiri, tapi ya terserah kamu deh.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Kak, gue lagi pusing banget soal presentasi lomba bisnis besok. Tadi file slide sama hitung-hitungan keuangan dari Raka malah salah kirim, jadi yang kebuka itu versi lama, padahal gue kira semuanya udah beres. Sekarang isinya berantakan, ada angka yang nggak sinkron sama isi slide, dan gue harus ngecek ulang satu-satu malam ini. Jujur aja, gue kesel sama panik bareng, soalnya besok udah tinggal tampil dan nggak ada waktu buat santai-santai.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar banget kamu panik, apalagi kalau yang salah itu justru file penting buat besok.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang kamu harus cek semua versi file dulu biar tahu mana yang paling bener, ya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Yaudah, coba tenang aja. Kalau salah kirim doang kan tinggal dibenerin, nggak usah segitunya.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Tadi pagi gue kena semprot bapak, kak. Beliau tau kalau gue nggak datang latihan basket, terus langsung nanya kenapa gue malah kerja diam-diam. Gue cuma diem waktu itu, soalnya bingung juga mau jawab apa tanpa bikin beliau makin emosi. Yang bikin gue kepikiran, uang dari kerja itu sebenarnya buat nutup biaya seragam kelas minggu ini, bukan buat senang-senang. Jadi sekarang gue kayak serba salah, di satu sisi nggak enak bohongin bapak, di sisi lain kalau gue nggak kerja, urusan sekolah gue juga nggak kelar.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu capek, Kak. Pasti rasanya serba salah banget kalau niatnya buat nutup kebutuhan, tapi malah dimarahin juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu emang posisinya ribet, ya. Kamu sekarang lebih kepikiran marahnya bapak atau biaya seragamnya?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, kenapa juga nggak ngomong dari awal aja sama bapak? Jadi sekarang malah numpuk sendiri, kan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku sempat dimarahin bokap, kak. Nilai matematikaku turun lagi, terus beliau langsung ngomel panjang. Aku sebenarnya udah belajar buat remedial besok, tapi tetep aja kepikiran terus sekarang. Yang bikin pusing, aku jadi ngerasa dua-duanya berat: kalau aku diam, bokap makin sebel, tapi kalau aku jelasin, takutnya malah kedengeran kayak alasan. Aku jadi susah fokus, padahal harusnya malam ini aku ngulang lagi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu kepikiran gitu, apalagi udah usaha tapi tetap kena marah. Kedengerannya capek banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Yaudah, yang penting sekarang fokus aja ke remedial besok. Jangan dipikirin terus dulu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau memang udah belajar, ya buat apa panik terus? Toh marah juga nggak ngerubah nilai.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Tadi pagi tuh aku dimarahin ayah, kak. Gara-gara nilai simulasi UTBK aku turun, padahal aku juga udah lihat hasilnya dan emang jelek, jadi ya... rasanya nggak enak banget. Abis itu seharian aku jadi kepikiran terus, apalagi malam ini masih harus ikut try out bimbel yang katanya bakal nentuin kelas intensif. Aku belum siap sama sekali, serius, kepala aku rasanya penuh banget. Yang bikin makin kepikiran tuh ayah ngomongnya lumayan keras, jadi dari pagi sampai sekarang masih kebawa.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran terus, apalagi habis dimarahin dan sekarang masih harus ketemu try out lagi malam ini.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya memang berat sih kalau nilainya turun terus ada try out penentuan. Kamu pasti lagi tegang banget.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, dijalanin aja dulu. Kalau dipikirin terus juga nggak bikin nilai naik.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Tadi pagi bokap gue ngamuk gara-gara nilai matematika gue turun lagi, kak. Dia tuh kalau udah lihat angka jelek, langsung panjang omongannya, jadi gue cuma bisa diem aja. Yang bikin capek, malam ini gue masih harus berangkat les tambahan juga, padahal gue lagi males banget buat ketemu orang-orang di rumah setelah dimarahin. Gue jadi kepikiran, nanti pulang-pulang pasti masih ada omelan lagi, dan itu yang paling gue gak kuat sih.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu capek, habis dimarahin terus masih harus lanjut les juga pasti berat banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Yaudah jalanin aja dulu lesnya, nanti di rumah baru dibahas lagi pelan-pelan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Nilai jelek ya memang pasti kena omel, tinggal tahan aja dulu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Tadi pagi rumahku agak ribut, kak. Orang tua aku marah gara-gara ketahuan aku bolos les matematika buat latihan band. Aku cuma bisa diam waktu mereka ngomel, soalnya ya memang aku salah, tapi di sisi lain aku juga lagi panik sendiri. Yang bikin berat itu besok udah tryout masuk kampus, dan aku belum berani bilang ke mereka kalau nilai matematikaku emang lagi jelek banget. Jadi sekarang rasanya aku kayak ketahan di tengah-tengah, pulang ke rumah juga jadi agak canggung, apalagi kalau mereka mulai nanya-nanya.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wah, pasti rasanya nggak enak banget ya, kak. Aku paham kalau sekarang situasinya jadi canggung di rumah.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang yang bikin berat bukan cuma lesnya, tapi juga hubungan sama orang tua jadi agak tegang ya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, paling marahnya cuma sebentar kok. Nanti juga lewat sendiri, jangan dibikin ribet.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku sempat dimarahin ibu, kak... jadi agak kepikiran terus sampai sekarang. Soalnya uang tabungan buat study tour itu kepake buat nutup ganti seragam aku yang sobek, dan pas ibu tahu, beliau langsung kesal banget. Aku ngerti sih kenapa ibu marah, cuma tetap aja rasanya berat, kayak aku malah bikin masalah sendiri. Yang bikin aku makin cemas tuh besok harus ngomong ke wali kelas soal uangnya kurang, dan aku belum kepikiran harus jelasin gimana.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Kak, aku paham itu pasti bikin kamu kepikiran banget. Kamu udah dapet tekanan dari rumah, sekarang masih harus hadapin wali kelas juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti besok kamu memang harus jelasin ke wali kelas soal kekurangannya, ya. Semoga masih ada cara buat nyesuainnya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Yaudah bilang aja apa adanya, kak. Paling juga wali kelas cuma nanya doang, jangan dibikin ribet.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin mama soal nilai matematikaku yang turun, kak. Jadi sekarang mama minta aku ikut try out tambahan hari Sabtu, padahal aku udah janji mau bantu event kelas juga. Aku jadi kepikiran terus, soalnya dua-duanya sama-sama penting buat aku. Kalau nolak mama, aku takut bikin beliau makin kesel. Tapi kalau batalin ke teman-teman, aku juga ngerasa gak enak banget, ih serius, bikin pusing.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kok kamu bingung, itu berat banget kalau harus milih di tengah dua hal yang sama-sama penting.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Coba tenang dulu, terus pikirin mana yang paling mendesak buat hari Sabtu nanti.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Yaudah pilih satu aja, gak usah dipikirin segitunya sampai capek sendiri.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku sempat dimarahin mama, kak. Dia kira aku sengaja pulang telat, padahal dari kemarin aku udah bilang bakal ada gladi bersih sama panitia sekolah sampai malam. Aku jadi kesel, tapi juga capek sendiri soalnya rasanya kayak omonganku nggak didengerin. Sekarang suasana di rumah jadi agak dingin, dan aku jadi mikir buat ngomong ke mama aja pun agak males, takut malah ujung-ujungnya berantem lagi. Aku cuma pengin dia ngerti kalau aku nggak main-main, gitu loh.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Pasti nyesek ya, kak… udah ngasih tahu dari awal tapi tetap dimarahin. Wajar kalau jadi kepikiran terus.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu coba jelasin lagi ke mama pas suasananya udah agak enak, biar nggak makin salah paham.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, namanya orang tua kadang suka gitu. Nggak usah dibawa perasaan amat.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku sempat kena marah mama, kak. Soalnya uang tabungan les yang harusnya aku simpan malah kepake buat beli tiket konser, terus pas diingetin soal uang daftar ulang ekskul yang besok harus dibayar, aku baru ngeh kalau itu memang udah dibilangin dari minggu lalu. Mama ngomongnya lumayan tegas di dapur, pas aku lagi siap-siap sekolah, jadi aku cuma bisa diam aja dulu. Jujur aku jadi kepikiran terus sih, bukan cuma karena dimarahin, tapi karena memang aku yang salah juga.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran, kak. Aku ngerti itu pasti bikin nggak enak banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang kamu lagi pusing mikirin uang daftar ulangnya, ya?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, lain kali jangan dipake dulu tabungannya kalau udah ada kebutuhan penting.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku kena omel mamaku, kak. Dia tahu aku nggak jadi les matematika dan malah kabur buat latihan dance, padahal dari awal aku udah dibikinin jadwalnya. Yang bikin aku makin kepikiran, minggu ini kan ada try out, dan aku belum berani ngomong kalau nilai matematikaku lagi turun. Aku cuma jawab seadanya waktu mama nanya, terus suasananya jadi tegang banget di rumah. Sampai sekarang aku masih takut kalau nanti dia nanya lagi soal itu.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kalau kak Naya kepikiran, itu memang bikin berat banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Itu lagi numpuk semua ya, dari les, latihan, sampai try out.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, nanti aja bilangnya kalau ketahuan juga.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Aku tadi pagi dimarahin ibu, kak. Gara-garanya ketahuan bolos les tambahan, padahal aku pergi latihan dance grup. Rasanya… ya campur aduk sih. Aku tahu aku salah karena bohong, tapi di sisi lain aku juga ngerasa kayak latihan itu penting banget buat aku, apalagi besok ada seleksi tampil di acara sekolah. Cuma aku belum berani bilang ke ibu kalau ini bukan sekadar main-main. Jadi sekarang aku kayak kepentok di tengah, mau ngomong takut, diam juga bikin sesek.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Pasti berat ya, kak. Udah dimarahin, terus masih dipendem sendiri juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kamu emang lagi serba salah sekarang. Pasti bikin kepala penuh.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya wajar sih kalau dimarahin, soalnya kamu juga bohong duluan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Aku masih kesel, kak. Tadi pagi aku dimarahin mama gara-gara pulang kesiangan habis nemenin temen latihan dance, padahal telatnya juga nggak lama, cuma sekitar dua puluh menit. Yang bikin makin ngeselin, HP aku disita seharian, jadi dari tadi rasanya kaya dikurung aja. Aku paham sih mama mungkin lagi khawatir, tapi tetap aja aku ngerasa nggak adil. Sekarang aku cuma berharap besok suasananya jangan panas lagi, soalnya aku nggak mau berantem terus sama mama cuma gara-gara hal gitu.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu kesel, dimarahin dan HP disita seharian pasti bikin bete banget.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya udah, nanti coba jelasin baik-baik lagi ke mama kalau kamu cuma telat sebentar.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kamu juga kenapa sih, kalau tahu bakal dimarahin ya jangan lama-lama.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin mama, kak... ya, gara-gara aku bolos les matematika. Aku malah kabur buat nyoba audisi dance di mall, karena kepalaku tuh rasanya penuh banget dan aku pengin nyoba hal yang beda, gitu. Tapi habis dimarahin, aku jadi kepikiran terus, soalnya besok ada remedial dan itu nilainya harus beneran kebantu. Aku jadi kayak ditarik ke dua arah, mau ngejar yang aku suka atau fokus beresin yang udah keburu berantakan.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Kedengeran berat banget ya, Nara. Pasti bikin kamu serba salah antara yang kamu pengin dan yang harus kamu hadapi sekarang.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Wajar sih kamu kepikiran dua-duanya. Yang penting sekarang kamu jangan terlalu panik dulu, coba tenangin kepala sebentar.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, siapa suruh bolos. Sekarang jangan lebay, tinggal fokus remedial aja.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku kena semprot ibu, kak. Beliau tahu aku nggak masuk les tambahan, padahal aku malah pergi latihan tari buat lomba sekolah. Jadi ya… aku cuma bisa diam pas dimarahin, soalnya kalau aku ngomong jujur dari awal, aku takut bakal makin panjang urusannya. Yang bikin kepala penuh itu bukan cuma takut dimarahin lagi, tapi juga karena latihannya sekarang berasa kayak benang kusut—ditarik ke dua arah terus. Aku jadi kepikiran terus, tiga hari itu rasanya mepet banget, tapi di sisi lain aku juga nggak enak sama ibu. ",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kamu kepikiran terus, kak. Posisi kamu memang serba ketarik, jadi capeknya pasti numpuk.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang kamu lagi pusing karena latihannya dan soal ibu sama-sama numpuk ya. Pasti berat juga.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau dari awal udah bikin masalah, wajar aja dimarahin. Sekarang tinggal terima dulu, kan?",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku dimarahin ibu, kak. Gara-gara nilai matematika aku jelek banget, terus beliau langsung bilang aku kurang serius belajar. Padahal semalem aku udah belajar lama, sampai ketiduran di meja, jadi rasanya kayak... capek sendiri, gitu. Sekarang aku malah kepikiran nanti pulang bakal kena lagi, apalagi takut HP aku disita sama disuruh ikut les tambahan minggu ini. Aku ngerti sih ibu kesel, tapi aku juga jadi kepikiran terus dan agak takut pulang.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar banget kamu kepikiran, kak. Udah usaha tapi tetap dimarahin pasti bikin capek dan sakit hati.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu kamu coba jelasin aja ke ibu kamu nanti, biar beliau tahu kamu juga udah belajar.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya emang kalau nilainya jelek, wajar lah dimarahin. Jangan kaget gitu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena semprot atasan karena satu pallet barang elektronik telat sampai ke tujuan. Yang bikin saya kesal, dia langsung anggap itu murni salah saya, padahal sistem gudang sempat error dan semua proses ikut mundur. Saya sudah jelaskan ke tim juga, tapi tetap saja yang paling depan diminta tanggung jawab biasanya saya. Sekarang sore ini saya harus jelasin kronologinya lagi ke dia, dan jujur saya masih bingung mau fokus ke fakta atau sekalian bilang kalau tadi dia terlalu cepat nge-judge. Soalnya kalau saya terlalu keras, urusannya bisa makin panjang. Tapi kalau saya terlalu lunak, nanti saya yang tetap disalahkan terus, kak.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kesel. Dipaksa jelasin ulang setelah dimarahin duluan pasti bikin capek juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, fokus aja ke kronologinya nanti. Biar jelas dan nggak melebar ke mana-mana.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, bilang aja seadanya. Kalau mereka mau marah lagi, itu urusan mereka.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena omel atasan gara-gara satu truk kiriman telat berangkat. Saya sudah lihat ada masalah di input gudang dari awal, jadi saya tahan dulu biar tim saya nggak ikut diseret ke urusan itu. Tapi ya tetap saja, yang kena duluan saya. Jujur, saya capek juga kalau hal begini terus yang dipakai cuma cari siapa yang salah.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kesal. Kakak sudah coba lindungi tim, tapi malah kakak yang disalahkan duluan.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau sudah ada masalah sistem, seharusnya memang dicek dulu sebelum marah ke orangnya. Itu kejadian yang bikin repot.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau atasan cuma mau marah, ngapain juga dipikirin. Kerjaan begini memang sering asal tunjuk salah.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Pagi tadi saya kena marah atasan, kak. Saya salah kirim file invoice ke klien yang penting banget, dan jujur itu bikin saya malu sendiri. Yang bikin makin ribet, file revisinya baru saya simpan di folder lain, jadi sekarang saya harus datang malam ini buat beresin semuanya. Saya juga jadi agak sungkan ketemu tim, soalnya kesannya saya ceroboh sekali.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak lagi kepikiran. Itu pasti bikin nggak enak ke atasan dan tim juga.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Iya, itu memang masalah kerja yang harus diberesin. Semoga malam ini bisa cepat kelar.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, kan tinggal datang malam ini. Jangan dibikin berat sendiri.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena tegur atasan soal satu pallet barang elektronik yang jadwal kirimnya kacau. Yang bikin saya kesal, data resinya bukan saya yang input, tapi saya yang diminta tanggung jawab penuh. Saya sudah jelasin apa adanya, cuma ya… dia tetap nggak mau dengar banyak. Sekarang saya cuma berharap jangan sampai itu berpengaruh ke penilaian kerja saya ke depan, karena saya memang takut kejadian begini dianggap kebiasaan.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kesal. Kedengarannya kakak sudah coba jelasin, tapi tetap disalahkan.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau begitu, semoga nanti ada waktu buat jelasin lagi pelan-pelan ke atasan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya udah, yang penting kan sekarang sudah lewat. Jangan dipikirin terus.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena tegur atasan, kak. Saya salah input 12 unit barang retur ke sistem, dan itu bikin laporan penutupan minggu ini ikut terganggu. Yang bikin saya kesal, sebenarnya angka itu sudah dikunci, jadi sekarang harus saya bereskan sebelum jam pulang. Saya cuma berharap tidak ada efek lanjutan lagi besok, karena kalau data masih berantakan, urusannya jadi panjang. Jujur saja, saya agak cemas juga kalau nanti dianggap ceroboh lagi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak jadi kepikiran. Kalau sudah sampai ganggu laporan, pasti rasanya nggak enak.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Yang penting sekarang dibenerin pelan-pelan aja. Biar tidak makin ketumpuk masalahnya.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau salah input ya wajar dimarahi. Lain kali lebih teliti dari awal saja.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Barusan saya habis dimarahin kepala cabang, kak. Dia sudah naik suara karena ada selisih stok yang belum ketemu, dan jujur saja saya juga masih kepikiran terus. Yang bikin saya makin nggak enak, besok pagi saya harus serahkan berita acara yang lengkap ke audit internal, jadi rasanya mepet sekali. Saya memang sudah cek ulang beberapa kali, tapi tetap saja angkanya belum nyambung. Sekarang saya cuma pengin cari tenang dulu sebentar, biar nggak makin kacau pas ngerjainnya.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kepikiran. Dimarahin seperti itu, apalagi saat masih ada urusan yang harus segera dibereskan, pasti bikin berat.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau begitu, coba tenang dulu sebentar. Setelah itu baru dilihat lagi satu per satu supaya lebih rapi.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, jangan terlalu dipikirin. Cuma selisih barang, nanti juga ketemu sendiri.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Kak, tadi aku baru kena masalah yang agak merepotkan di kantor. Ada invoice buat pelanggan besar, dan ternyata nominalnya salah, jadi harus kirim ulang sebelum jam lima. Yang bikin pusing, file revisinya masih ada di laptop rekan kerjaku, dan dia belum datang juga. Aku jadi ingat dulu pernah kejadian mirip, nungguin orang lain kelamaan sampai semua kerjaan ikut mundur. Jadinya sekarang aku cuma berusaha tetap tenang, tapi ya tetap kepikiran.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran, kak. Kalau nyangkut di orang lain memang rasanya serba nggak enak.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Semoga rekan kerjamu cepat datang, kak. Kalau sudah pegang filenya, pasti bisa langsung dibereskan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, tinggal tunggu aja kan? Kalau orangnya belum datang, memang nggak bisa dipaksa.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya sempat kena omel atasan karena laporan anggaran itu. Yang bikin saya kesal, sebetulnya isinya sudah benar dari awal, cuma pas kebuka di laptop kantor ada satu angka yang geser ke kolom sebelah. Sekarang saya lagi cek ulang satu-satu, soalnya kalau salah kirim lagi sebelum jam 5, pasti makin panjang urusannya. Jujur saja, saya cuma berharap angka yang saya pegang sekarang ini yang benar, kak. Kalau sampai harus mulai dari nol, ya repot juga.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kesal. Di posisi itu pasti bikin tegang, apalagi kalau sebenarnya bukan salah kamu dari awal.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang tinggal cek pelan-pelan dulu, ya. Semoga ketemu angka yang paling aman buat dikirim ulang.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau cuma gara-gara satu angka geser, kok bisa langsung dimarahi? Ribet juga atasanmu.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena tegur atasan soal satu rak barang yang input-nya salah. Saya sudah cek ulang, dan jujur saja, saya rasa asal masalahnya dari shift malam, cuma orangnya belum mau mengakui. Sekarang saya yang harus bereskan semuanya untuk audit internal sore ini, jadi ya, saya agak terjepit. Saya cuma bingung, kak, mau terus dorong soal siapa yang salah atau fokus rapikan dulu supaya urusan ini tidak makin panjang.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Pasti capek ya, kak. Di satu sisi kamu harus tanggung jawab, tapi di sisi lain rasanya nggak adil kalau kamu yang kena duluan.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, mending fokus dulu ke auditnya. Soal siapa yang salah, nanti saja dibahas kalau waktunya lebih pas.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, kerja aja dulu. Kalau memang penting, urusan siapa salah nanti juga ketahuan sendiri.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Pagi tadi saya kena omel atasan, kak. Ada kiriman ke toko pelanggan yang labelnya ketukar, dan saya yang disalahin duluan. Padahal setelah saya cek, data yang dipakai sudah diubah bagian administrasi, cuma saya memang belum sempat cocokin ulang. Jadi saya cuma diam waktu dimarahin, tapi dalam hati rasanya kesal juga, karena kejadian kayak gitu pernah kejadian dulu waktu saya masih baru kerja.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak kesal. Sudah kena marah padahal bukan sepenuhnya salah kakak.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti memang ada miss komunikasi di sana. Kakak cuma perlu jelasin ke atasan pelan-pelan.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya, kalau belum dicek ulang memang jadi risiko. Tapi kok sekarang baru dipermasalahkan?",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 1,
+    "dialog": {
+      "dialog_npc": "Pagi ini aku sempat dimarahi ibu karena pulang terlalu malam kemarin. Ya, aku tahu itu salahku juga, tapi tetap saja rasanya nggak enak dengarnya. Sekarang aku harus cepat pulang lagi karena ada makan keluarga di rumah tante, dan jujur aku lagi nggak terlalu ingin datang. Masalahnya, masih ada laporan stok yang belum selesai, jadi kepalaku rasanya penuh semua. Aku cuma capek, kak, dan agak kesal karena semuanya numpuk di hari yang sama.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu capek. Dapat omelan di pagi hari, lalu harus ke acara keluarga yang kamu hindari, itu memang berat.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kedengarannya hari kamu padat sekali. Semoga urusannya bisa selesai satu per satu tanpa makin bikin pusing.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, jalani saja dulu. Kalau semua dipikirin terus memang jadi tambah ribet.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 2,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku sempat dimarahi ibu, kak. Aku memang lupa nganter adik ke les, padahal jadwalnya sudah aku atur dari kemarin dan aku juga sengaja tukar shift biar bisa bantu. Yang bikin kepikiran itu bukan cuma omelannya, tapi rasa kesal ke diri sendiri, karena hal kayak gini dulu juga pernah kejadian waktu aku masih sekolah. Sekarang aku jadi harus pulang cepat, soalnya kalau adikku telat sedikit lagi, yang kena omel juga dia. Aku cuma pengin beresin ini dulu, biar nggak makin panjang di rumah.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar sih kalau kak Dina jadi kepikiran. Sudah diatur dari awal, terus tetap kebobolan, pasti nyesek.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu mending kak Dina fokus pulang dulu. Urusan yang lain bisa dibahas setelah adiknya aman.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, yang penting sekarang jangan tambah lama di sini. Kalau sampai adiknya kena marah lagi, makin ribet nanti.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 3,
+    "dialog": {
+      "dialog_npc": "Kak, aku lagi pusing banget soal presentasi besok pagi ke direktur. Aku harus jelasin laporan keterlambatan pengiriman, tapi data dari tiga cabang itu masih berantakan, dan ada dua angka yang belum ketemu cocoknya. Aku sebenarnya pengin rapihin semuanya dulu, cuma waktunya mepet banget, jadi aku jadi kepikiran terus antara beresin detailnya dulu atau bikin slide yang cukup aman buat dipresentasiin. Rasanya capek, karena kalau salah sedikit aja, nanti aku yang kena.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wah, itu pasti bikin kamu kepikiran banget. Aku paham kenapa kamu jadi serba salah sekarang.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Iya, situasinya memang bikin repot. Kalau boleh, kamu bisa mulai dari bagian yang paling penting dulu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau datanya masih acak, jangan dipaksa selesai cepat. Bikin aja seadanya dulu, besok urusan belakangan.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 4,
+    "dialog": {
+      "dialog_npc": "Pagi tadi aku sempat kena tegur atasan, kak. Katanya ada selisih di data stok lip tint edisi terbatas, dan ternyata sumbernya dari salah input yang belum ketahuan waktu aku cek cepat tadi. Yang bikin kepikiran itu bukan cuma tegurannya, tapi karena besok aku harus tutup laporan bulanan dan masih ada beberapa bagian yang belum sempat aku cocokin lagi. Rasanya jadi ingat kejadian lama waktu aku pernah telat nemu salah hitung kecil, lalu akhirnya berantakan ke mana-mana. Jadi sekarang aku agak waspada sendiri, takut ada yang kelewat lagi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kak Mira kepikiran, apalagi kalau sudah pernah ngalamin yang hampir sama. Kedengerannya memang bikin tegang.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau begitu memang harus dicek pelan-pelan lagi, biar ketahuan bagian yang masih janggal.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau urusan angka gitu sih memang harus teliti dari awal, jangan sampai salah input lagi.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 5,
+    "dialog": {
+      "dialog_npc": "Tadi pagi aku kena tegur atasan, kak. Aku salah kirim file proyeksi ke klien, jadi sekarang semuanya harus dibenerin lagi sebelum jam lima. Yang bikin capek itu bukan cuma revisinya, tapi nunggu balasan dari klien juga—rasanya jadi serba salah. Aku sih ngerti mereka kecewa, cuma tetap aja kepikiran terus dari tadi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kepikiran. Situasinya memang bikin berat, apalagi kalau masih nunggu kabar dari klien.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Ya sudah, fokus ke revisinya dulu. Kalau klien balas nanti, baru disesuaikan lagi.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau cuma salah kirim, ya cepat beresin saja. Jangan kebanyakan dipikirin.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 6,
+    "dialog": {
+      "dialog_npc": "Tadi pagi saya kena omel dari atasan di depan tim, kak. Masalahnya laporan klaim itu sebenarnya sudah saya kirim dari kemarin, tapi entah kenapa belum terbaca juga. Yang bikin saya kesal, kliennya nunggu jawaban sore ini, tapi yang kena marah malah saya. Saya cuma bisa diam waktu itu, soalnya kalau saya jawab panjang juga percuma.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Pasti nggak enak banget ya, sudah kerja benar tapi malah disalahkan di depan orang.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Itu memang bikin repot. Semoga nanti ada cara buat jelasin duduk masalahnya dengan lebih jelas.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya kalau sudah kirim, seharusnya mereka cek sendiri. Kok yang disalahin kamu terus.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 7,
+    "dialog": {
+      "dialog_npc": "Tadi pagi ibu sempat marah ke saya karena formulir kos itu belum saya tanda tangani juga. Saya jadi kepikiran terus, soalnya tenggatnya memang tinggal hari ini, dan dari pemilik kos sudah dua kali masuk chat. Jujur, saya agak kesal sama diri sendiri juga, karena hal sesederhana itu malah jadi numpuk begini, kak. Sekarang saya cuma ingin beresin cepat, tapi kepala rasanya sudah terlanjur penuh.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar banget kalau kamu jadi kepikiran. Kedengarannya memang bikin sesak, apalagi kalau sudah diingatkan berkali-kali.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Iya, itu memang perlu segera diberesin. Kamu masih sempat kok kalau langsung ditangani sekarang.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, tanda tangani saja sekarang. Jangan dipikirin terus, nanti malah makin ribet.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 8,
+    "dialog": {
+      "dialog_npc": "Aku lagi pusing sendiri, kak. Besok pagi aku harus presentasi revisi laporan bulanan ke direktur, tapi data dari dua cabang belum juga masuk. Atasan udah minta file final sebelum pulang sore ini, jadi aku serba salah; kalau nunggu, aku takut telat, kalau jalan tanpa data, nanti yang kena aku juga. Jujur aja, aku capek karena rasanya semua nunggu aku yang beresin, padahal bukan cuma salahku.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu capek. Situasinya memang bikin serba salah, dan itu berat.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti sekarang kamu lagi nunggu data sambil tetap siapin file final, ya?",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Kalau belum lengkap ya bilang saja belum, jangan dipaksain.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 9,
+    "dialog": {
+      "dialog_npc": "Pagi tadi aku dimarahi ibu, kak. Katanya aku sudah janji bantu siapin hidangan buat arisan keluarga, tapi malah nggak datang juga. Aku sebenarnya paham beliau kesal, cuma tetap saja rasanya nggak enak dengarnya langsung begitu. Sekarang aku bingung, mau minta maaf secepatnya atau nunggu suasana agak reda dulu supaya nggak tambah panas. Kalau terlalu lama juga salah, tapi kalau sekarang aku takut malah jadi debat lagi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kakak jadi serba salah. Kamu memang lagi kena dua tekanan sekaligus, jadi mau minta maaf pun terasa susah.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Kalau gitu, mungkin coba pilih waktu yang tenang dulu buat ngomong baik-baik sama ibu.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah, seharusnya dari awal kamu jangan sampai lupa. Sekarang tinggal hadapi saja.",
+          "nada": "angry"
+        }
+      ]
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "curhat",
+    "ke": 10,
+    "dialog": {
+      "dialog_npc": "Kepala klinik tadi pagi tiba-tiba minta rekap klaim asuransi dimajuin, kak. Padahal saya baru kelar setengah, terus masih ada tiga berkas pasien yang datanya salah semua. Jujur saya jadi agak kesal, soalnya ini bukan hal yang bisa dikejar asal jadi.",
+      "pilihan_jawaban": [
+        {
+          "id": 1,
+          "teks": "Wajar kalau kamu kesal, apalagi kerjanya dipercepat mendadak begitu. Itu memang bikin capek dan bikin kepala penuh.",
+          "nada": "satisfy"
+        },
+        {
+          "id": 2,
+          "teks": "Berarti kamu lagi dikejar waktu ya. Pasti repot kalau masih ada data yang harus dibenerin juga.",
+          "nada": "neutral"
+        },
+        {
+          "id": 3,
+          "teks": "Ya sudah kerjakan saja, mau gimana lagi. Paling juga bisa selesai kalau dipaksa.",
+          "nada": "angry"
+        }
+      ]
+    }
+  }
+]

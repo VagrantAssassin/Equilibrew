@@ -1,0 +1,9 @@
+seed,metrik,mean_sim,uncertainty
+good,cosine_similarity (FED vector),0.9956,0.0044
+good,spearman_rho (FED vector),0.572,0.428
+good,kendall_tau (FED vector),1.0,0.0
+good,absolute_score_diff (total),,0.0688
+bad,cosine_similarity (FED vector),0.9904,0.0096
+bad,spearman_rho (FED vector),0.9407,0.0593
+bad,kendall_tau (FED vector),0.981,0.019
+bad,absolute_score_diff (total),,0.075

@@ -22,7 +22,7 @@ import random
 from langgraph.graph import StateGraph, START, END
 
 from state      import GameState
-from config     import MAX_REVISI, RONDE_MIN, RONDE_MAX, MOOD_DELTA, MOOD_MIN, MOOD_MAX
+from config     import MAX_REVISI, RONDE_MIN, RONDE_MAX, MOOD_DELTA, MOOD_MIN, MOOD_MAX, CRITIC_THRESHOLD
 from llm_client import call_llm, parse_json
 
 import agents.profile_agent  as profile_agent
@@ -41,24 +41,53 @@ def jalankan_dialog_state(state: dict, fn_generate) -> dict:
     Alur:
       fn_generate(state) → generate dialog
       critic_agent.run(state) → validasi
-      [jika gagal & belum max revisi] → critic_agent.run_revisi → ulang
+      [jika gagal & belum max revisi] → fn_generate(state, saran_revisi=...) → ulang
       [lulus atau max revisi] → kembalikan state final
+
+    Perbaikan:
+      - critic_lulus ditentukan oleh threshold (skor >= CRITIC_THRESHOLD),
+        BUKAN nilai mentah dari LLM.
+      - critic_log mencatat setiap attempt (skor, dimensi, saran, lulus/tidak).
+      - Revisi menggunakan fungsi yang SAMA (fn_generate) dengan parameter
+        saran_revisi, bukan fungsi run_revisi() terpisah. Ini memastikan
+        prompt revisi sama kayanya dengan prompt asli.
     """
     updates = fn_generate(state)
     state.update(updates)
+
+    critic_log = []
 
     for i in range(MAX_REVISI + 1):
         kritik = critic_agent.run(state)
         state.update(kritik)
 
-        if state.get("critic_lulus", False):
+        skor = kritik.get("critic_skor", 0)
+        lulus = skor >= CRITIC_THRESHOLD
+
+        # Override critic_lulus dengan threshold-based
+        state["critic_lulus"] = lulus
+
+        # Catat log attempt ini
+        critic_log.append({
+            "attempt_ke": i + 1,
+            "skor": round(skor, 2),
+            "skor_dimensi": kritik.get("critic_skor_dimensi", {}),
+            "saran": kritik.get("critic_saran", ""),
+            "catatan": kritik.get("critic_catatan", []),
+            "lulus": lulus,
+        })
+
+        if lulus:
             break
         if i >= MAX_REVISI:
             break
 
-        revisi = critic_agent.run_revisi(state)
+        # Revisi: panggil fungsi yang SAMA dengan saran_revisi
+        # Prompt asli tetap dipertahankan, hanya ditambahkan blok revisi
+        revisi = fn_generate(state, saran_revisi=state.get("critic_saran", ""))
         state.update(revisi)
 
+    state["critic_log"] = critic_log
     return state
 
 
@@ -197,7 +226,8 @@ def _node_critic(state: GameState) -> dict:
 
 
 def _node_critic_revisi(state: GameState) -> dict:
-    return critic_agent.run_revisi(state)
+    """Node revisi: panggil ulang dialogue_pesanan dengan saran Critic."""
+    return dialogue_agent.run_pesanan(state, saran_revisi=state.get("critic_saran", ""))
 
 
 def _route_critic(state: GameState) -> str:

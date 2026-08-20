@@ -1,0 +1,566 @@
+[
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan": "Kak, boleh teh satu ya... yang hangat aja. Aku lagi pengin minum yang simpel dulu, soalnya kepala rasanya penuh banget hari ini.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan": "Kak, boleh teh aja... yang hangat. Aku duduk sini dulu, ya.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesen teh ya... yang hangat aja. Lagi pengin yang biasa-biasa dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat ya... yang biasa aja. Kalau bisa jangan terlalu manis.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesen teh aja ya... yang hangat. Boleh yang nggak terlalu manis.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh ya. Yang biasa aja, nggak usah aneh-aneh... hari ini pengin minum yang aman dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan": "Eh, kak, aku pesen teh ya... yang hangat aja. Jangan terlalu manis, aku lagi pengin yang biasa-biasa aja.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh, ya. Yang biasa aja... hangat.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat aja... yang biasa. Boleh cepat, ya.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan": "Eh, kak... saya pesen teh, ya. Yang hangat aja, nggak usah aneh-aneh. Terima kasih.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku... teh aja, ya. Yang hangat, kalau bisa, soalnya hari ini rasanya kepala aku kayak penuh kertas gambar yang ketiup angin.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan": "Kak, boleh teh hangat satu, ya... yang biasa aja. Aku duduk sini dulu, boleh?",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh ya... yang hangat aja. Boleh yang biasa, aku lagi pengin minum yang simpel dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku mau teh, ya... yang hangat. Hari ini rasanya pengin yang tenang aja, kayak air yang diam di cangkir. Terima kasih, kak.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh ya... yang hangat, boleh. Aku lagi pengin yang rasanya tenang, kayak hujan kecil di jendela.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh ya... yang hangat aja. Hmm, boleh dibuat sedikit manis? Aku lagi pengen yang tenang-tenang dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan": "Kak, boleh teh hangat satu? Yang biasa aja. ...Aku lagi pengen minum yang simpel dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh saja. Yang hangat ya... aku lagi pengin yang biasa-biasa aja.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan": "Kak, boleh minta teh ya... yang hangat, kalau ada. Aku lagi pengin yang rasanya tenang, kayak sore yang nggak buru-buru.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku mau teh... yang hangat, ya. Hari ini rasanya kayak awan tebal sedikit, jadi pengin yang sederhana dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat aja ya... yang biasa. Lagi pengin yang simpel dulu, capek mikirnya.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat aja ya... yang biasa. Lagi pengin yang simpel dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat aja ya... yang biasa. Lagi pengen yang simpel dulu, nggak ribet.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh aja ya... yang hangat. Lagi pengen yang simpel dulu, nggak usah aneh-aneh.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh panas aja. Yang biasa, nggak usah aneh-aneh. Habis ini aku duduk bentar dulu, capek abis latihan.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh aja ya... yang hangat kalau ada. Lagi pengen yang simpel dulu, soalnya kepala rasanya penuh banget hari ini.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh aja ya... yang hangat. Beneran, saya lagi pengin yang simpel dulu, jangan macem-macem.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 8,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 9,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 10,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 1,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 2,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 3,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 4,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 5,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 6,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 7,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 8,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 9,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan": "Kak, aku pesan teh aja ya... yang hangat. Lagi pengen yang simpel, ih, serius, hari ini capek banget.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan": "Teh hangat, kak. Yang biasa saja, ya... saya lagi nggak butuh yang macam-macam.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan": "Mbak, teh hangat satu, ya, kak. Boleh yang biasa saja, nggak usah terlalu manis. Makasih.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja. Yang hangat, ya… tolong jangan terlalu manis.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh, ya. Panas aja... hari ini rasanya butuh yang simpel.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja. Panas, yang biasa.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan": "Teh biasa saja, kak. Hangat, tanpa gula. Saya duduk sebentar dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja. Yang hangat, tanpa tambahan macam-macam. Cepat kalau bisa, saya lagi dikejar waktu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh hangat saja. Yang biasa, ya... tanpa macem-macem.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja. Yang hangat, ya... nggak usah terlalu lama, saya lagi buru-buru.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan": "Kak, teh hangat satu. Cepat ya, saya lagi butuh yang sederhana.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan": "Kak, pesan teh hangat saja. Yang biasa, tanpa gula. Lagi pengin yang sederhana dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh, ya. Yang biasa saja—hangat kalau ada. Terima kasih.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan": "Permisi, kak... saya pesan teh, ya. Yang hangat saja, tanpa terlalu manis. Hari ini rasanya saya butuh yang sederhana dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja, ya. Hangat, jangan terlalu manis. Hari ini rasanya saya butuh yang sederhana.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan": "Mbak, teh hangat ya, kak. Yang biasa saja. Saya lagi butuh yang sederhana dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan": "Teh hangat, ya, kak. Tanpa yang macam-macam. Saya lagi butuh yang simpel saja.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja. Yang hangat, tanpa tambahan apa-apa. Biar cepat, saya lagi tidak ingin ribet.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh ya. Yang biasa aja, tidak usah terlalu manis... saya lagi kurang enak hati.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan": "Mbak, teh hangat saja, kak. Yang biasa, ya... hari ini saya butuh yang simpel dulu.",
+      "minuman_dipesan": "teh"
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan": "Kak, saya pesan teh saja, ya. Yang hangat, tolong—sepertinya saya butuh yang sederhana dulu hari ini. Terima kasih.",
+      "minuman_dipesan": "teh"
+    }
+  }
+]

@@ -3,19 +3,23 @@ agents/dialogue_agent.py
 ------------------------
 Dialogue Agent — bertanggung jawab atas SEMUA produksi dialog NPC.
 
-Menangani 5 dialog state sesuai skenario game Tea'n Brew:
+Menangani 7 dialog state sesuai skenario game Tea'n Brew:
   run_pesanan()       → state "pesanan"       : NPC memesan minuman
   run_pesanan_salah() → state "pesanan_salah" : NPC bereaksi saat pesanan salah
   run_marah()         → state "marah"         : NPC marah dan pergi (max fails)
   run_berhasil()      → state "berhasil"      : NPC puas, pesanan benar
   run_curhat()        → state "curhat"        : Dialog curhat multi-baris per ronde
-  run_reaksi()        → sub-state curhat      : Reaksi NPC setelah pemain menjawab
-"""
+    run_reaksi()        → state "reaksi"        : NPC merespons jawaban pemain
+    run_closing()       → state "closing"       : NPC menutup sesi curhat
+  """
 
-import sys, os
+import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from config     import GAYA_BAHASA, MENU_MINUMAN
+from config     import (
+    GAYA_BAHASA, DIALOGUE_MODEL,
+    DIALOGUE_TEMPERATURE, DIALOGUE_FREQUENCY_PENALTY, DIALOGUE_PRESENCE_PENALTY,
+)
 from llm_client import call_llm, parse_json
 from state      import GameState
 from agents.profile_agent import build_ocean_desc
@@ -136,46 +140,76 @@ ATURAN MUTLAK:
 1. NPC memanggil pemain "kak". JANGAN "bro", "man", "sis", "guys".
 2. Dialog harus TERASA BEDA antar NPC. Jangan semua NPC bicara dengan nada yang sama.
 3. Tunjukkan OCEAN melalui CARA BICARA, bukan dengan menyebutkan angka atau sifat langsung.
-4. Kalimat harus natural seperti orang bicara sungguhan — ada jeda, ada emosi, ada gaya.
+4. Kalimat harus natural seperti orang bicara sungguhan — ada jeda, ada emosi.
 5. Untuk state curhat: NPC wajib merespons jawaban pemain di ronde sebelumnya, jangan mulai dari awal.
+6. HANYA tulis KATA-KATA yang diucapkan NPC (dialog lisan). JANGAN sertakan deskripsi aksi,
+   narasi panggung, atau stage direction. Contoh DILARANG: "tersenyum kecil sambil mengangguk",
+   "*diam sebentar*", "(tertawa)", "sambil menunduk". Emosi HARUS terbaca dari pilihan kata
+   dan tanda baca saja, bukan dari deskripsi gerakan.
 
 Kembalikan HANYA JSON valid, tanpa teks lain."""
 
 
 # ── STATE 1: Pesanan ──────────────────────────────────────────────────────────
 
-def run_pesanan(state: GameState) -> dict:
-    """NPC datang dan memesan minuman."""
+def run_pesanan(state: GameState, saran_revisi: str = "") -> dict:
+    """NPC datang dan memesan minuman. Minuman sudah dipilih oleh Unity."""
     ocean  = state["ocean"]
     system = _base_system(ocean, state["usia"])
+    minuman = state.get("minuman_dipesan", "teh")
+
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Dialog sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Dialog lama yang perlu diperbaiki: "{state.get('dialog_pesanan', '')}"
+PERBAIKI sekarang, hasilkan dialog BARU yang lebih baik.
+"""
 
     user = f"""NPC: {state['nama']} ({state['usia']}, {state['gender']})
 Background   : {state['background']}
 Masalah hari ini: {state['masalah_hari_ini']}
-Menu tersedia: {', '.join(MENU_MINUMAN)}
+Minuman yang dipesan: {minuman}
 
-Buat dialog NPC PERTAMA KALI datang ke café dan memesan minuman.
+Buat dialog NPC PERTAMA KALI datang ke café dan memesan {minuman}.
 
 PANDUAN:
 - NPC sedang membawa beban masalah hari ini, jadi dialog pesanannya boleh terpengaruh suasana hati
 - Misalnya: kalau lagi sedih mungkin pesannya sambil mendesah, kalau lagi marah mungkin pesannya to the point
 - Tapi JANGAN langsung cerita masalah — cukup terlihat dari nada atau ekspresi kecil
-- Pilih minuman dari menu yang sesuai suasana hati NPC
+- Minuman SUDAH DITENTUKAN: {minuman}. JANGAN ganti minuman.
 - 1-3 kalimat, natural, sesuai pola bicara OCEAN di atas
 - Panggil pemain "kak" (1 kali saja)
-
+{revisi_blok}
 Format JSON:
 {{
-  "minuman_dipesan": "nama minuman dari menu",
   "dialog_pesanan": "dialog NPC memesan..."
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
+    # Post-process: pastikan nama minuman di dialog_text sesuai dengan minuman_dipesan
+    dialog_text = result["dialog_pesanan"]
+    # Cek apakah LLM mengganti nama minuman di dialog
+    if minuman.lower() not in dialog_text.lower():
+        # Cari dan ganti nama minuman yang salah
+        import re
+        possible_drinks = ["green tea", "black tea", "mint tea", "matcha latte", "jasmine tea", "chamomile tea", "oolong tea"]
+        for wrong_drink in possible_drinks:
+            if wrong_drink.lower() != minuman.lower() and wrong_drink.lower() in dialog_text.lower():
+                dialog_text = re.sub(wrong_drink, minuman, dialog_text, flags=re.IGNORECASE)
+                break
+
     return {
-        "minuman_dipesan": result["minuman_dipesan"],
-        "dialog_pesanan" : result["dialog_pesanan"],
+        "minuman_dipesan": minuman,
+        "dialog_pesanan" : dialog_text,
         "dialog_state"   : "pesanan",
         "konteks_critic" : "pesanan",
         "revisi_ke"      : 0,
@@ -184,13 +218,22 @@ Format JSON:
 
 # ── STATE 2: Pesanan Salah ────────────────────────────────────────────────────
 
-def run_pesanan_salah(state: GameState) -> dict:
+def run_pesanan_salah(state: GameState, saran_revisi: str = "") -> dict:
     """NPC bereaksi saat pemain menyajikan minuman yang salah."""
     ocean      = state["ocean"]
     fail_count = state.get("fail_count", 1)
     max_fails  = state.get("max_fails", 2)
     system     = _base_system(ocean, state["usia"])
     reaksi_gaya = state.get("reaksi_gaya", "")
+
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Dialog sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Dialog lama yang perlu diperbaiki: "{state.get('dialog_pesanan_salah', '')}"
+PERBAIKI sekarang, hasilkan dialog BARU yang lebih baik.
+"""
 
     # Intensitas berdasarkan progres fail
     if fail_count == 1:
@@ -219,13 +262,18 @@ CARA NPC BEREAKSI BERDASARKAN KEPALIBADIAN:
 - Kalau Extraversion rendah: diam, cemberut, tidak manya manya tapi terlihat kecewa.
 
 Sesuaikan dengan intensitas di atas. Maks 2 kalimat.
-
+{revisi_blok}
 Format JSON:
 {{
   "dialog_pesanan_salah": "reaksi NPC saat pesanan salah..."
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
     return {
@@ -238,27 +286,36 @@ Format JSON:
 
 # ── STATE 3: Marah ────────────────────────────────────────────────────────────
 
-def run_marah(state: GameState) -> dict:
+def run_marah(state: GameState, saran_revisi: str = "") -> dict:
     """NPC marah dan pergi setelah mencapai batas fail."""
     ocean  = state["ocean"]
     system = _base_system(ocean, state["usia"])
     reaksi_gaya = state.get("reaksi_gaya", "")
     gaya_hint = f"\nGaya marah NPC: {reaksi_gaya}" if reaksi_gaya else ""
 
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Dialog sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Dialog lama yang perlu diperbaiki: "{state.get('dialog_marah', '')}"
+PERBAIKI sekarang, hasilkan dialog BARU yang lebih baik.
+"""
+
     n = ocean.get('neuroticism', 50)
     a = ocean.get('agreeableness', 50)
     e = ocean.get('extraversion', 50)
 
     if n >= 70 and a < 50:
-        cara_marah = "Meledak-ledak, banyak kata-kata emosional, mungkin hampir nangis karena frustasi"
+        cara_marah = "Meledak-ledak, banyak kata-kata emosional, frustasi"
     elif n >= 70:
-        cara_marah = "Sedih sekaligus marah, frustasi, mungkin suara bergetar"
+        cara_marah = "Sedih sekaligus marah, frustasi, nada bergetar"
     elif a < 40:
-        cara_marah = "Dingin, sinis, blak-blakan. Tidak teriak tapi kata-katanya menyakitkan"
+        cara_marah = "Dingin, sinis, blak-blakan. Tidak berteriak tapi kata-katanya tajam"
     elif e >= 60:
-        cara_marah = "Loud, langsung ngomong ke siapa saja di sekitar, ekspresif"
+        cara_marah = "Berdasar, langsung ngomong ke siapa saja di sekitar, ekspresif"
     else:
-        cara_marah = "Diam seribu bahasa, pasang muka masam, lalu pergi tanpa banyak kata"
+        cara_marah = "Pendiam, pasif-agresif, lalu pergi tanpa banyak kata"
 
     user = f"""NPC: {state['nama']} ({state['usia']}, {state['gender']})
 Pesanan NPC: {state.get('minuman_dipesan', 'teh')}
@@ -268,13 +325,18 @@ Cara marah: {cara_marah}{gaya_hint}
 Pemain gagal melayani pesanan NPC untuk yang terakhir kalinya.
 Buat dialog NPC MARAH dan memutuskan PERGI dari café.
 Sesuaikan cara marah dengan OCEAN. Maksimal 2-3 kalimat.
-
+{revisi_blok}
 Format JSON:
 {{
   "dialog_marah": "dialog NPC marah dan pergi..."
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
     return {
@@ -287,24 +349,33 @@ Format JSON:
 
 # ── STATE 4: Berhasil ─────────────────────────────────────────────────────────
 
-def run_berhasil(state: GameState) -> dict:
+def run_berhasil(state: GameState, saran_revisi: str = "") -> dict:
     """NPC puas karena pesanan benar, transisi ke sesi curhat."""
     ocean  = state["ocean"]
     system = _base_system(ocean, state["usia"])
+
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Dialog sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Dialog lama yang perlu diperbaiki: "{state.get('dialog_berhasil', '')}"
+PERBAIKI sekarang, hasilkan dialog BARU yang lebih baik.
+"""
 
     e = ocean.get('extraversion', 50)
     a = ocean.get('agreeableness', 50)
     n = ocean.get('neuroticism', 50)
 
     if e >= 70:
-        gaya_senang = "Ekspresif, teriak kecil senang, langsung banyak kata, mungkin minta temenan"
+        gaya_senang = "Ekspresif, antusias, banyak kata, mungkin minta temenan. Nada bicara naik dan bersemangat."
     elif e >= 40:
-        gaya_senang = "Senyum hangat, bilang terima kasih dengan tulus, ukuran pas"
+        gaya_senang = "Hangat, bilang terima kasih dengan tulus, ukuran pas."
     else:
-        gaya_senang = "Senyum kecil, bilang terima kasih pelan, lebih diam tapi terlihat lega"
+        gaya_senang = "Pelan dan tenang, bilang terima kasih singkat, lebih diam tapi terlihat lega dari nada suara."
 
     if n >= 70:
-        reaksi_plus = " (lega banget karena sempat khawatir salah)"
+        reaksi_plus = " (lega dan terkejut bahagia; boleh agak emosional tapi FOKUS pada kepuasan, BUKAN ketakutan)"
     elif a >= 70:
         reaksi_plus = " (puas dan ingin memuji baristanya)"
     else:
@@ -319,13 +390,21 @@ Buat dialog NPC puas menerima pesanannya.
 Tunjukkan kepuasan melalui CARA BICARA NPC sesuai OCEAN.
 1-3 kalimat. Panggil pemain "kak" (1 kali).
 JANGAN lanjut ke topik lain. Berhenti setelah ekspresi kepuasan.
-
+JANGAN sekali-kali menyebut ketakutan, kekhawatiran, atau keraguan tentang salah
+(misal dilarang: "aku takut salah", "kirain salah", "sempat khawatir").
+NPC SUDAH tahu pesanannya BENAR — fokus pada rasa PUAS dan TERIMA KASIH.
+{revisi_blok}
 Format JSON:
 {{
   "dialog_berhasil": "dialog NPC puas dengan pesanan..."
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
     return {
@@ -338,20 +417,32 @@ Format JSON:
 
 # ── STATE 5: Curhat (per ronde) ───────────────────────────────────────────────
 
-def run_curhat(state: GameState) -> dict:
+def run_curhat(state: GameState, saran_revisi: str = "") -> dict:
     """
     NPC bercerita untuk satu ronde curhat.
     Ronde 1: NPC cerita masalah.
     Ronde 2+: NPC merespons pilihan jawaban pemain dari ronde sebelumnya.
-    Ronde terakhir: NPC tutup cerita (penutup, tanpa pilihan).
+    Semua ronde, termasuk ronde terakhir, menyediakan tiga pilihan jawaban.
+    Penutup sesi dibuat oleh run_reaksi setelah jawaban ronde terakhir.
     """
     ocean       = state["ocean"]
     mood        = state.get("mood", 50)
     ronde       = state.get("ronde_sekarang", 1)
     total_ronde = state.get("total_ronde", 3)
     riwayat     = state.get("riwayat", [])
-    is_last     = (ronde == total_ronde)
+    # Pemain harus tetap menjawab pada ronde terakhir. Penutup baru diberikan
+    # oleh run_reaksi setelah jawaban tersebut diproses.
+    is_last     = False
     system      = _base_system(ocean, state["usia"])
+
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Dialog sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Dialog lama yang perlu diperbaiki: "{state.get('dialog_npc', '')}"
+PERBAIKI sekarang, hasilkan dialog BARU yang lebih baik.
+"""
 
     # ── Konteks dari ronde sebelumnya ──
     # Ronde 2+: ambil jawaban pemain dari riwayat sebagai dasar NPC merespons
@@ -429,6 +520,7 @@ PANDUAN:
 - Tutup dengan natural, boleh terima kasih atau harapan kecil
 - 3-4 kalimat yang mengalir natural
 - Panggil pemain "kak" secara natural (1-2 kali saja)
+{revisi_blok}
 
 Format JSON:
 {{
@@ -460,6 +552,7 @@ INFLUENSI MOOD TERHADAP CARA BERCERITA:
 - Mood <20: Sangat pendek, kadang hanya 1-2 kalimat, tidak mau banyak cerita, nada menyerah
 
 - Panggil pemain "kak" secara natural (1-2 kali saja, jangan berlebihan)
+{revisi_blok}
 
 PANDUAN pilihan_jawaban (WAJIB sesuai mood NPC):
 - Saat mood tinggi (>=60): pilihan satisfy harus lebih hangat, neutral netral, angry bisa lebih ringan
@@ -480,7 +573,12 @@ Format JSON:
   ]
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
     return {
@@ -495,7 +593,7 @@ Format JSON:
 
 # ── SUB-STATE: Reaksi ─────────────────────────────────────────────────────────
 
-def run_reaksi(state: GameState) -> dict:
+def run_reaksi(state: GameState, saran_revisi: str = "") -> dict:
     """
     NPC bereaksi terhadap jawaban pemain di sesi curhat.
     Reaksi ini adalah JEMBATAN antar ronde, NPC merespons jawaban pemain
@@ -509,24 +607,31 @@ def run_reaksi(state: GameState) -> dict:
     is_last     = (ronde >= total_ronde)
     system      = _base_system(ocean, state["usia"])
 
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Reaksi sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Reaksi lama yang perlu diperbaiki: "{state.get('reaksi_npc', '')}"
+PERBAIKI sekarang, hasilkan reaksi BARU yang lebih baik.
+"""
+
     last_riwayat = state.get("riwayat", [])
     prev_reaksi = last_riwayat[-1].get("reaksi_npc", "") if last_riwayat else ""
 
-    if is_last:
-        instruksi = (
-            "Ini adalah ronde TERAKHIR. NPC merespons jawaban pemain dan MEMBERIKAN "
-            "RESOLUSI atau KESIMPULAN dari ceritanya. NPC boleh mengucapkan terima kasih "
-            "secara natural sebagai penutup sesi curhat."
-        )
-    else:
-        instruksi = (
-            "Ini BELUM ronde terakhir. NPC merespons jawaban pemain dengan SINGKAT dan TULUS. "
-            "JANGAN memperkenal topik baru atau kenangan baru di reaksi ini. "
-            "Cukup respons apa yang pemain katakan, lalu akhiri dengan kalimat yang "
-            "secara natural menggantung (menunjukkan masih ada yang ingin diceritakan). "
-            "Contoh: 'Iya kak, makanya aku juga bingung harus gimana...' "
-            "Contoh yang SALAH: 'Iya kak. Eh tadi juga aku keinget pas...' (jangan lanjut cerita di sini)"
-        )
+    # Reaksi HANYA merespons jawaban pemain, TIDAK menutup percakapan
+    # Penutup sesi curhat ditangani oleh run_closing() setelah ronde terakhir
+    instruksi = (
+        "NPC merespons jawaban pemain dengan TULUS dan BERKAITAN dengan apa yang baru saja NPC ceritakan. "
+        "Boleh 2-3 kalimat pendek (maks ~30 kata) supaya reaksi terasa hidup dan nyambung. "
+        "KAITKAN reaksi dengan ISI cerita/pilihan pemain — sebut atau respons spesifik sesuatu dari jawaban pemain, "
+        "jangan hanya respons generik seperti 'iya kak'. "
+        "Setelah itu, akhiri dengan kalimat yang secara natural menggantung (menunjukkan masih ada yang ingin diceritakan). "
+        "Contoh yang BAIK (nyambung): 'Wah kakak ngerti banget, makanya aku tadi bingung mau bilang ke orangtuaku gak...' "
+        "Contoh yang BURUK (tidak nyambung): 'Iya kak. ...' (tidak merujuk isi jawaban pemain sama sekali) "
+        "PENTING: JANGAN mengakhiri percakapan atau mengucapkan terima kasih sebagai penutup. "
+        "Reaksi ini hanyalah JEMBATAN menuju dialog selanjutnya."
+    )
 
     # ── Instruksi berdasarkan nada jawaban pemain ──
     last_nada = ""
@@ -538,26 +643,35 @@ def run_reaksi(state: GameState) -> dict:
         nada_hint = (
             "Pemain memberi respons yang EMPATI dan MENYENANGKAN.\n"
             "NPC MERASA SENANG, LEGA, atau TERHARU. Nada bicara naik, ada semangat.\n"
-            "Contoh gaya reaksi: 'Iya banget kak, makasih ya udah dengerin~', 'Hehe iya kak, lega banget ngomong gini...', 'Wah kakak ngerti banget sih!'\n"
-            "PENTING: Tunjukkan KEBAHAGIAAN NPC secara nyata, bukan sekadar 'makasih'."
+            "Contoh gaya reaksi (PILIH variasi yang berbeda, jangan selalu pakai 'Iya'):\n"
+            "  'Wah kakak ngerti banget sih, makasih ya... jadi aku mikir gimana ya kalau aku bilang ke dia...'\n"
+            "  'Hehe ternyata kakak pernah ngalamin juga ya, lega banget aku ngomong gini...'\n"
+            "  'Duh makasih kak, denger itu jadi aku mikir...'\n"
+            "  'Bener banget kata kakak, makanya aku tadi bingung...'\n"
+            "PENTING: Tunjukkan KEBAHAGIAAN NPC secara nyata, sebut/maklumi isi jawaban pemain, LALU gantungkan cerita."
         )
     elif last_nada == "angry":
         nada_hint = (
             "Pemain memberi respons yang KURANG PEKA, MENYEBALKAN, atau MENYakitkan.\n"
             "NPC HARUS menunjukkan KEKECEWAAN, SEDIH, atau SEDIKIT MARAH. Nada bicara turun, pendek, ada jeda.\n"
             "VARIASI emosi yang boleh digunakan (PILIH salah satu yang paling cocok dengan situasi):\n"
-            "  [Sinis] 'Oh... gitu ya kak.' / 'He-eh. Makasih infonya.' / 'Oh kalo gitu sih... oke.'\n"
-            "  [Sedih/pendiam] '*diam sebentar* ...iya kak.' / 'Hmm...' / 'Iya kak... aku juga ga tau harus ngomong apa lagi.'\n"
-            "  [Pasrah] 'Yaudahlah kak, gapapa.' / 'Emang harusnya aku ga cerita sih...' / 'Sudahlah, biar aja.'\n"
-            "  [Kecewa langsung] 'Kok gitu jawabannya kak...' / 'Duh kak, ga gitu juga dong...' / 'Hadeh kak, kirain ngerti...'\n"
-            "PENTING: Pilih VARIASI yang BERBEDA dari reaksi sebelumnya. Jangan selalu pakai 'Oh/Hadeh + yaudah'. NPC harus TERSENDAK atau KECEWA. JANGAN pura-pura senang atau biasa saja."
+            "  [Sinis] 'Oh... gitu ya kak. Yaudah...' / 'He-eh. Makasih infonya deh...'\n"
+            "  [Sedih/pendiam] '...iya kak. Aku kira... yaudahlah...' / 'Hmm... aku ga ngerti juga sih...'\n"
+            "  [Pasrah] 'Yaudahlah kak, gapapa. Emang aku yang salah cerita kali ya...' / 'Sudahlah, biar aja gitu...'\n"
+            "  [Kecewa langsung] 'Kok gitu jawabannya kak... kirain kakak ngerti...' / 'Duh kak, ga gitu juga dong...'\n"
+            "PENTING: Pilih VARIASI yang BERBEDA dari reaksi sebelumnya. Respons SPESIFIK ke apa yang pemain katakan (jangan generik). NPC harus TERSENDAK atau KECEWA. JANGAN pura-pura senang atau biasa saja.\n"
+            "JANGAN tulis deskripsi aksi seperti *diam sebentar* atau (menunduk). HANYA kata-kata yang diucapkan."
         )
     elif last_nada == "neutral":
         nada_hint = (
             "Pemain memberi respons yang NETRAL, TIDAK SPESIFIK, atau SETENGAH HATI.\n"
             "NPC merasa AGAK KECEWA karena harapannya lebih, tapi tidak marah. Nada sedikit lesu.\n"
-            "Contoh gaya reaksi: 'Oh oke kak...', 'Hmm iya sih, yaudah deh...', 'Yakali kak, tapi gapapa sih...'\n"
-            "PENTING: NPC merasa jawaban pemain kurang memuaskan tapi masih mau lanjut cerita."
+            "Contoh gaya reaksi (variasikan, kaitkan ke cerita):\n"
+            "  'Oh gitu ya... hmm, padahal aku kira kakak ngerti maksudku...'\n"
+            "  'Iya sih, tapi... yaudah deh, gapapa. Aku mikir-mikir lagi deh...'\n"
+            "  'Hmm oke kak... sebenernya masih ada yang mau aku ceritain sih...'\n"
+            "  'Yaudah gapapa, makasih ya... jadi aku kepikiran...'\n"
+            "PENTING: NPC merasa jawaban pemain kurang memuaskan tapi masih mau lanjut cerita. KAITKAN ke cerita sebelumnya."
         )
 
     user = f"""NPC: {state['nama']} (usia: {state['usia']}) | Mood: {mood}/100
@@ -571,12 +685,14 @@ Reaksi NPC sebelumnya: "{prev_reaksi[:100] if prev_reaksi else '(ronde pertama, 
 {nada_hint}
 {instruksi}
 
-ATURAN KETAT untuk reaksi NPC:
-1. PANJANG: 1 kalimat SAJA (maksimal 15 kata). Pendek dan tajam.
+ATURAN untuk reaksi NPC:
+1. PANJANG: 2-3 kalimat pendek (maks ~30 kata). Cukup untuk merespons & menggantungkan.
 2. GAYA: Seperti teman ngobrol biasa. Gunakan 'kak' jika NPC teen, 'mas/mbak' jika adult.
-3. EMOSI: Harus JELAS terasa dari pilihan kata. Tidak boleh ambigu.
-4. JANGAN: Mengulang kata pemain, memberi saran, atau cerita panjang lebar.
-5. JANGAN: Mengakhiri percakapan (kecuali ronde terakhir).
+3. NYAMBUNG: WAJIB merujuk/merespons SPESIFIK isi jawaban pemain atau cerita NPC. Jangan respons generik seperti 'Iya kak' tanpa konteks.
+4. EMOSI: Harus JELAS tereba dari pilihan kata. Tidak boleh ambigu.
+5. JANGAN: Memberi saran solusi, atau cerita panjang lebar (tapi boleh mengaitkan singkat).
+6. JANGAN: Mengakhiri percakapan (kecuali ronde terakhir).
+{revisi_blok}
 
 WAJIB mengembalikan JSON dengan format TEPAT seperti di bawah. Jangan format lain.
 
@@ -585,7 +701,12 @@ Format JSON (WAJIB):
   "reaksi_npc": "reaksi NPC yang singkat, 1 kalimat, emosional..."
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
     print(f"  [REAKSI RAW] {raw[:300] if raw else '(empty)'}")
     result = parse_json(raw)
 
@@ -623,3 +744,94 @@ Format JSON (WAJIB):
         print(f"  [REAKSI] OK: {reaksi[:120]}")
 
     return {"reaksi_npc": reaksi}
+
+# ── STATE 6: Closing (Penutup Sesi Curhat) ─────────────────────────────────────
+
+def run_closing(state: GameState, saran_revisi: str = "") -> dict:
+    """
+    NPC memberikan penutup sesi curhat setelah ronde terakhir selesai.
+    Dipanggil HANYA setelah run_reaksi() ronde terakhir.
+    Memberikan resolusi/kesimpulan dari cerita dan mengucapkan terima kasih.
+    """
+    ocean   = state["ocean"]
+    mood    = state.get("mood", 50)
+    riwayat = state.get("riwayat", [])
+
+    revisi_blok = ""
+    if saran_revisi:
+        revisi_blok = f"""
+⚠️ REVISI — Penutup sebelumnya DITOLAK oleh Critic Agent.
+Saran perbaikan: {saran_revisi}
+Penutup lama yang perlu diperbaiki: "{state.get('dialog_closing', '')}"
+PERBAIKI sekarang, hasilkan penutup BARU yang lebih baik.
+"""
+    system  = _base_system(ocean, state["usia"])
+
+    # ── Ringkasan mood akhir ──
+    if mood >= 70:
+        mood_summary = "NPC merasa SANGAT LEGA dan BAHAGIA setelah curhat."
+    elif mood >= 50:
+        mood_summary = "NPC merasa LEGA dan lebih TENANG setelah curhat."
+    elif mood >= 30:
+        mood_summary = "NPC merasa CUKUP lega, tapi masih ada sedikit kekhawatiran."
+    else:
+        mood_summary = "NPC merasa kurang terbantu, mungkin sedikit kecewa."
+
+    # ── Ambil konteks dari riwayat ──
+    tema_utama = state.get("tema", "masalah pribadi")
+    last_reaksi = ""
+    if riwayat:
+        last_reaksi = riwayat[-1].get("reaksi_npc", "")
+
+    user = f"""NPC: {state['nama']} ({state['usia']}, {state['gender']})
+Tema curhat: {tema_utama}
+Mood akhir: {mood}/100
+Kondisi emosional: {mood_summary}
+Reaksi terakhir NPC: "{last_reaksi[:100] if last_reaksi else '(tidak ada)'}"
+
+Sesi curhat telah selesai. NPC memberikan PENUTUP yang:
+1. Menyampaikan KESIMPULAN atau RESOLUSI dari ceritanya
+2. Mengucapkan TERIMA KASIH secara natural kepada pemain
+3. Menunjukkan perubahan emosi yang konsisten dengan mood akhir
+
+ATURAN:
+- 2-4 kalimat, tidak terlalu panjang
+- Gunakan sapaan "kak" (untuk remaja) atau "mas/mbak" (untuk dewasa/orang tua)
+- Sesuaikan gaya bicara dengan OCEAN NPC
+- Jangan memperkenalkan topik baru
+- Akhiri dengan nada positif (kecuali mood sangat rendah)
+{revisi_blok}
+
+Format JSON:
+{{
+  "dialog_closing": "penutup NPC yang memberikan resolusi dan terima kasih..."
+}}"""
+
+    raw    = call_llm(
+        system, user, model=DIALOGUE_MODEL,
+        temperature=DIALOGUE_TEMPERATURE,
+        frequency_penalty=DIALOGUE_FREQUENCY_PENALTY,
+        presence_penalty=DIALOGUE_PRESENCE_PENALTY,
+    )
+    result = parse_json(raw)
+
+    dialog_closing = result.get("dialog_closing", "")
+    if not dialog_closing:
+        # Fallback: cari key lain
+        for key in ["closing", "penutup", "dialog", "text"]:
+            val = result.get(key, "")
+            if isinstance(val, str) and len(val) > 5:
+                dialog_closing = val
+                break
+
+    if not dialog_closing:
+        print(f"  [CLOSING] WARNING: No closing found. keys={list(result.keys())}")
+    else:
+        print(f"  [CLOSING] OK: {dialog_closing[:120]}")
+
+    return {
+        "dialog_closing": dialog_closing,
+        "dialog_state"  : "closing",
+    }
+
+

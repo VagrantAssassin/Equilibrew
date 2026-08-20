@@ -21,7 +21,7 @@ public class MultiAgentBridge : MonoBehaviour
 
     [Header("Server Configuration")]
     [Tooltip("URL server Python Multi-Agent")]
-    public string serverUrl = "http://localhost:8765";
+    public string serverUrl = "https://unfibered-noninstructional-corrin.ngrok-free.dev";
 
     [Tooltip("Timeout per request (detik)")]
     public int timeoutSeconds = 60;
@@ -72,10 +72,35 @@ public class MultiAgentBridge : MonoBehaviour
         public string dialog_text;
         public string minuman_dipesan;
         public PilihanJawaban[] pilihan_jawaban;
-        public int critic_skor;
+        public float critic_skor;
         public bool critic_lulus;
+        public CriticLogEntry[] critic_log;
         public int total_ronde;
         public int ronde_sekarang;
+    }
+
+    [Serializable]
+    public class CriticLogEntry
+    {
+        public int attempt_ke;
+        public float skor;
+        public CriticDimensi skor_dimensi;
+        public string saran;
+        public string[] catatan;
+        public bool lulus;
+    }
+
+    [Serializable]
+    public class CriticDimensi
+    {
+        public float understanding;
+        public float empathy;
+        public float appropriateness;
+        public float engagement;
+        public float creativity;
+        public float coherence;
+        public float naturalness;
+        public float emotional_depth;
     }
 
     [Serializable]
@@ -129,7 +154,13 @@ public class MultiAgentBridge : MonoBehaviour
     {
         public string usia;
         public string gender;
-        public string[] menu;
+    }
+
+    [Serializable]
+    private class PesananRequestBody
+    {
+        public string session_id;
+        public string minuman_dipesan;
     }
 
     [Serializable]
@@ -165,18 +196,18 @@ public class MultiAgentBridge : MonoBehaviour
     /// <summary>
     /// Generate NPC profile baru. Callback menerima ProfileResponse + error string.
     /// </summary>
-    public void GenerateProfile(string usia, string gender, Action<ProfileResponse, string> callback, string[] menu = null)
+    public void GenerateProfile(string usia, string gender, Action<ProfileResponse, string> callback)
     {
-        var body = new ProfileRequestBody { usia = usia, gender = gender, menu = menu };
+        var body = new ProfileRequestBody { usia = usia, gender = gender };
         StartCoroutine(PostRequest<ProfileResponse>("/generate_profile", body, callback));
     }
 
     /// <summary>
     /// Generate dialog pemesanan NPC.
     /// </summary>
-    public void GeneratePesanan(string sessionId, Action<DialogResponse, string> callback)
+    public void GeneratePesanan(string sessionId, string minumanDipesan, Action<DialogResponse, string> callback)
     {
-        var body = new SessionRequestBody { session_id = sessionId };
+        var body = new PesananRequestBody { session_id = sessionId, minuman_dipesan = minumanDipesan };
         StartCoroutine(PostRequest<DialogResponse>("/generate_pesanan", body, callback));
     }
 
@@ -237,6 +268,15 @@ public class MultiAgentBridge : MonoBehaviour
             chosen_nada = chosenNada
         };
         StartCoroutine(PostRequest<EvaluateResponse>("/evaluate_answer", body, callback));
+    }
+
+    /// <summary>
+    /// Generate dialog penutup sesi curhat setelah semua ronde selesai.
+    /// </summary>
+    public void GenerateClosing(string sessionId, Action<DialogResponse, string> callback)
+    {
+        var body = new SessionRequestBody { session_id = sessionId };
+        StartCoroutine(PostRequest<DialogResponse>("/generate_closing", body, callback));
     }
 
     /// <summary>

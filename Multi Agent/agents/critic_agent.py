@@ -9,14 +9,16 @@ Memvalidasi dialog dari Dialogue Agent terhadap:
   3. Kesesuaian emosi dengan dialog state aktif
 
 Lulus jika skor >= CRITIC_THRESHOLD (default 70).
-Jika gagal → run_revisi() dipanggil (maks MAX_REVISI kali).
 """
 
 import json
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from config     import GAYA_BAHASA, CRITIC_THRESHOLD
+from config     import (
+    GAYA_BAHASA, CRITIC_THRESHOLD, CRITIC_MODEL,
+    CRITIC_TEMPERATURE, CRITIC_FREQUENCY_PENALTY, CRITIC_PRESENCE_PENALTY,
+)
 from llm_client import call_llm, parse_json
 from state      import GameState
 
@@ -28,6 +30,8 @@ EMOSI_EXPECTED = {
     "marah"         : "marah atau kecewa berat, memutuskan pergi. Emosi kuat dan jelas.",
     "berhasil"      : "lega dan senang. Tersenyum, memuji minuman, atau bilang terima kasih.",
     "curhat"        : "emosional sesuai masalah dan mood. Mood tinggi=lebih terbuka, mood rendah=lebih pendek dan pesimis.",
+    "reaksi"        : "merespons jawaban pemain secara spesifik dengan emosi yang sesuai nada jawaban, tanpa menutup sesi.",
+    "closing"       : "menyimpulkan sesi curhat, berterima kasih, dan menutup percakapan secara konsisten dengan mood akhir.",
 }
 
 # Panduan OCEAN → behavior yang HARUS terlihat di dialog
@@ -58,6 +62,8 @@ def run(state: GameState) -> dict:
         "berhasil"      : {"dialog_berhasil": state.get("dialog_berhasil", "")},
         "curhat"        : {"dialog_npc": state.get("dialog_npc", ""),
                            "pilihan_jawaban": state.get("pilihan_jawaban", [])},
+        "reaksi"        : {"reaksi_npc": state.get("reaksi_npc", "")},
+        "closing"       : {"dialog_closing": state.get("dialog_closing", "")},
     }
     dialog_target = dialog_map.get(konteks, {})
 
@@ -81,22 +87,33 @@ def run(state: GameState) -> dict:
     behavior_str = "\n".join([f"  - {b}" for b in behavior_checks]) if behavior_checks else "  Tidak ada perilaku ekstrem yang perlu diperiksa."
 
     system = f"""[Game Fiction Context — Tea'n Brew Visual Novel]
-Tugas: memvalidasi dialog NPC terhadap profil OCEAN, gaya bahasa usia/gender,
-dan emosi yang seharusnya muncul pada dialog state tersebut.
+Tugas: Evaluasi kualitas dialog NPC menggunakan framework G-Eval dengan dimensi FED
+(Fine-grained Evaluation of Dialogue). Anda adalah juri (LLM-as-a-Judge) yang menilai
+dialog berdasarkan 8 dimensi turn-level FED (Mehri & Eskenazi, 2020).
 
-KRITERIA PENILAIAN:
-1. OCEAN konsisten (40 poin) — Apakah cara bicara NPC sesuai skor OCEAN-nya?
-2. Emosi tepat (30 poin) — Apakah emosi yang muncul sesuai state dialog?
-3. Gaya bahasa usia (20 poin) — Apakah bahasa sesuai kategori usia?
-4. Konsistensi karakter (10 poin) — Apakah NPC terasa konsisten, tidak berubah-ubah?
+EVALUATION CRITERIA (8 Dimensi FED, skala Likert 1-5):
+1. interesting           — Apakah dialog menarik untuk dibaca? Tidak membosankan?
+2. engaging              — Apakah dialog membuat pembaca ingin tahu lebih lanjut?
+3. specific              — Apakah dialog mengandung detail spesifik, bukan generik?
+4. relevant              — Apakah dialog relevan dengan konteks state dan karakter?
+5. correct               — Apakah dialog sesuai fakta (OCEAN, usia, gender, situasi)?
+6. semantically_appropriate — Apakah makna dialog sesuai dengan konteks percakapan?
+7. understandable        — Apakah dialog mudah dipahami? Tidak ambigu?
+8. fluent                — Apakah dialog lancar secara linguistik? Natural?
 
-SKOR KETAT: Jangan ragu memberi skor RENDAH jika dialog terasa generik atau
-tidak menunjukkan personality yang jelas. Dialog yang "aman tapi tidak berkesan"
-seharusnya skornya 60-75, bukan 85+.
+SKALA LIKERT 1-5:
+- 5 = Sangat Baik (tidak ada kekurangan yang terlihat)
+- 4 = Baik (ada kekurangan minor tapi tidak mengganggu)
+- 3 = Cukup (ada beberapa kekurangan yang perlu diperbaiki)
+- 2 = Kurang (banyak kekurangan, perlu revisi signifikan)
+- 1 = Sangat Kurang (tidak memenuhi kriteria sama sekali)
+
+THRESHOLD: Dialog lulus jika RATA-RATA skor >= {CRITIC_THRESHOLD}/5.0.
+(Zheng et al., 2023: LLM-as-a-Judge agreement >80% pada threshold 4.0)
 
 Kembalikan HANYA JSON valid, tanpa teks lain."""
 
-    user = f"""Validasi dialog NPC (state: {konteks}):
+    user = f"""Evaluasi dialog NPC (state: {konteks}) dengan G-Eval + FED:
 
 === PROFIL NPC ===
 Nama  : {state.get('nama', '')} | Usia: {state.get('usia', '')} | Gender: {state.get('gender', '')}
@@ -115,103 +132,56 @@ PERILAKU YANG HARUS TERLIHAT BERDASARKAN OCEAN:
 === DIALOG YANG DIEVALUASI ===
 {json.dumps(dialog_target, ensure_ascii=False, indent=2)}
 
-Evaluasi 4 aspek dengan SKOR KETAT:
-1. Konsistensi OCEAN (40 poin) — Cara bicara, emosi, pilihan kata harus mencerminkan OCEAN
-2. Ketepatan emosi (30 poin) — Emosi harus sesuai dengan state "{konteks}" dan mood
-3. Gaya bahasa usia (20 poin) — Bahasa harus sesuai kategori usia
-4. Konsistensi karakter (10 poin) — NPC harus terasa konsisten
+EVALUATION STEPS (Chain-of-Thought — lakukan secara berurutan):
+Langkah 1: Baca dialog dengan seksama. Identifikasi siapa yang bicara dan konteksnya.
+Langkah 2: Cocokkan dengan profil OCEAN. Apakah E tinggi → dialog panjang/antusias?
+           Apakah N tinggi → emosi kuat? Apakah A tinggi → ramah/lembut?
+Langkah 3: Periksa emosi — apakah sesuai dengan state "{konteks}"?
+Langkah 4: Periksa gaya bahasa — apakah sesuai kategori usia {state.get('usia', '')}?
+Langkah 5: Nilai setiap dimensi FED (1-5) dengan justifikasi singkat.
 
-CONTOH SKOR:
-- 90+: Dialog SANGAT HIDUP, personality jelas terasa, emosi kuat, berkesan
-- 75-89: Dialog bagus, personality cukup terlihat, tapi masih bisa lebih baik
-- 60-74: Dialog AMAN tapi generik, personality kurang jelas
-- Di bawah 60: Dialog TIDAK sesuai personality
-
-Format JSON:
+SCORING FORM:
 {{
   "lulus": true/false,
-  "skor": <0-100>,
+  "skor": <rata-rata 8 dimensi, float>,
+  "skor_dimensi": {{
+    "interesting": <1-5>,
+    "engaging": <1-5>,
+    "specific": <1-5>,
+    "relevant": <1-5>,
+    "correct": <1-5>,
+    "semantically_appropriate": <1-5>,
+    "understandable": <1-5>,
+    "fluent": <1-5>
+  }},
+  "justifikasi": "<Chain-of-Thought: 3-5 kalimat penalaran sebelum skor akhir>",
   "catatan": ["catatan 1", "catatan 2"],
-  "saran_perbaikan": "saran spesifik (kosong jika lulus=true)"
+  "saran_perbaikan": "saran spesifik dan actionable (kosong jika lulus=true)"
 }}
-Lulus jika skor >= {CRITIC_THRESHOLD}."""
 
-    raw    = call_llm(system, user)
+Lulus jika skor >= {CRITIC_THRESHOLD}. JANGAN ragu memberi skor rendah jika dialog generik."""
+
+    raw    = call_llm(
+        system, user, model=CRITIC_MODEL,
+        temperature=CRITIC_TEMPERATURE,
+        frequency_penalty=CRITIC_FREQUENCY_PENALTY,
+        presence_penalty=CRITIC_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
+
+    # Hitung ulang skor dari dimensi untuk akurasi
+    skor_dimensi = result.get("skor_dimensi", {})
+    if skor_dimensi and len(skor_dimensi) == 8:
+        skor = sum(skor_dimensi.values()) / 8.0
+    else:
+        skor = float(result.get("skor", 0))
 
     return {
-        "critic_lulus"  : result.get("lulus", False),
-        "critic_skor"   : result.get("skor", 0),
-        "critic_catatan": result.get("catatan", []),
-        "critic_saran"  : result.get("saran_perbaikan", ""),
-        "revisi_ke"     : state.get("revisi_ke", 0) + 1,
+        "critic_lulus"        : result.get("lulus", False),
+        "critic_skor"         : skor,
+        "critic_skor_dimensi" : skor_dimensi,
+        "critic_catatan"      : result.get("catatan", []),
+        "critic_saran"        : result.get("saran_perbaikan", ""),
+        "critic_justifikasi"  : result.get("justifikasi", ""),
+        "revisi_ke"           : state.get("revisi_ke", 0) + 1,
     }
-
-
-def run_revisi(state: GameState) -> dict:
-    """
-    Dialogue Agent merevisi dialog berdasarkan saran Critic Agent.
-    Dipanggil ketika critic_lulus=False dan revisi_ke <= MAX_REVISI.
-    """
-    ocean   = state["ocean"]
-    konteks = state.get("konteks_critic", "pesanan")
-    saran   = state.get("critic_saran", "Perbaiki konsistensi OCEAN dan gaya bahasa.")
-
-    # Ambil dialog lama sesuai konteks
-    dialog_map = {
-        "pesanan"       : {"dialog_pesanan": state.get("dialog_pesanan", ""),
-                           "minuman_dipesan": state.get("minuman_dipesan", "")},
-        "pesanan_salah" : {"dialog_pesanan_salah": state.get("dialog_pesanan_salah", "")},
-        "marah"         : {"dialog_marah": state.get("dialog_marah", "")},
-        "berhasil"      : {"dialog_berhasil": state.get("dialog_berhasil", "")},
-        "curhat"        : {"dialog_npc": state.get("dialog_npc", ""),
-                           "pilihan_jawaban": state.get("pilihan_jawaban", [])},
-    }
-    dialog_lama = dialog_map.get(konteks, {})
-
-    system = f"""[Game Fiction Context — Tea'n Brew]
-Tugas: merevisi dialog NPC berdasarkan feedback Critic Agent.
-
-ATURAN REVISI:
-1. Perbaiki SEMUA yang disebut di saran_perbaikan
-2. Pertahankan inti cerita, jangan ubah plot
-3. OCEAN harus LEBIH JELAS terlihat setelah revisi — jangan buat dialog generik
-4. Emosi harus lebih kuat dan spesifik — jangan setengah-setengah
-5. Gaya bahasa: {GAYA_BAHASA.get(state.get('usia', ''), 'natural')}
-
-Kembalikan HANYA JSON valid dengan struktur yang SAMA PERSIS, tanpa teks lain."""
-
-    user = f"""Revisi dialog NPC (state: {konteks}) berdasarkan saran Critic Agent:
-
-PROFIL: {state.get('nama', '')} | {state.get('usia', '')} | {state.get('gender', '')}
-OCEAN : O={ocean['openness']} C={ocean['conscientiousness']} E={ocean['extraversion']} A={ocean['agreeableness']} N={ocean['neuroticism']}
-
-DIALOG LAMA:
-{json.dumps(dialog_lama, ensure_ascii=False, indent=2)}
-
-SARAN PERBAIKAN:
-{saran}
-
-CATATAN CRITIC:
-{json.dumps(state.get('critic_catatan', []), ensure_ascii=False)}
-
-Kembalikan dialog yang sudah direvisi. PASTIKAN:
-- Personality OCEAN terlihat jelas dari cara bicara
-- Emosi lebih kuat dari versi sebelumnya
-- Gaya bahasa sesuai usia
-Format JSON sama persis."""
-
-    raw    = call_llm(system, user)
-    result = parse_json(raw)
-
-    # Update field sesuai konteks
-    field_map = {
-        "pesanan"       : {"dialog_pesanan"      : result.get("dialog_pesanan",       state.get("dialog_pesanan", "")),
-                           "minuman_dipesan"      : result.get("minuman_dipesan",      state.get("minuman_dipesan", ""))},
-        "pesanan_salah" : {"dialog_pesanan_salah": result.get("dialog_pesanan_salah", state.get("dialog_pesanan_salah", ""))},
-        "marah"         : {"dialog_marah"         : result.get("dialog_marah",         state.get("dialog_marah", ""))},
-        "berhasil"      : {"dialog_berhasil"      : result.get("dialog_berhasil",      state.get("dialog_berhasil", ""))},
-        "curhat"        : {"dialog_npc"           : result.get("dialog_npc",           state.get("dialog_npc", "")),
-                           "pilihan_jawaban"      : result.get("pilihan_jawaban",      state.get("pilihan_jawaban", []))},
-    }
-    return field_map.get(konteks, {})

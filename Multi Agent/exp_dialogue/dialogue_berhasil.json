@@ -1,0 +1,542 @@
+[
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "Wah, iyaaa kak, teh-nya pas banget! Makasih ya, aku jadi seneng banget, enak dan hangat gini. Hehe, kak baik banget, boleh temenan sama aku nggak?"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, tehnya enak dan bikin tenang. Kakak jago bikin yang begini."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "Oh, ini tehnya ya, kak... terima kasih. Heh, enak juga."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget kak. Terima kasih ya, teh-nya enak."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "...Heh, terima kasih, kak. Tehnya pas."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Terima kasih ya, teh-nya enak dan bikin lega. Aku suka, cukup begini aja."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "Makasih, kak... pas banget. "
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas sekali, kak. Terima kasih ya, teh-nya enak dan hangat. Aku senang, sudah cukup begini."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Terima kasih ya, teh-nya enak dan bikin aku senang."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Terima kasih ya, teh-nya enak, aku suka."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "Makasih banyak, kak. Tehnya pas banget… hangatnya kayak selimut kecil buat hati, enak sekali. Kakak pintar meraciknya, aku senang banget."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "Wah, ini teh-nya ya, kak? Pas, terima kasih banyak... aku senang. Enak kelihatannya, jadi aku minum ini dulu ya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "\"Wah, pas banget, kak... makasih ya.\" Naya senyum hangat sambil menerima tehnya, lalu menatap gelas itu sebentar seperti menemukan sesuatu yang tepat di tempatnya. \"Aku suka. Enak, tenang rasanya.\""
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "Oh, teh ya. Makasih, kak... ini pas."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "Wah, teh-nya bener, kak! Ih, makasih ya, aku suka banget—pas gitu rasanya. Hehe, kak baik deh, nanti kita temenan juga boleh ya?"
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Oh, ini teh yang aku pesan, kak? Pas banget. Makasih ya, kak, aku senang."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "\"Terima kasih, kak...\" Nisa tersenyum kecil, lalu menatap tehnya sebentar. \"Pas banget rasanya.\""
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Terima kasih ya, tehnya enak dan hangat, aku suka banget. Kakak pintar bikin minuman."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "Wah, ini teh-nya pas banget, kak. Makasih ya, aku suka. Jadi enak diminumnya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Makasih banyak, kak. Hehe, lega banget, aku sempat takut salah tadi... tapi ini teh yang aku mau, pas banget. Aku suka, serius!"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini yang aku mau—tehnya kelihatan enak, bikin lega."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "Oh, teh ya—pas banget, kak. Makasih banyak, serius, aku tadi sempet takut salah, tapi ini udah bener dan bikin lega banget. Hehe, enak dilihat juga."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, teh-nya enak dan bikin lega. Aku puas, ini udah sesuai."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini teh-nya enak kelihatannya, aku suka. Beneran puas nih."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak... makasih ya. Aku sempat khawatir salah, jadi ini lega banget, serius. Tehnya enak, aku suka."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini teh-nya enak dan ukurannya juga pas, aku puas banget."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, teh-nya enak dan hangat, aku puas."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "Wah, ini teh-nya pas, kak. Makasih banget ya, tadi aku sempat khawatir salah, ternyata beneran sesuai. Lega banget aku sekarang, hehe."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget kak, teh-nya juga enak kelihatannya. Makasih ya, ini udah sesuai sama yang aku mau."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget kak. Terima kasih ya, ini teh-nya enak dan ukurannya juga pas, aku suka."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, teh-nya enak dan ukurannya juga pas—jadi hati rasanya adem gitu. Hehe, aku seneng."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "Ih, pas banget kak... makasih ya. Aku sempat khawatir salah, tapi ini teh-nya bener, jadi lega banget. Enak dilihat juga, rapi gitu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini teh-nya bikin hati adem... aku suka, serius."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini teh-nya kelihatan enak dan ukurannya juga pas, aku suka. Seneng deh, beneran terima kasih."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini aku suka—tehnya bikin adem dan rasanya enak. Udah cukup, aku puas kok."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Ih, ini pas banget, kak. Makasih ya, aku sempat khawatir salah pesen, jadi sekarang lega banget. Tehnya enak, aku suka."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "Ih, pas banget, kak. Makasih ya, aku sempet khawatir salah, tapi ini beneran teh yang aku mau. Jadi lega banget, serius."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "\"Ih, makasih ya, kak... pas banget teh-nya. Aku sempat takut salah, serius, jadi lega banget sekarang.\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "Ah, iya, ini teh yang aku pesen, kak. Makasih ya, serius, aku lega banget... tadi sempat takut salah, tapi ini pas banget. Aku seneng banget, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Wah, pas banget, kak. Makasih ya, ini teh-nya enak dan ukurannya juga pas... aku seneng bener."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "Senyum kecil. \"Pas sekali, kak. Terima kasih.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "Senyum kecil. Terima kasih, kak... pas sekali."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "Terima kasih, kak. Tehnya pas. Bima senang, sudah cukup begini."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "...Iya, ini pas. Terima kasih, kak."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "...Iya, ini teh. Terima kasih, kak. Cukup begini saja."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Oh, ini teh yang saya pesan, kak. Terima kasih... pas. "
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "Terima kasih, kak. Pas begini yang saya mau, hangat dan ukurannya juga tepat. Saya puas, ini sudah sangat cukup."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "Eh, pas sekali, kak. Terima kasih, ini memang yang saya pesan—tehnya enak dan suhunya juga pas. Saya puas."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "Senyum Arga mengembang hangat. \"Pas, kak. Terima kasih, ini sudah sesuai.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Oh, ini teh saya... pas. Terima kasih, kak. "
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 1,
+    "dialog": {
+      "dialog_berhasil": "...Iya, ini teh. Makasih, kak. Aku lega banget, tadi sempat takut salah."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 2,
+    "dialog": {
+      "dialog_berhasil": "\"Iya, itu teh... makasih, kak.\" Dina tersenyum kecil, lalu menghela napas pelan. \"Syukurlah, saya sempat takut salah.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 3,
+    "dialog": {
+      "dialog_berhasil": "Oh, pas sekali, kak. Terima kasih ya, tehnya jadi enak diminum begini. Saya puas, ini sudah sesuai."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 4,
+    "dialog": {
+      "dialog_berhasil": "Oh, ini teh yang saya pesan. Terima kasih, kak... sudah pas."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 5,
+    "dialog": {
+      "dialog_berhasil": "\"Wah, pas sekali, kak. Terima kasih ya, tehnya rapi dan hangat begini—saya suka.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 6,
+    "dialog": {
+      "dialog_berhasil": "Oh, pas. Terima kasih, kak..."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 7,
+    "dialog": {
+      "dialog_berhasil": "...Iya, ini pas. Terima kasih, kak."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 8,
+    "dialog": {
+      "dialog_berhasil": "Terima kasih, kak. Pas sekali buat saya—hangatnya juga enak, ukurannya juga pas. Saya puas, benar-benar terima kasih."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 9,
+    "dialog": {
+      "dialog_berhasil": "\"...Iya, ini pas. Terima kasih, kak.\" Maya tersenyum kecil sambil menerima teh itu dengan tenang, lalu mengangguk pelan, terlihat lega."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "berhasil",
+    "ke": 10,
+    "dialog": {
+      "dialog_berhasil": "Oh, iya, ini teh yang saya pesan. Terima kasih, kak... sudah pas."
+    }
+  }
+]

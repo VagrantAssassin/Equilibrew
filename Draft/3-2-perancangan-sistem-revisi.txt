@@ -1,0 +1,177 @@
+3.2 PERANCANGAN SISTEM
+
+Perancangan sistem menjelaskan bagaimana komponen permainan Tea'n Brew diintegrasikan dengan sistem multi-agent untuk menghasilkan profile dan dialog pelanggan secara dinamis. Sistem dirancang menggunakan arsitektur client-server dengan Unity sebagai klien dan aplikasi berbasis FastAPI sebagai server yang menghubungkan permainan dengan sistem multi-agent dan penyedia Large Language Model (LLM). Tahapan perancangan sistem dibagi menjadi tiga bagian utama:
+
+1. Perancangan Class - untuk struktur data di sisi Unity
+2. Perancangan Server - untuk komunikasi REST API antara Unity dan multi-agent
+3. Perancangan Sistem Multi Agent - untuk arsitektur internal agent dengan LangGraph
+
+Gambar 3.x menunjukkan arsitektur sistem keseluruhan yang menghubungkan ketiga komponen utama tersebut.
+
+Gambar 3.x Arsitektur Sistem Game Tea'n Brew
+
+3.2.1 PERANCANGAN CLASS
+
+Analisis class dilakukan untuk mengidentifikasi class yang dibutuhkan dalam menerapkan sistem multi-agent pada game Tea'n Brew. Identifikasi class mengacu pada kebutuhan fungsional yang telah dijelaskan melalui use case dan skenario use case. Berdasarkan hasil analisis, diperlukan 9 class baru pada sisi Unity untuk menghubungkan alur permainan dengan sistem multi-agent serta untuk menyimpan data output multi-agent:
+
+1. MultiAgentFlowController - Mengatur alur interaksi customer
+2. MultiAgentCustomerAdapter - Perantara antara pengendali alur dan sistem multi-agent
+3. MultiAgentBridge - HTTP client Unity ↔ Python Multi-Agent server
+4. ProfileResponse - Menyimpan hasil dari profile agent
+5. OceanData - Menyimpan nilai kepribadian pelanggan berdasarkan model OCEAN
+6. DialogResponse - Menyimpan dialog yang diterima dari dialogue agent
+7. PilihanJawaban - Menyimpan pilihan respons untuk sesi curhat
+8. EvaluateResponse - Menyimpan hasil evaluasi jawaban pemain
+9. RiwayatEntry - Menyimpan catatan interaksi dalam satu ronde curhat
+
+Setiap class memiliki variabel dan fungsi spesifik yang mendukung operasi sistem multi-agent dalam game.
+
+3.2.2 PERANCANGAN SERVER
+
+Server berbasis FastAPI berfungsi sebagai pusat komunikasi antara Unity dan sistem multi-agent. Server ini dibangun menggunakan Python dengan library utama FastAPI untuk menyediakan endpoint REST API yang dapat diakses oleh Unity. Fungsi utama server adalah:
+
+1. Menyediakan interface HTTP untuk komunikasi dengan Unity
+2. Mengelola session management untuk setiap customer
+3. Menghubungkan dengan sistem multi-agent (Profile Agent, Dialogue Agent, Critic Agent)
+4. Menyediakan health check dan monitoring
+
+Library yang digunakan dalam implementasi server:
+- FastAPI: Framework untuk membangun REST API dengan Python
+- Uvicorn: ASGI server untuk menjalankan aplikasi FastAPI
+- Pydantic: Untuk validasi data dan serialisasi JSON
+- LangGraph: Untuk implementasi multi-agent system dengan workflow graph
+- OpenAI/Local LLM: Untuk integrasi dengan model bahasa besar
+
+Arsitektur server menggunakan pola MVC (Model-View-Controller) dengan FastAPI sebagai controller, model Pydantic untuk struktur data, dan agent system sebagai business logic.
+
+3.2.2.1 PERANCANGAN ENDPOINT
+
+Server menyediakan 9 endpoint utama yang dibagi menjadi 8 kategori penjelasan berdasarkan fungsi dalam alur gameplay:
+
+1. Endpoint Pembuatan Profil (/generate_profile)
+   - Metode: POST
+   - Fungsi: Membuat profil dan sesi pelanggan baru
+   - Input: usia (string), gender (string)
+   - Output: ProfileResponse (session_id, nama, background, masalah_hari_ini, ocean, max_fails)
+   - Digunakan saat: Customer baru datang ke cafe (Use Case 1 Step 1)
+
+2. Endpoint Dialog Pemesanan (/generate_pesanan)
+   - Metode: POST
+   - Fungsi: Menghasilkan dialog pemesanan customer
+   - Input: session_id (string), minuman_dipesan (string)
+   - Output: DialogResponse dengan dialog pemesanan
+   - Digunakan saat: Customer menyampaikan pesanan minuman (Use Case 1 Step 2)
+
+3. Endpoint Dialog Reaksi Pesanan Salah (/generate_salah)
+   - Metode: POST
+   - Fungsi: Menghasilkan reaksi ketika pesanan salah
+   - Input: session_id (string)
+   - Output: DialogResponse dengan dialog penolakan
+   - Digunakan saat: Pemain membuat minuman salah (Use Case 1 Extension Step 6)
+
+4. Endpoint Dialog Customer Marah (/generate_marah)
+   - Metode: POST
+   - Fungsi: Menghasilkan dialog ketika customer marah dan pergi
+   - Input: session_id (string)
+   - Output: DialogResponse dengan dialog kemarahan
+   - Digunakan saat: Pemain mencapai max_fail (Use Case 1 Extension Step 6)
+
+5. Endpoint Dialog Pesanan Berhasil (/generate_berhasil)
+   - Metode: POST
+   - Fungsi: Menghasilkan dialog ketika pesanan benar
+   - Input: session_id (string)
+   - Output: DialogResponse dengan dialog kepuasan
+   - Digunakan saat: Pemain membuat minuman benar (Use Case 1 Step 6)
+
+6. Endpoint Dialog Sesi Curhat (/start_curhat dan /next_curhat_round)
+   - Metode: POST
+   - Fungsi: Memulai dan melanjutkan sesi curhat customer
+   - Input: session_id (string), total_ronde (int) untuk start, ronde (int) untuk next
+   - Output: DialogResponse dengan pilihan jawaban untuk pemain
+   - Digunakan saat: Sesi curhat dimulai dan setiap ronde berikutnya (Use Case 1 Step 7-9)
+
+7. Endpoint Evaluasi Jawaban (/evaluate_answer)
+   - Metode: POST
+   - Fungsi: Mengevaluasi jawaban pemain dan mengupdate mood customer
+   - Input: session_id (string), jawaban_pemain (string), chosen_nada (string)
+   - Output: EvaluateResponse dengan mood baru dan reaksi NPC
+   - Digunakan saat: Pemain memilih jawaban pada sesi curhat (Use Case 1 Step 8-9)
+
+8. Endpoint Administrasi dan Debugging
+   - GET /health: Memeriksa status server
+   - GET /session/{session_id}/summary: Mengambil ringkasan sesi untuk debugging
+   - DELETE /session/{session_id}: Menghapus sesi dari server
+
+3.2.3 PERANCANGAN SISTEM MULTI AGENT
+
+Sistem multi-agent dirancang menggunakan framework LangGraph yang memungkinkan koordinasi antara tiga agent utama dengan peran spesifik:
+
+1. Arsitektur Agent dengan LangGraph
+   Sistem menggunakan LangGraph untuk mengelola workflow multi-agent dengan graf yang mendefinisikan alur komunikasi antara agent. Setiap agent memiliki state dan tools khusus, dengan LangGraph mengkoordinasikan eksekusi paralel dan serial.
+
+2. Struktur File Sistem Multi Agent
+   File-file yang diperlukan untuk implementasi sistem multi-agent dengan LangGraph:
+
+   - server.py: Entry point FastAPI dengan endpoint dan routing
+   - agents/
+     - profile_agent.py: Profile Agent untuk generate profil customer
+     - dialogue_agent.py: Dialogue Agent untuk generate dialog
+     - critic_agent.py: Critic Agent untuk evaluate dialog quality
+     - base_agent.py: Base class untuk semua agent
+   - models/
+     - schemas.py: Pydantic models untuk data validation
+     - prompts.py: System prompts untuk setiap agent
+   - tools/
+     - unity_tools.py: Tools untuk akses konteks Unity
+     - memory_tools.py: Tools untuk session memory management
+   - graphs/
+     - main_graph.py: LangGraph utama untuk koordinasi agent
+     - dialogue_graph.py: Subgraph untuk workflow dialogue generation
+   - config/
+     - settings.py: Konfigurasi model, threshold, dan parameter
+   - storage/
+     - session_store.py: Session storage untuk persistensi data
+
+3. Workflow Multi-Agent dengan LangGraph
+   LangGraph mengimplementasikan directed graph dengan node sebagai agent dan edges sebagai komunikasi:
+   
+   Profile Agent → Dialogue Agent → Critic Agent → (Loop jika tidak lulus) → Output ke Unity
+
+   Setiap agent memiliki:
+   - System prompt: Mendefinisikan peran dan instruksi
+   - Tools: Akses ke konteks Unity dan data session
+   - Memory: Session context untuk konsistensi dialog
+   - Output validation: Validasi format JSON output
+
+4. Kriteria Kualitas dengan Critic Agent
+   Critic Agent menggunakan G-Eval framework dengan 8 dimensi evaluasi:
+   - Understanding: Pemahaman konteks
+   - Empathy: Tingkat empati dalam respons
+   - Appropriateness: Kesesuaian dengan kepribadian OCEAN
+   - Engagement: Kemampuan untuk melibatkan pemain
+   - Creativity: Kreativitas dalam penyampaian
+   - Coherence: Koherensi dengan konteks sebelumnya
+   - Naturalness: Kewajaran bahasa
+   - Emotional Depth: Kedalaman emosional
+
+   Dialog harus mencapai threshold CRITIC_THRESHOLD untuk dinyatakan lulus sebelum dikirim ke Unity.
+
+5. Integrasi dengan Unity
+   Sistem multi-agent menerima input berupa:
+   - Session context dari Unity
+   - Game state (mood, round, drink order)
+   - Player responses untuk evaluasi
+
+   Dan menghasilkan output berupa:
+   - Profile customer dengan OCEAN scores
+   - Dynamic dialogue sesuai konteks
+   - Evaluation results untuk player responses
+
+6. Scalability dan Performance
+   Sistem dirancang untuk:
+   - Concurrent session handling dengan session isolation
+   - Caching untuk mengurangi API calls ke LLM
+   - Error handling dengan retry mechanism
+   - Monitoring dengan logging dan metrics
+
+Implementasi ini memungkinkan game Tea'n Brew memiliki sistem dialog dinamis yang dapat beradaptasi dengan kepribadian customer dan respons pemain, meningkatkan immersion dan engagement pemain.

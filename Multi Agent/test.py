@@ -1,7 +1,7 @@
 from openai import OpenAI
 
 endpoint = "http://localhost:20128/v1"
-deployment_name = "azure/gpt-5.4"
+deployment_name = "Cosmos API/gpt-5.6-luna"
 token_provider = "sk-473fedd5bd789e1e-49rflf-805a0b0a"
 
 client = OpenAI(

@@ -59,6 +59,26 @@ _client = OpenAI(
 )
 
 
+def _is_reasoning_model(model_name: str) -> bool:
+    """
+    Deteksi apakah model adalah reasoning model (GPT-5.x / o-series) yang
+    TIDAK mendukung parameter sampling: temperature, frequency_penalty,
+    presence_penalty. Model ini hanya menerima default temperature=1.
+
+    Azure mengembalikan error 400 'unsupported_value' jika parameter sampling
+    dikirim ke model reasoning.
+    """
+    name = (model_name or "").lower()
+    # GPT-5.x (azure langsung) atau via proxy dengan prefix azure/
+    if name.startswith("gpt-5") or name.startswith("azure/gpt-5"):
+        return True
+    # OpenAI o-series reasoning models (o1, o3, o4, dst.)
+    import re
+    if re.match(r"^o\d", name) or name.startswith("azure/o"):
+        return True
+    return False
+
+
 def _in_server_context() -> bool:
     """Deteksi apakah kode berjalan di dalam FastAPI/uvicorn server (bukan CLI).
     Jika di server, jangan panggil sys.exit() karena akan kill thread."""
@@ -69,7 +89,16 @@ def _in_server_context() -> bool:
     return False
 
 
-def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: bool = True) -> str:
+def call_llm(
+    system_prompt: str,
+    user_message: str,
+    retries: int = 2,
+    fatal: bool = True,
+    model: str | None = None,
+    temperature: float | None = None,
+    frequency_penalty: float | None = None,
+    presence_penalty: float | None = None,
+) -> str:
     """
     Panggil LLM menggunakan OpenAI SDK.
     Semua agent memanggil fungsi ini — tidak perlu tahu provider-nya apa.
@@ -79,7 +108,14 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
     Args:
         fatal: Jika True (default), panggil sys.exit() saat semua retry gagal.
                Jika False, raise RuntimeError agar pemanggil bisa fallback.
+        temperature: Mengontrol kreativitas/randomness output (0.0-2.0).
+                     None = pakai default provider.
+        frequency_penalty: Mencegah repetisi kata (-2.0 to 2.0).
+                           None = pakai default provider.
+        presence_penalty: Mencegah repetisi topik (-2.0 to 2.0).
+                          None = pakai default provider.
     """
+    selected_model = model or MODEL
     last_error = None
     for attempt in range(retries + 1):
         try:
@@ -99,18 +135,37 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 sys_prompt = "You are a sentiment classifier. Reply with ONLY valid JSON."
                 usr_msg = _minimal_classification_prompt(user_message)
 
-            # Deteksi parameter token yang tepat berdasarkan model
+            # Deteksi parameter token yang tepat berdasarkan provider.
+            # Azure OpenAI (langsung maupun via proxy 9router) untuk model
+            # GPT-5.x hanya menerima `max_completion_tokens`, bukan `max_tokens`.
+            # Deteksi dari: prefix model "azure/" ATAU URL endpoint mengandung "azure.com".
+            _is_azure = selected_model.startswith("azure/") or "azure.com" in API_URL
             _params = {
-                "model": MODEL,
+                "model": selected_model,
                 "messages": [
                     {"role": "system", "content": sys_prompt},
                     {"role": "user",   "content": usr_msg},
                 ],
             }
-            if MODEL.startswith("azure/"):
+            if _is_azure:
                 _params["max_completion_tokens"] = MAX_TOKENS
             else:
                 _params["max_tokens"] = MAX_TOKENS
+
+            # Hyperparameter sampling (hanya kirim jika explicitly di-set).
+            # Model reasoning (GPT-5.x / o-series) TIDAK mendukung parameter
+            # sampling — Azure akan reject dengan error 400 'unsupported_value'.
+            # Jadi untuk model reasoning, skip semua parameter sampling.
+            _is_reasoning = _is_reasoning_model(selected_model)
+            if not _is_reasoning:
+                if temperature is not None:
+                    _params["temperature"] = temperature
+                if frequency_penalty is not None:
+                    _params["frequency_penalty"] = frequency_penalty
+                if presence_penalty is not None:
+                    _params["presence_penalty"] = presence_penalty
+            elif temperature is not None or frequency_penalty is not None or presence_penalty is not None:
+                print(f"  [LLM INFO] Model '{selected_model}' adalah reasoning model — parameter sampling (temperature/frequency_penalty/presence_penalty) di-skip.")
 
             completion = _client.chat.completions.create(**_params)
             content = completion.choices[0].message.content
@@ -124,9 +179,8 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
         except AuthenticationError as e:
             print(f"\n[LLM ERROR] API Key tidak valid atau ditolak.")
             print(f"  Detail: {e}")
-            if fatal and not _in_server_context():
-                sys.exit(1)
-            raise
+            # Jangan sys.exit() di server context - raise RuntimeError sebagai fallback
+            raise RuntimeError(f"API Key tidak valid: {e}")
 
         except APIError as e:
             err_msg = str(e).lower()
@@ -136,9 +190,7 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 last_error = e
                 continue  # retry dengan prompt netral
             print(f"\n[LLM ERROR] {e}")
-            if fatal and not _in_server_context():
-                sys.exit(1)
-            raise
+            raise RuntimeError(f"LLM API error: {e}")
 
         except Exception as e:
             err_msg = str(e).lower()
@@ -147,16 +199,12 @@ def call_llm(system_prompt: str, user_message: str, retries: int = 2, fatal: boo
                 last_error = e
                 continue
             print(f"\n[LLM ERROR] {type(e).__name__}: {e}")
-            if fatal and not _in_server_context():
-                sys.exit(1)
-            raise
+            raise RuntimeError(f"LLM error: {type(e).__name__}: {e}")
 
     # Semua retry gagal
     msg = f"Semua {retries+1} percobaan gagal karena content filter."
     print(f"\n[LLM ERROR] {msg}")
     print(f"  Error terakhir: {last_error}")
-    if fatal and not _in_server_context():
-        sys.exit(1)
     raise RuntimeError(msg) from last_error
 
 

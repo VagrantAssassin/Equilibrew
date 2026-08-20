@@ -1,0 +1,22 @@
+{
+  "good_orig": {
+    "background": "Mahasiswa teknik yang hobi main gitar di kosan. Tipikal orang yang keliatan cuek tapi sebenernya perhatian.",
+    "masalah_hari_ini": "Deadline tugas kelompok dimajukan jadi besok padahal anggota timnya pada menghilang semua.",
+    "dialog_pesanan": "Eh kak, akhirnya sampai juga! Pesen Green Tea ya kak, soalnya kepala aku penuh banget tadi mulai dari deadline tugas kelompok yang dimajuin besok sampe anggota tim yang pada ngilang. Serius deh, butuh teh buat ngecabin malam nanti. Makasih ya kak!"
+  },
+  "good_rephrase": {
+    "background": "Mahasiswa teknik yang senang gitaran di kosan. Tipe orang yang kelihatannya cuek, padahal aslinya perhatian.",
+    "masalah_hari_ini": "Batas pengumpulan tugas kelompok dipercepat ke besok, padahal semua anggota timnya malah menghilang.",
+    "dialog_pesanan": "Eh kak, akhirnya tiba juga! Aku pesan Green Tea ya kak, karena kepala lagi penuh banget, dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang semuanya menghilang. Beneran deh, aku perlu teh buat ngelewatin malam nanti. Makasih ya kak!"
+  },
+  "bad_orig": {
+    "background": "Mahasiswa teknik yang hobi main gitar di kosan. Tipikal orang yang keliatan cuek tapi sebenernya perhatian.",
+    "masalah_hari_ini": "Deadline tugas kelompok dimajukan jadi besok padahal anggota timnya pada menghilang semua.",
+    "dialog_pesanan": "Saya ingin memesan green tea, cepat ya saya buru buru."
+  },
+  "bad_rephrase": {
+    "background": "Mahasiswa jurusan teknik yang suka main gitar di kosan. Tipe orang yang kelihatannya cuek, padahal sebenarnya perhatian.",
+    "masalah_hari_ini": "Batas pengumpulan tugas kelompok dimajuin ke besok, padahal semua anggota timnya malah menghilang.",
+    "dialog_pesanan": "Saya mau memesan green tea, cepat ya, saya sedang buru-buru."
+  }
+}

@@ -1,4 +1,4 @@
-using System;
+    using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -76,7 +76,7 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
     /// <summary>
     /// Generate NPC profile baru dari Multi-Agent system.
     /// </summary>
-    public void GenerateProfile(string usia, string gender, Action<ProfileResponse> onSuccess, Action<string> onErr = null, string[] menu = null)
+    public void GenerateProfile(string usia, string gender, Action<ProfileResponse> onSuccess, Action<string> onErr = null)
     {
         if (isGenerating)
         {
@@ -109,13 +109,13 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
                 Debug.Log($"[Adapter] Profile ready: {response.nama} (session={response.session_id})");
 
             onProfileReady?.Invoke(response);
-        }, menu);
+        });
     }
 
     /// <summary>
     /// Generate dialog pemesanan NPC.
     /// </summary>
-    public void GenerateOrderDialog(Action<DialogResponse> onSuccess, Action<string> onErr = null)
+    public void GenerateOrderDialog(string minumanDipesan, Action<DialogResponse> onSuccess, Action<string> onErr = null)
     {
         if (!CheckSession(onErr)) return;
 
@@ -124,9 +124,9 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
         onError = onErr;
 
         if (verboseLogging)
-            Debug.Log($"[Adapter] Generating order dialog for session {currentSessionId}");
+            Debug.Log($"[Adapter] Generating order dialog for session {currentSessionId}, minuman={minumanDipesan}");
 
-        MultiAgentBridge.Instance.GeneratePesanan(currentSessionId, (response, error) =>
+        MultiAgentBridge.Instance.GeneratePesanan(currentSessionId, minumanDipesan, (response, error) =>
         {
             isGenerating = false;
             HandleDialogResponse(response, error, onSuccess, onErr);
@@ -229,6 +229,8 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
         MultiAgentBridge.Instance.NextCurhatRound(currentSessionId, currentCurhatRound, (response, error) =>
         {
             isGenerating = false;
+            if (error == null && response != null && response.total_ronde > 0)
+                totalCurhatRounds = response.total_ronde;
             HandleDialogResponse(response, error, onSuccess, onErr);
         });
     }
@@ -259,6 +261,34 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
 
             onEvaluateReady?.Invoke(response);
         }, chosenNada);
+    }
+
+    /// <summary>
+    /// Generate dialog penutup sesi curhat setelah semua ronde selesai.
+    /// </summary>
+    public void GenerateClosing(Action<DialogResponse> onSuccess, Action<string> onErr = null)
+    {
+        if (!CheckSession(onErr)) return;
+
+        isGenerating = true;
+        onDialogReady = onSuccess;
+        onError = onErr;
+
+        MultiAgentBridge.Instance.GenerateClosing(currentSessionId, (response, error) =>
+        {
+            isGenerating = false;
+            if (error != null)
+            {
+                Debug.LogError($"[Adapter] Closing error: {error}");
+                onErr?.Invoke(error);
+                return;
+            }
+
+            if (verboseLogging)
+                Debug.Log($"[Adapter] Closing: {response.dialog_text?.Substring(0, System.Math.Min(50, response.dialog_text?.Length ?? 0))}...");
+
+            onDialogReady?.Invoke(response);
+        });
     }
 
     /// <summary>
@@ -318,8 +348,40 @@ public class MultiAgentCustomerAdapter : MonoBehaviour
         currentDialog = response;
 
         if (verboseLogging)
-            Debug.Log($"[Adapter] Dialog ready: state={response.dialog_state}, critic={response.critic_skor}/100, lulus={response.critic_lulus}");
+            Debug.Log($"[Adapter] Dialog ready: state={response.dialog_state}, critic={response.critic_skor:F1}/5.0, lulus={response.critic_lulus}");
+
+        // Log detail critic per-attempt
+        LogCriticHistory(response);
 
         onSuccess?.Invoke(response);
+    }
+
+    /// <summary>
+    /// Log detail critic per attempt ke Unity console.
+    /// </summary>
+    private void LogCriticHistory(DialogResponse response)
+    {
+        if (response.critic_log == null || response.critic_log.Length == 0)
+        {
+            if (verboseLogging)
+                Debug.Log($"[Adapter] Critic: no log (closing atau non-critic state)");
+            return;
+        }
+
+        for (int i = 0; i < response.critic_log.Length; i++)
+        {
+            var entry = response.critic_log[i];
+            string status = entry.lulus ? "✅" : "❌";
+            Debug.Log($"[Adapter] Critic attempt {entry.attempt_ke}: {status} skor={entry.skor:F1}/5.0");
+
+            if (entry.catatan != null && entry.catatan.Length > 0)
+            {
+                foreach (var catatan in entry.catatan)
+                    Debug.Log($"[Adapter]   📝 {catatan}");
+            }
+
+            if (!string.IsNullOrEmpty(entry.saran))
+                Debug.Log($"[Adapter]   💡 Saran: {entry.saran}");
+        }
     }
 }

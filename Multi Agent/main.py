@@ -6,7 +6,7 @@ from graph  import app, jalankan_dialog_state, update_mood, random_total_ronde
 from config import MOOD_AWAL
 from agents.dialogue_agent import (
     run_pesanan_salah, run_marah, run_berhasil,
-    run_curhat, run_reaksi
+    run_curhat, run_reaksi, run_closing
 )
 
 SEP = "=" * 64
@@ -33,7 +33,7 @@ def print_critic(state: dict, label: str = ""):
     catatan = state.get("critic_catatan", [])
     info    = f" | {catatan[0]}" if catatan else ""
     tag     = f" [{label}]" if label else ""
-    print(f"  {icon} Critic{tag}: {skor}/100{info}")
+    print(f"  {icon} Critic{tag}: {skor:.1f}/5.0{info}")
 
 def cetak_dialog_npc(nama: str, teks: str):
     """
@@ -145,6 +145,12 @@ def tampilkan_reaksi(s: dict, jawaban: str, mood_lama: int):
     print(f"\n  {icon} Mood: {mood_lama} {delta_str} → {mood_baru}/100 {mood_label(mood_baru)}")
 
 
+def tampilkan_closing(s: dict):
+    """Tampilkan dialog penutup sesi curhat dari NPC."""
+    ps("PENUTUP SESI")
+    cetak_dialog_npc(s["nama"], s.get("dialog_closing", "-"))
+
+
 def tampilkan_ringkasan(s: dict):
     ph("SESI SELESAI — RINGKASAN")
     print(f"  NPC        : {s['nama']} ({s['usia']}, {s['gender']})")
@@ -177,7 +183,7 @@ def run_session(usia: str, gender: str, mood_awal: int = MOOD_AWAL):
         elif node_name == "critic_agent":
             icon = "✅" if current.get("critic_lulus") else "❌"
             skor = current.get("critic_skor", 0)
-            print(f"\n  [CRITIC — {current.get('konteks_critic', '')}] {icon} {skor}/100", end="")
+            print(f"\n  [CRITIC — {current.get('konteks_critic', '')}] {icon} {skor:.1f}/5.0", end="")
             if not current.get("critic_lulus") and current.get("revisi_ke", 0) <= 2:
                 print(f" → revisi ke-{current['revisi_ke']}...", end="")
             print()
@@ -234,6 +240,12 @@ def run_session(usia: str, gender: str, mood_awal: int = MOOD_AWAL):
         current.update(reaksi)
 
         tampilkan_reaksi(current, jawaban, mood_sebelum)
+
+    # ── Setelah semua ronde selesai, tampilkan penutup ──
+    print(f"\n  [AGENT 2] Dialogue Agent → penutup sesi curhat...")
+    closing = run_closing(current)
+    current.update(closing)
+    tampilkan_closing(current)
 
     tampilkan_ringkasan(current)
 

@@ -1,0 +1,48 @@
+{
+  "good": {
+    "original": {
+      "nama": "Raka",
+      "usia": "remaja",
+      "gender": "pria",
+      "ocean": {
+        "openness": 62,
+        "conscientiousness": 55,
+        "extraversion": 78,
+        "agreeableness": 35,
+        "neuroticism": 72
+      },
+      "minuman_dipesan": "Green Tea",
+      "background": "Mahasiswa teknik yang hobi main gitar di kosan. Tipikal orang yang keliatan cuek tapi sebenernya perhatian.",
+      "masalah_hari_ini": "Deadline tugas kelompok dimajukan jadi besok padahal anggota timnya pada menghilang semua.",
+      "dialog_pesanan": "Eh kak, akhirnya sampai juga! Pesen Green Tea ya kak, soalnya kepala aku penuh banget tadi mulai dari deadline tugas kelompok yang dimajuin besok sampe anggota tim yang pada ngilang. Serius deh, butuh teh buat ngecabin malam nanti. Makasih ya kak!"
+    },
+    "rephrased": {
+      "background": "Mahasiswa jurusan teknik yang suka main gitar di kosan. Biasanya kelihatan cuek, padahal sebenarnya perhatian.",
+      "masalah_hari_ini": "Batas pengumpulan tugas kelompok dimajuin ke besok, padahal semua anggota timnya malah menghilang.",
+      "dialog_pesanan": "Eh kak, akhirnya nyampe juga! Aku pesan Green Tea ya kak, soalnya tadi kepala lagi penuh banget, mulai dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang pada menghilang. Serius deh, malam nanti aku butuh teh buat ngecabin. Makasih ya kak!"
+    }
+  },
+  "bad": {
+    "original": {
+      "nama": "Raka",
+      "usia": "remaja",
+      "gender": "pria",
+      "ocean": {
+        "openness": 62,
+        "conscientiousness": 55,
+        "extraversion": 78,
+        "agreeableness": 35,
+        "neuroticism": 72
+      },
+      "minuman_dipesan": "Green Tea",
+      "background": "Mahasiswa teknik yang hobi main gitar di kosan. Tipikal orang yang keliatan cuek tapi sebenernya perhatian.",
+      "masalah_hari_ini": "Deadline tugas kelompok dimajukan jadi besok padahal anggota timnya pada menghilang semua.",
+      "dialog_pesanan": "Saya ingin memesan green tea, cepat ya saya buru buru."
+    },
+    "rephrased": {
+      "background": "Mahasiswa teknik yang suka main gitar di kosan. Kelihatannya cuek, tapi sebenarnya perhatian.",
+      "masalah_hari_ini": "Batas waktu tugas kelompok dimajuin ke besok, sementara semua anggota timnya malah pada hilang.",
+      "dialog_pesanan": "Saya mau pesan green tea, cepat ya, saya lagi buru-buru."
+    }
+  }
+}

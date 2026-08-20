@@ -15,12 +15,43 @@ Tanggung jawab:
   Output langsung menggantikan mekanik randomize_profile di game Unity.
 """
 
-import sys, os
+import sys, os, random, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from config     import GAYA_BAHASA
+from config     import (
+    GAYA_BAHASA, PROFILE_MODEL,
+    PROFILE_TEMPERATURE, PROFILE_FREQUENCY_PENALTY, PROFILE_PRESENCE_PENALTY,
+)
 from llm_client import call_llm, parse_json
 from state      import GameState
+
+# ── Pool nama untuk variasi (mencegah reasoning model konvergen ke nama sama) ──
+_NAMA_POOL_PRIA = [
+    "Raka", "Dimas", "Fajar", "Joko", "Reza", "Adit", "Bayu", "Galih", "Hadi",
+    "Iwan", "Krisna", "Lukman", "Marco", "Nico", "Oscar", "Pandu", "Rizki",
+    "Surya", "Teguh", "Yoga", "Zaki", "Arman", "Budi", "Candra", "Dwi",
+    "Eko", "Farhan", "Gunawan", "Hendra", "Ilham",
+]
+_NAMA_POOL_WANITA = [
+    "Sari", "Bunga", "Lesti", "Tari", "Anya", "Citra", "Dewi", "Elsa", "Fitri",
+    "Gita", "Hana", "Indah", "Jihan", "Kania", "Lala", "Maya", "Nisa", "Olivia",
+    "Putri", "Rani", "Sasa", "Tika", "Ulya", "Vina", "Wati", "Yuni", "Zahra",
+    "Amelia", "Bella", "Clara", "Diana", "Era", "Fiona",
+]
+
+# ── Tema masalah untuk dipilih random (memaksa variasi antar pelanggan) ──
+_TEMA_MASALAH = [
+    ("Tugas kuliah/kantor yang deadline-nya besok", "akademik/pekerjaan"),
+    ("Pertengkaran dengan sahabat yang belum diselesaikan", "sosial"),
+    ("Bingung harus memilih A atau B dalam hidup", "keputusan"),
+    ("Dimarahi orang tua tadi pagi tentang sesuatu", "keluarga"),
+    ("Dompet kosong tapi harus bayar sesuatu minggu ini", "finansial"),
+    ("Putus cinta atau bertengkar dengan pacar", "percintaan"),
+    ("Capek banget tapi masih harus hadir ke acara", "kelelahan"),
+    ("Diejek atau diremehkan orang hari ini", "harga diri"),
+    ("Pindah ke tempat baru dan belum punya teman", "transisi"),
+    ("Khawatir gagal ujian/tes/proyek penting", "kecemasan"),
+]
 
 
 def build_ocean_desc(ocean: dict) -> str:
@@ -55,11 +86,39 @@ def run(state: GameState) -> dict:
     usia   = state["usia"]
     gender = state["gender"]
 
+    # ── Randomisasi untuk mencegah reasoning model konvergen ke output sama ──
+    # Reasoning model (GPT-5.6-luna) mengabaikan temperature, jadi kita inject
+    # elemen acak ke prompt supaya setiap pelanggan benar-benar berbeda.
+    seed = int(time.time() * 1000) % 100000
+    random.seed(seed)
+
+    # Pilih tema masalah secara random
+    tema_idx = random.randint(0, len(_TEMA_MASALAH) - 1)
+    tema_label, tema_kategori = _TEMA_MASALAH[tema_idx]
+
+    # Pilih 3 nama acak dari pool sebagai "inspirasi" (gender-appropriate)
+    if gender == "wanita":
+        nama_inspirasi = random.sample(_NAMA_POOL_WANITA, min(3, len(_NAMA_POOL_WANITA)))
+    else:
+        nama_inspirasi = random.sample(_NAMA_POOL_PRIA, min(3, len(_NAMA_POOL_PRIA)))
+
+    # Pilih rentang OCEAN acak sebagai "arah kepribadian" supaya tidak sama semua
+    ocean_hints = random.sample([
+        "introvert pendiam", "extrovert cerewet", "sangat emosional",
+        "tenang dan stabil", "blak-blakan", "sangat ramah", "kreatif/imajinatif",
+        "praktis/lugas", "cemas dan overthinking", "santai dan flexible",
+    ], 3)
+
+    # Seed unik untuk session ini
+    session_tag = f"SEED-{seed}"
+
     system = """[Game Fiction Context — Tea'n Brew Visual Novel]
 Tugas: merakit profil satu pelanggan café yang unik, realistis, dan relatable.
 
 ATURAN WAJIB:
 1. Nama: HANYA satu kata (nama panggilan). TANPA nama belakang.
+   PILIH NAMA DARI DAFTAR INSPIRASI yang diberikan di user message.
+   JANGAN pakai nama yang sama berulang-ulang. Variasikan setiap pelanggan.
    Contoh OK: Raka, Dimas, Sari, Bunga, Lesti, Fajar, Tari, Joko.
    Contoh SALAH: Raka Pratama, Dimas Putra.
 
@@ -68,18 +127,8 @@ ATURAN WAJIB:
    - Satu fakta unik tentang kepribadiannya
 
 3. Masalah hari ini: HARUS spesifik dan berbeda antar NPC. JANGAN pernah pakai masalah generik.
-   Pilih SATU tema dari daftar ini:
-   a) Tugas kuliah/kantor yang deadline-nya besok
-   b) Pertengkaran dengan sahabat yang belum diselesaikan
-   c) Bingung harus memilih A atau B dalam hidup
-   d) Dimarahi orang tua tadi pagi tentang sesuatu
-   e) Dompet kosong tapi harus bayar sesuatu minggu ini
-   f) Putus cinta atau bertengkar dengan pacar
-   g) capek banget tapi masih harus hadir ke acara
-   h) Diejek atau diremehkan orang hari ini
-   i) Pindah ke tempat baru dan belum punya teman
-   j) Khawatir gagal ujian/tes/proyek penting
-   Setelah memilih tema, JELASKAN secara spesifik — misalnya bukan "masalah kuliah" tapi "deadline skripsi yang dimajukan dosen padahal baru setengah jadi".
+   TEMA MASALAH SUDAH DITENTUKAN di user message — WAJIB pakai tema tersebut.
+   JELASKAN secara spesifik — misalnya bukan "masalah kuliah" tapi "deadline skripsi yang dimajukan dosen padahal baru setengah jadi".
 
 4. OCEAN (0-100): buat skor yang KONSISTEN. Contoh:
    - Introvert (E<40) + Neurotic tinggi → masalah sosial terasa lebih berat
@@ -100,6 +149,13 @@ Kembalikan HANYA JSON valid, tanpa markdown, tanpa teks lain."""
 - Gender        : {gender}
 - Gaya bahasa nanti: {GAYA_BAHASA.get(usia, 'natural')}
 
+VARIASI WAJIB (tag unik: {session_tag}):
+- NAMA: pilih dari inspirasi berikut (boleh variasi, asal satu kata): {", ".join(nama_inspirasi)}
+- TEMA MASALAH (WAJIB pakai tema ini): {tema_label} (kategori: {tema_kategori})
+- ARAH KEPRIBADIAN: kombinasi dari -> {", ".join(ocean_hints)}
+
+PENTING: Setiap pelanggan HARUS unik. Jangan ulang nama atau masalah yang sama.
+
 Contoh profil BAIK:
 {{
   "nama": "Raka",
@@ -117,7 +173,7 @@ Contoh profil LAINNYA (jangan duplikat):
   "masalah_hari_ini": "Ketahuan bossnya suka main HP pas kerja dan sekarang dipanggil masuk ruangan buat dimarahin.",
   "ocean": {{ "openness": 45, "conscientiousness": 38, "extraversion": 52, "agreeableness": 72, "neuroticism": 75 }},
   "max_fails": 1,
-  "reaksi_gaya": "muka merah padam, bisik bilang 'ya udahlah' terus langsung pergi"
+  "reaksi_gaya": "langsung pergi tanpa banyak bicara, cuma bilang 'ya udahlah' pelan"
 }}
 
 Format JSON:
@@ -136,7 +192,12 @@ Format JSON:
   "reaksi_gaya": "1 cara NPC bereaksi saat marah"
 }}"""
 
-    raw    = call_llm(system, user)
+    raw    = call_llm(
+        system, user, model=PROFILE_MODEL,
+        temperature=PROFILE_TEMPERATURE,
+        frequency_penalty=PROFILE_FREQUENCY_PENALTY,
+        presence_penalty=PROFILE_PRESENCE_PENALTY,
+    )
     result = parse_json(raw)
 
     return {

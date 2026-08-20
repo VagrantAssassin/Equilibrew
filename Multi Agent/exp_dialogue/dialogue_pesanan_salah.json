@@ -1,0 +1,528 @@
+[
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Bima udah bilang teh, jadi tolong yang bener ya, Bima capek nunggu."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku udah bilang teh, tapi malah salah lagi, ya? Hah, aku jadi kayaknya emang nggak jelas pesennya, padahal udah gampang."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan_salah": "Haa... kak, ini bukan teh yang aku pesen. Aku capek nunggu, jadi tolong dibenerin ya, yang benar aja..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku pesennya teh, yang hangat itu."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku udah nunggu dari tadi, jadi tolong yang bener ya, aku hampir nggak mau ngomong lagi."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "Kak, ini bukan teh... aduh, salah lagi. Aku udah nunggu, jadi malah kesel banget, huff."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "Eh, ini bukan teh, kak. Aku pesen teh, bukan yang ini... hmpf."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku udah bilang tadi, yang teh ya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku pesan teh, ya, bukan yang ini..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan_salah": "Naya cemberut, menatap minumannya sebentar. \"Kak, ini bukan teh... aku tadi pesen teh, lho. Aku udah nunggu, jadi tolong benerin ya.\""
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "...Kak, ini bukan teh. Aku udah nunggu dari tadi, terus kok yang datang malah ini... ih serius, aku jadi sedih banget."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "*Naya cemberut, lalu menoleh ke samping.* Ih kak, ini bukan teh... aku pesen teh, lho. Aku jadi kesel, tapi tolong ganti yang bener ya."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "ih kak... ini bukan teh yang aku pesen. "
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, aku diam dulu ya. Ini bukan teh yang aku pesen, terus rasanya aku udah capek nunggu dari tadi, jadi tolong dibikin yang bener ya... aku nggak mau bilang dua kali."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "...Kak, ini bukan teh. Aku pesen teh tadi..."
+    }
+  },
+  {
+    "usia": "anak",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan_salah": "..."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "…Kak, ini bukan teh. Serius deh, aku udah bilang te... ih, ya udah, coba benerin lagi aja, aku masih nunggu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan_salah": "Dika nyender, terus ngelirik minumannya dengan wajah makin kusut. \"Hah... kak, ini bukan teh. Aku udah hampir capek nungguin, serius deh...\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "Eh kok ini bukan teh, kak? Duh kak, aku kesel banget nih... parah, tadi udah nunggu lama, terus malah salah lagi."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan_salah": "*Dio ngetuk-ngetuk meja pelan, terus ngelirik minumannya dengan muka capek.* \"Eh, ini bukan teh, kak... serius deh, gue udah bilang teh. Iya, iya, kak, gue ngerti... tapi ya tolong benerin, gue hampir nyerah nih.\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "Haa... salah lagi ya, kak? *ngebuang napas panjang* Udah deh kak, jangan bahas itu terus, aku pesen teh, bukan ini... serius, aku udah capek banget."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "*tok tok* Eh kak, ini bukan teh. Serius deh, aku udah pesen teh, jangan salah lagi ya—aku udah hampir nyerah nih."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "Eh kak, ini bukan teh yang aku pesen. Serius deh, aku udah hampir nyerah nih—kok bisa salah lagi sih?!"
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "Eh kak, ini bukan teh... serius deh, dari tadi aku pesen teh, kok jadinya yang ini sih? Aku udah mau nyerah, tapi ya... coba dibenerin ya, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "Ih serius, kak... ini bukan teh yang aku pesen. Aku udah capek banget, jadinya malah makin kesel, tapi... coba ulang ya, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan_salah": "Kak, ini bukan teh... aduh, seriusan deh, aku udah nungguin dari tadi. Salah lagi gini tuh bikin aku pengen pulang aja, sumpah, tapi... ya udah, coba benerin, kak."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan_salah": "Naya nghela napas panjang, matanya sempat melirik minuman itu lama banget. \"Hah... kak, ini jelas bukan teh yang aku pesen. Aku tuh udah nungguin yang simpel aja, jangan bikin aku makin pusing gitu dong...\" lalu dia nyengir tipis, agak pasrah, \"ya udah deh, makasih kak\""
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "Ih kak, ini bukan teh... serius deh, aku udah capek banget nungguin dari tadi. Ya udah deh, sekarang bantuin mikir dong, biar aku gak makin kesel."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan_salah": "Eh kak, ini bukan teh... salah lagi ya? Aku udah hampir nyerah nih, serius. Tapi... ya udah, coba dibenerin aja, aku tunggu."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "…ih, serius deh kak. Ini bukan teh, dan aku udah capek banget nungguin, jadi tolong dibenerin ya."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Aku udah nungguin dari tadi, jadi ya agak kesel sih... coba yang bener, ya."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "Aduh kak, ini bukan teh... bikin kesel aja, serius. Aku udah nunggu dari tadi, terus salah lagi; aku nyender dulu deh, udah hampir nyerah nih."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "Kak, ini serius bukan teh... aduh, aku udah ngerasa kayak jalan muter di labirin dari tadi, terus yang datang malah begini. Tapi ya udah, maaf ya, aku ngomel kebanyakan—coba ulangi lagi, kak, yang teh beneran."
+    }
+  },
+  {
+    "usia": "remaja",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "error": "500 Server Error: Internal Server Error for url: http://localhost:8765/test/dialogue"
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "...Hah. Kak, ini bukan teh. Tolong dibetulkan ya, saya pesan teh, bukan yang ini."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan_salah": "...Bukan ini, kak. Saya pesan teh."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan_salah": "Bukan ini, kak. Teh yang saya pesan—tolong dibetulkan sekarang."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "...Bukan ini, kak. Saya pesen teh. Tolong ganti yang benar."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan_salah": "...Hah. Ini jelas bukan teh, kak. Saya pesan teh yang biasa, tolong ditukar."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "...Bukan ini, kak. Saya pesen teh."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Tolong dibetulkan, ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "...Ini bukan teh, kak. Saya tunggu yang jelas, ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "\"...\" Bayu menarik napas panjang, menatap minuman itu sebentar. \"Bukan ini, kak. Saya tunggu sebentar ya.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "pria",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan_salah": "Ini bukan yang saya pesan, kak. ..."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 1,
+    "dialog": {
+      "dialog_pesanan_salah": "...Hah, bukan ini. Kak, saya pesan teh. Tolong ganti yang benar, ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 2,
+    "dialog": {
+      "dialog_pesanan_salah": "…Haaah. Bukan ini, kak. Aku pesan teh, tolong yang benar ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 3,
+    "dialog": {
+      "dialog_pesanan_salah": "...kak, ini bukan teh. Tolong yang benar ya, saya sudah capek kalau harus ulang lagi."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 4,
+    "dialog": {
+      "dialog_pesanan_salah": "*Nadya menarik napas panjang.* \"Hah... ini bukan teh, kak. Saya minta teh, tolong dibetulkan ya.\""
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 5,
+    "dialog": {
+      "dialog_pesanan_salah": "...Kak, ini bukan teh. Saya tunggu yang benar."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 6,
+    "dialog": {
+      "dialog_pesanan_salah": "...*Nadya menarik napas panjang.* Kak, ini bukan teh. Saya udah nunggu dari tadi, jadi... tolong dibenerin ya, saya lagi capek banget."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 7,
+    "dialog": {
+      "dialog_pesanan_salah": "...Hah. Ini bukan teh, kak. Aku capek kalau harus ulang lagi, tapi tolong dibenerin ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 8,
+    "dialog": {
+      "dialog_pesanan_salah": "*Mira menarik napas panjang.* Kak, ini bukan teh. Tolong dibetulkan, ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 9,
+    "dialog": {
+      "dialog_pesanan_salah": "*Mira menarik napas panjang.* Bukan ini, kak. Saya pesen teh—tolong dicek lagi, ya."
+    }
+  },
+  {
+    "usia": "dewasa",
+    "gender": "wanita",
+    "state": "pesanan_salah",
+    "ke": 10,
+    "dialog": {
+      "dialog_pesanan_salah": "Dinda menarik napas panjang, lalu menatap minumannya sebentar. \"Bukan ini, kak. Saya pesan teh.\""
+    }
+  }
+]

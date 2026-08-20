@@ -114,22 +114,24 @@ public class CurhatChoiceUI : MonoBehaviour
         panelRoot.SetActive(true);
         isActive = true;
         
+        // Acak urutan pilihan agar player tidak bisa "selalu pilih tombol atas"
+        PilihanJawaban[] shuffled = ShuffleArray(pilihan);
+        
         // Create choice buttons
-        if (pilihan != null && choiceButtonContainer != null && choiceButtonPrefab != null)
+        if (shuffled != null && choiceButtonContainer != null && choiceButtonPrefab != null)
         {
-            foreach (var p in pilihan)
+            foreach (var p in shuffled)
             {
                 if (p == null) continue;
                 
                 var btn = Instantiate(choiceButtonPrefab, choiceButtonContainer);
                 btn.gameObject.SetActive(true);
                 
-                // Set button text
+                // Set button text — TANPA icon/warna nada (jangan bocorkan emosi)
                 var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
                 if (tmp != null)
                 {
-                    string icon = p.nada == "satisfy" ? "💚" : p.nada == "angry" ? "🔴" : "💛";
-                    tmp.text = $"{icon} {p.teks}";
+                    tmp.text = p.teks;
                 }
                 
                 // Capture for closure
@@ -186,6 +188,21 @@ public class CurhatChoiceUI : MonoBehaviour
     public bool IsActive => isActive;
     
     // ── Private Methods ───────────────────────────────────────────────────────
+    
+    /// <summary>Acak urutan array (Fisher-Yates) supaya urutan pilihan tidak predictable.</summary>
+    private PilihanJawaban[] ShuffleArray(PilihanJawaban[] source)
+    {
+        if (source == null || source.Length <= 1) return source;
+        PilihanJawaban[] arr = (PilihanJawaban[])source.Clone();
+        for (int i = arr.Length - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            var tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
+    }
     
     private void OnChoiceClicked(string nada, string teks)
     {

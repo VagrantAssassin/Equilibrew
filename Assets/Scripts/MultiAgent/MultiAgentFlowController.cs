@@ -342,9 +342,14 @@ public class MultiAgentFlowController : MonoBehaviour
 
             // Generate order dialog
             state = FlowState.GeneratingOrder;
-            adapter.GenerateOrderDialog((dialogResp) =>
+
+            // Random pilih minuman dari menu NPC
+            string chosenDrink = menuMinuman[UnityEngine.Random.Range(0, menuMinuman.Length)];
+            Debug.Log($"[MultiAgentFlow] Random drink: {chosenDrink}");
+
+            adapter.GenerateOrderDialog(chosenDrink, (dialogResp) =>
             {
-                Debug.Log($"[MultiAgentFlow] Order dialog ready. Critic: {dialogResp.critic_skor}/100");
+                Debug.Log($"[MultiAgentFlow] Order dialog ready. Critic: {dialogResp.critic_skor:F1}/5.0, lulus={dialogResp.critic_lulus}");
 
                 // Find recipe
                 currentRequestedRecipeName = dialogResp.minuman_dipesan;
@@ -365,7 +370,7 @@ public class MultiAgentFlowController : MonoBehaviour
 
             }, (error) => HandleError("Order", error));
 
-        }, (error) => HandleError("Profile", error), menuMinuman);
+        }, (error) => HandleError("Profile", error));
     }
 
     private IEnumerator SpawnWhenIdle()
@@ -441,10 +446,11 @@ public class MultiAgentFlowController : MonoBehaviour
     private IEnumerator HandleWrongServe()
     {
         state = FlowState.GeneratingWrong;
+        ShowLoadingDots();
 
         adapter.GenerateWrongDialog((dialogResp) =>
         {
-            Debug.Log("[MultiAgentFlow] Wrong dialog ready.");
+            Debug.Log($"[MultiAgentFlow] Wrong dialog ready. Critic: {dialogResp.critic_skor:F1}/5.0, lulus={dialogResp.critic_lulus}");
             PlayDynamicDialog(dialogResp.dialog_text, true, false, () =>
             {
                 state = FlowState.WaitingForServe;
@@ -453,6 +459,7 @@ public class MultiAgentFlowController : MonoBehaviour
         }, (error) =>
         {
             Debug.LogError($"[MultiAgentFlow] Wrong dialog error: {error}");
+            HideLoadingDots();
             state = FlowState.WaitingForServe;
         });
 
@@ -462,6 +469,7 @@ public class MultiAgentFlowController : MonoBehaviour
     private IEnumerator HandleMaxFailLeave()
     {
         state = FlowState.GeneratingAngry;
+        ShowLoadingDots();
 
         // Apply affinity penalty
         if (currentProfile != null)
@@ -475,7 +483,7 @@ public class MultiAgentFlowController : MonoBehaviour
 
         adapter.GenerateAngryDialog((dialogResp) =>
         {
-            Debug.Log("[MultiAgentFlow] Angry dialog ready.");
+            Debug.Log($"[MultiAgentFlow] Angry dialog ready. Critic: {dialogResp.critic_skor:F1}/5.0, lulus={dialogResp.critic_lulus}");
             PlayDynamicDialog(dialogResp.dialog_text, false, true, () =>
             {
                 AdvanceToNextCustomer();
@@ -483,6 +491,7 @@ public class MultiAgentFlowController : MonoBehaviour
         }, (error) =>
         {
             Debug.LogError($"[MultiAgentFlow] Angry dialog error: {error}");
+            HideLoadingDots();
             AdvanceToNextCustomer();
         });
 
@@ -492,11 +501,12 @@ public class MultiAgentFlowController : MonoBehaviour
     private IEnumerator HandleCorrectServe()
     {
         state = FlowState.GeneratingSuccess;
+        ShowLoadingDots();
 
         // Generate success dialog
         adapter.GenerateSuccessDialog((successResp) =>
         {
-            Debug.Log("[MultiAgentFlow] Success dialog ready.");
+            Debug.Log($"[MultiAgentFlow] Success dialog ready. Critic: {successResp.critic_skor:F1}/5.0, lulus={successResp.critic_lulus}");
             PlayDynamicDialog(successResp.dialog_text, true, true, () =>
             {
                 // After success dialog acknowledged, start curhat
@@ -505,6 +515,7 @@ public class MultiAgentFlowController : MonoBehaviour
         }, (error) =>
         {
             Debug.LogError($"[MultiAgentFlow] Success dialog error: {error}");
+            HideLoadingDots();
             StartCoroutine(RunCurhatSession());
         });
 
@@ -520,6 +531,7 @@ public class MultiAgentFlowController : MonoBehaviour
 
         // Small thank-you
         yield return new WaitForSecondsRealtime(0.5f);
+        ShowLoadingDots();
 
         adapter.StartCurhat((curhatResp) =>
         {
@@ -528,6 +540,7 @@ public class MultiAgentFlowController : MonoBehaviour
         }, (error) =>
         {
             Debug.LogError($"[MultiAgentFlow] Curhat start error: {error}");
+            HideLoadingDots();
             FinishCustomer();
         });
     }
@@ -549,15 +562,15 @@ public class MultiAgentFlowController : MonoBehaviour
 
         PlayDynamicDialog(curhatResp.dialog_text, true, false, () =>
         {
-            if (hasChoices && inkDialogController != null)
+            if (hasChoices)
             {
-                // Show choice buttons
+                // Gunakan ShowChoicesOnPanel (buttons di InkDialogPanel) — Choice_Agree,
+                // Choice_Neutral, Choice_Disagree sudah tersedia di scene.
                 inkDialogController.ShowChoicesOnPanel(curhatResp.pilihan_jawaban, (jawaban, nada) =>
                 {
                     Debug.Log($"[MultiAgentFlow] Choice selected: {jawaban} (nada={nada})");
                     OnCurhatPlayerResponse(jawaban, nada);
                 });
-                Debug.Log("[MultiAgentFlow] Curhat dialog shown. Waiting for player response.");
             }
             else
             {
@@ -581,6 +594,7 @@ public class MultiAgentFlowController : MonoBehaviour
 
         state = FlowState.GeneratingReaction;
         Debug.Log($"[MultiAgentFlow] Player answered: {jawaban} (nada={chosenNada ?? "auto"})");
+        ShowLoadingDots();
 
         float moodSebelum = currentProfile != null ? currentProfile.affinity : 50f;
 
@@ -602,11 +616,13 @@ public class MultiAgentFlowController : MonoBehaviour
             }
             else
             {
+                HideLoadingDots();
                 CheckNextCurhatRound();
             }
         }, (error) =>
         {
             Debug.LogError($"[MultiAgentFlow] Evaluate error: {error}");
+            HideLoadingDots();
             CheckNextCurhatRound();
         }, chosenNada);
     }
@@ -619,12 +635,27 @@ public class MultiAgentFlowController : MonoBehaviour
 
         if (maxRounds > 0 && nextRound > maxRounds)
         {
-            Debug.Log($"[MultiAgentFlow] Curhat selesai: sudah mencapai {maxRounds} ronde.");
-            FinishCustomer();
+            Debug.Log($"[MultiAgentFlow] Curhat selesai: sudah mencapai {maxRounds} ronde. Generating closing...");
+            ShowLoadingDots();
+            // Request closing dialog before finishing
+            adapter.GenerateClosing((closingResp) =>
+            {
+                Debug.Log("[MultiAgentFlow] Closing dialog received.");
+                PlayDynamicDialog(closingResp.dialog_text, true, false, () =>
+                {
+                    FinishCustomer();
+                });
+            }, (error) =>
+            {
+                Debug.LogError($"[MultiAgentFlow] Closing error: {error}");
+                HideLoadingDots();
+                FinishCustomer();
+            });
             return;
         }
 
         Debug.Log($"[MultiAgentFlow] Requesting curhat round {nextRound}/{maxRounds}");
+        ShowLoadingDots();
         adapter.NextCurhatRound((nextResp) =>
         {
             Debug.Log($"[MultiAgentFlow] Next curhat round {nextResp.ronde_sekarang}/{nextResp.total_ronde} ready.");
@@ -633,6 +664,7 @@ public class MultiAgentFlowController : MonoBehaviour
         {
             // Server returned error (e.g. round limit exceeded) — finish
             Debug.Log($"[MultiAgentFlow] Curhat session ended: {error}");
+            HideLoadingDots();
             FinishCustomer();
         });
     }
@@ -751,8 +783,27 @@ public class MultiAgentFlowController : MonoBehaviour
             return;
         }
 
+        // Sembunyikan loading dots sebelum dialog ditampilkan
+        HideLoadingDots();
+
         inkDialogController.SetSpeakerName(currentCustomerDisplayName);
         inkDialogController.PlayDynamicText(text, onComplete, leavePanelOpen, requireAck);
+    }
+
+    // ── Loading Indicator ─────────────────────────────────────────────────────
+
+    /// <summary>Tampilkan animasi titik-titik "....." di dalam dialog box pelanggan.</summary>
+    public void ShowLoadingDots()
+    {
+        if (inkDialogController != null)
+            inkDialogController.ShowLoadingDots();
+    }
+
+    /// <summary>Sembunyikan animasi loading dots.</summary>
+    public void HideLoadingDots()
+    {
+        if (inkDialogController != null)
+            inkDialogController.HideLoadingDots();
     }
 
     private void CloseDialogPanel()

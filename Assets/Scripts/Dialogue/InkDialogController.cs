@@ -59,6 +59,10 @@ public class InkDialogController : MonoBehaviour
     // cached speaker name so SetSpeakerName before PlayCurhat will be applied later
     private string cachedSpeakerName = "";
 
+    // ── Loading Dots (titik-titik "....." saat LLM loading) ───────────────────
+    private Coroutine loadingDotsRoutine;
+    private bool isLoadingDotsActive = false;
+
     private void Awake()
     {
         if (dialogPanelRoot != null) dialogPanelRoot.SetActive(false);
@@ -74,6 +78,99 @@ public class InkDialogController : MonoBehaviour
             if (runtimeDialogInstance != null) return runtimeDialogInstance.activeInHierarchy;
             if (dialogPanelRoot != null) return dialogPanelRoot.activeInHierarchy;
             return false;
+        }
+    }
+
+    // ── Loading Dots (titik-titik "....." saat LLM loading) ───────────────────
+
+    /// <summary>
+    /// ShowLoadingDots — tampilkan dialog box pelanggan dengan animasi titik-titik
+    /// "....." di body text. Dipanggil MultiAgentFlowController sebelum request LLM.
+    /// Panel yang di-instantiate di sini akan di-reuse oleh PlayDynamicText.
+    /// </summary>
+    public void ShowLoadingDots()
+    {
+        if (isPlaying)
+        {
+            Debug.LogWarning("[InkDialogController] ShowLoadingDots ignored — dialog sedang playing.");
+            return;
+        }
+
+        // Ensure dialog panel exists (instantiate prefab if needed)
+        GameObject panelRoot = runtimeDialogInstance;
+        if (panelRoot == null)
+        {
+            if (dialogPrefab == null || dialogAnchor == null)
+            {
+                Debug.LogWarning("[InkDialogController] ShowLoadingDots: no dialogPrefab/dialogAnchor.");
+                return;
+            }
+            runtimeDialogInstance = Instantiate(dialogPrefab, dialogAnchor, false);
+            panelRoot = runtimeDialogInstance;
+            if (!string.IsNullOrEmpty(cachedSpeakerName))
+                SetSpeakerName(cachedSpeakerName);
+        }
+
+        panelRoot.SetActive(true);
+        affinityWidget?.Show();
+
+        // Animate open if not already open
+        if (!runtimeKeptOpen)
+        {
+            panelRoot.transform.localScale = Vector3.one * panelStartScale;
+            if (affinityWidget != null)
+            {
+                affinityWidget.transform.localScale = Vector3.one * panelStartScale;
+                StartCoroutine(ScaleTransform(affinityWidget.transform, panelStartScale, 1f, panelScaleDuration));
+            }
+            StartCoroutine(ScaleTransform(panelRoot.transform, panelStartScale, 1f, panelScaleDuration));
+        }
+
+        // Hide choice container during loading
+        if (choiceContainer != null) choiceContainer.SetActive(false);
+
+        // Find body text and start dots animation
+        TextMeshProUGUI bodyText = panelRoot.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (bodyText == null)
+        {
+            Debug.LogWarning("[InkDialogController] ShowLoadingDots: body TMP not found.");
+            return;
+        }
+
+        if (loadingDotsRoutine != null) StopCoroutine(loadingDotsRoutine);
+        loadingDotsRoutine = StartCoroutine(AnimateLoadingDots(bodyText));
+        isLoadingDotsActive = true;
+    }
+
+    /// <summary>
+    /// HideLoadingDots — hentikan animasi titik-titik. Dipanggil sebelum PlayDynamicText
+    /// menampilkan text asli, atau saat error/finish.
+    /// </summary>
+    public void HideLoadingDots()
+    {
+        if (loadingDotsRoutine != null)
+        {
+            StopCoroutine(loadingDotsRoutine);
+            loadingDotsRoutine = null;
+        }
+        isLoadingDotsActive = false;
+    }
+
+    /// <summary>True jika animasi loading dots sedang aktif.</summary>
+    public bool IsLoadingDotsActive => isLoadingDotsActive;
+
+    private IEnumerator AnimateLoadingDots(TextMeshProUGUI tmp)
+    {
+        if (tmp == null) yield break;
+        int maxDots = 5;
+        int count = 0;
+        // Reset maxVisibleCharacters agar semua titik terlihat
+        tmp.maxVisibleCharacters = int.MaxValue;
+        while (true)
+        {
+            tmp.text = new string('.', count + 1);
+            count = (count + 1) % maxDots;
+            yield return new WaitForSecondsRealtime(0.35f);
         }
     }
 
@@ -552,18 +649,18 @@ public class InkDialogController : MonoBehaviour
             yield break;
         }
 
-        // Get or create panel root
-        GameObject panelRoot = dialogPanelRoot;
+        // Hentikan animasi loading dots (jika aktif) sebelum menampilkan text asli
+        bool wasLoadingDots = isLoadingDotsActive;
+        HideLoadingDots();
 
-        if (runtimeDialogInstance != null)
-        {
-            panelRoot = runtimeDialogInstance;
-        }
-        else if (panelRoot == null)
+        // Get or create panel root — use runtime prefab for NPC dialog text
+        GameObject panelRoot = runtimeDialogInstance;
+
+        if (panelRoot == null)
         {
             if (dialogPrefab == null || dialogAnchor == null)
             {
-                Debug.LogError("[InkDialogController] No dialogPanelRoot and no dialogPrefab/dialogAnchor.");
+                Debug.LogError("[InkDialogController] No dialogPrefab/dialogAnchor.");
                 isPlaying = false;
                 onCompleteCallback?.Invoke();
                 yield break;
@@ -576,8 +673,8 @@ public class InkDialogController : MonoBehaviour
                 SetSpeakerName(cachedSpeakerName);
         }
 
-        // Show panel with animation (animate open only on first appearance)
-        bool shouldAnimateOpen = !panelRoot.activeSelf || (runtimeDialogInstance != null && !runtimeKeptOpen);
+        // Show panel with animation (skip if panel sudah terbuka dari loading dots)
+        bool shouldAnimateOpen = !wasLoadingDots && (!panelRoot.activeSelf || (runtimeDialogInstance != null && !runtimeKeptOpen));
         panelRoot.SetActive(true);
         affinityWidget?.Show();
 
@@ -685,6 +782,9 @@ public class InkDialogController : MonoBehaviour
     /// 
     /// Dipanggil setelah dialog NPC selesai ditampilkan (per-sentence).
     /// Player memilih salah satu → callback(jawaban, nada).
+    /// 
+    /// NOTE: Selalu pakai dialogPanelRoot (InkDialogPanel) karena hanya itu yang punya
+    /// ChoiceContainer dengan tombol pilihan. runtimeDialogInstance (prefab) tidak punya.
     /// </summary>
     public void ShowChoicesOnPanel(PilihanJawaban[] pilihan, Action<string, string> onChoiceSelected)
     {
@@ -694,23 +794,26 @@ public class InkDialogController : MonoBehaviour
             return;
         }
 
-        GameObject panelRoot = runtimeDialogInstance ?? dialogPanelRoot;
+        // Selalu pakai dialogPanelRoot (InkDialogPanel) untuk pilihan — hanya ini yang punya ChoiceContainer
+        GameObject panelRoot = dialogPanelRoot;
         if (panelRoot == null)
         {
-            Debug.LogWarning("[InkDialogController] No panel for ShowChoicesOnPanel.");
+            Debug.LogWarning("[InkDialogController] dialogPanelRoot (InkDialogPanel) tidak di-assign! Tidak bisa menampilkan pilihan.");
             onChoiceSelected?.Invoke("", "neutral");
             return;
         }
 
-        // Keep panel open
+        // Aktifkan InkDialogPanel untuk menampilkan pilihan
         panelRoot.SetActive(true);
 
         // Hide continue button while choices are displayed
         if (continueButton != null) continueButton.gameObject.SetActive(false);
 
-        // Check if choiceContainer is actually visible in hierarchy
-        // (may be inside an inactive parent like InkDialogPanel)
-        bool containerUsable = choiceContainer != null && choiceContainer.activeInHierarchy;
+        // Acak urutan pilihan agar player tidak bisa menebak nada dari posisi
+        PilihanJawaban[] shuffled = ShufflePilihan(pilihan);
+
+        // choiceContainer is usable if it exists and its parent panel is now active
+        bool containerUsable = choiceContainer != null && panelRoot.activeSelf;
 
         // Use existing choice buttons from InkDialogController
         List<Button> buttons = new List<Button>();
@@ -728,7 +831,7 @@ public class InkDialogController : MonoBehaviour
         if (containerUsable) choiceContainer.SetActive(true);
 
         // Configure each button
-        int count = Mathf.Min(buttons.Count, pilihan.Length);
+        int count = Mathf.Min(buttons.Count, shuffled.Length);
         for (int i = 0; i < buttons.Count; i++)
         {
             var btn = buttons[i];
@@ -740,13 +843,13 @@ public class InkDialogController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var btn = buttons[i];
-            var pil = pilihan[i];
+            var pil = shuffled[i];
 
             var tmp = btn.GetComponentInChildren<TextMeshProUGUI>(true);
             if (tmp != null)
             {
-                string icon = pil.nada == "satisfy" ? "💚" : pil.nada == "angry" ? "🔴" : "💛";
-                tmp.text = icon + " " + pil.teks;
+                // TANPA icon nada — jangan bocorkan emosi pilihan
+                tmp.text = pil.teks;
             }
 
             string capturedTeks = pil.teks;
@@ -764,8 +867,23 @@ public class InkDialogController : MonoBehaviour
         {
             Debug.LogWarning($"[InkDialogController] No usable choice buttons (count={count}, containerUsable={containerUsable}). Using fallback.");
             // Fallback: create temporary choice buttons under runtimeDialogInstance
-            StartFallbackChoiceCoroutine(pilihan, onChoiceSelected);
+            StartFallbackChoiceCoroutine(shuffled, onChoiceSelected);
         }
+    }
+
+    /// <summary>Acak urutan pilihan (Fisher-Yates) supaya nada tidak predictable dari posisi.</summary>
+    private PilihanJawaban[] ShufflePilihan(PilihanJawaban[] source)
+    {
+        if (source == null || source.Length <= 1) return source;
+        PilihanJawaban[] arr = (PilihanJawaban[])source.Clone();
+        for (int i = arr.Length - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            var tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
     }
 
     /// <summary>
@@ -832,8 +950,6 @@ public class InkDialogController : MonoBehaviour
         for (int i = 0; i < pilihan.Length; i++)
         {
             var pil = pilihan[i];
-            string icon = pil.nada == "satisfy" ? "💚" : pil.nada == "angry" ? "🔴" : "💛";
-            string nadaLabel = pil.nada == "satisfy" ? "[Satisfy]" : pil.nada == "angry" ? "[Angry]" : "[Neutral]";
 
             GameObject btnGo = new GameObject($"Choice_{i}");
             btnGo.transform.SetParent(choicePanel.transform, false);
@@ -856,43 +972,20 @@ public class InkDialogController : MonoBehaviour
             le.preferredHeight = 55f;
             le.flexibleWidth = 1f;
 
-            // Text container (HorizontalLayoutGroup for icon + text)
-            GameObject textContainer = new GameObject("TextContainer");
-            textContainer.transform.SetParent(btnGo.transform, false);
-            RectTransform tcRt = textContainer.AddComponent<RectTransform>();
-            // Stretch to fill button
-            tcRt.anchorMin = Vector2.zero;
-            tcRt.anchorMax = Vector2.one;
-            tcRt.offsetMin = new Vector2(10, 0);
-            tcRt.offsetMax = new Vector2(-10, 0);
-            HorizontalLayoutGroup hlg = textContainer.AddComponent<HorizontalLayoutGroup>();
-            hlg.spacing = 8f;
-            hlg.childAlignment = TextAnchor.MiddleLeft;
-            hlg.childForceExpandWidth = false;
-            hlg.childForceExpandHeight = true;
-
-            // Nada label
-            GameObject nadaGo = new GameObject("Nada");
-            nadaGo.transform.SetParent(textContainer.transform, false);
-            TextMeshProUGUI nadaTmp = nadaGo.AddComponent<TextMeshProUGUI>();
-            nadaTmp.text = $"{icon} {nadaLabel}";
-            nadaTmp.fontSize = 14;
-            nadaTmp.alignment = TextAlignmentOptions.Left;
-            nadaTmp.color = pil.nada == "satisfy" ? new Color(0.3f, 0.9f, 0.4f) :
-                           pil.nada == "angry" ? new Color(0.9f, 0.3f, 0.3f) :
-                           new Color(0.9f, 0.9f, 0.4f);
-            LayoutElement nadaLe = nadaGo.AddComponent<LayoutElement>();
-            nadaLe.preferredWidth = 90f;
-
-            // Choice text
+            // Choice text only — TANPA icon/label/warna nada (jangan bocorkan emosi)
             GameObject txtGo = new GameObject("Text");
-            txtGo.transform.SetParent(textContainer.transform, false);
+            txtGo.transform.SetParent(btnGo.transform, false);
             TextMeshProUGUI tmp = txtGo.AddComponent<TextMeshProUGUI>();
             tmp.text = pil.teks;
             tmp.fontSize = 15;
             tmp.alignment = TextAlignmentOptions.Left;
             tmp.color = Color.white;
             tmp.enableWordWrapping = true;
+            RectTransform txtRt = txtGo.GetComponent<RectTransform>();
+            txtRt.anchorMin = Vector2.zero;
+            txtRt.anchorMax = Vector2.one;
+            txtRt.offsetMin = new Vector2(15, 5);
+            txtRt.offsetMax = new Vector2(-15, -5);
 
             string capturedTeks = pil.teks;
             string capturedNada = pil.nada;
@@ -1014,6 +1107,8 @@ public class InkDialogController : MonoBehaviour
         StopAllCoroutines();
         isPlaying = false;
         runtimeKeptOpen = false;
+        isLoadingDotsActive = false;
+        loadingDotsRoutine = null;
 
         if (runtimeDialogInstance != null)
         {

@@ -1,0 +1,300 @@
+[
+  {
+    "seed": "good",
+    "threshold": 4.0,
+    "n_iterations_requested": 5,
+    "n_iterations_success": 5,
+    "reference": {
+      "skor_total": 4.375,
+      "skor_dimensi": {
+        "interesting": 4,
+        "engaging": 4,
+        "specific": 5,
+        "relevant": 5,
+        "correct": 4,
+        "semantically_appropriate": 5,
+        "understandable": 4,
+        "fluent": 4
+      },
+      "lulus": true
+    },
+    "skor_total_series": [
+      4.375,
+      4.75,
+      4.625,
+      4.5,
+      4.875,
+      4.25
+    ],
+    "metrics": [
+      {
+        "metrik": "cosine_similarity (FED vector)",
+        "mean_sim_vs_ref": 0.9956,
+        "std_sim_vs_ref": 0.0014,
+        "mean_sim_pairwise": 0.9944,
+        "uncertainty": 0.0044
+      },
+      {
+        "metrik": "spearman_rho (FED vector)",
+        "mean_sim_vs_ref": 0.572,
+        "std_sim_vs_ref": 0.1819,
+        "mean_sim_pairwise": 0.4081,
+        "uncertainty": 0.428
+      },
+      {
+        "metrik": "kendall_tau (FED vector)",
+        "mean_sim_vs_ref": 1.0,
+        "std_sim_vs_ref": 0.0,
+        "mean_sim_pairwise": 0.8833,
+        "uncertainty": 0.0
+      },
+      {
+        "metrik": "absolute_score_diff (total)",
+        "mean_abs_diff": 0.275,
+        "std_abs_diff": 0.1458,
+        "uncertainty": 0.0688
+      }
+    ],
+    "iterations": [
+      {
+        "iterasi": 1,
+        "skor_total": 4.75,
+        "abs_diff": 0.375,
+        "skor_dimensi": {
+          "interesting": 5,
+          "engaging": 4,
+          "specific": 5,
+          "relevant": 5,
+          "correct": 4,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 5
+        },
+        "dialog_rephrased": "Eh kak, akhirnya datang juga! Aku pesen Green Tea ya kak, karena kepala lagi penuh banget—deadline tugas kelompok dimajuin jadi besok, terus anggota tim malah pada menghilang. Beneran, aku perlu teh buat ngelewatin malam nanti. Makasih ya kak!",
+        "background_rephrased": "Anak teknik yang suka ngulik gitar di kosan. Kelihatannya cuek banget, padahal aslinya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dimajukan ke besok, padahal semua anggota timnya malah menghilang."
+      },
+      {
+        "iterasi": 2,
+        "skor_total": 4.625,
+        "abs_diff": 0.25,
+        "skor_dimensi": {
+          "interesting": 5,
+          "engaging": 4,
+          "specific": 5,
+          "relevant": 5,
+          "correct": 5,
+          "semantically_appropriate": 5,
+          "understandable": 4,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Eh kak, akhirnya nyampe juga! Aku pesen Green Tea ya kak, karena tadi kepala lagi penuh banget, dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang malah pada menghilang. Beneran deh, perlu teh buat ngecabin malam nanti. Makasih ya kak!",
+        "background_rephrased": "Mahasiswa teknik yang gemar main gitar di kos. Tipe yang kelihatannya cuek, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas waktu tugas kelompok dipercepat jadi besok, sementara semua anggota tim malah menghilang."
+      },
+      {
+        "iterasi": 3,
+        "skor_total": 4.5,
+        "abs_diff": 0.125,
+        "skor_dimensi": {
+          "interesting": 4,
+          "engaging": 4,
+          "specific": 5,
+          "relevant": 5,
+          "correct": 4,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Eh kak, akhirnya nyampe juga! Aku pesen Green Tea ya, kak, karena tadi kepala lagi penuh banget, dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang malah pada menghilang. Beneran deh, perlu teh buat ngelewatin malam nanti. Makasih ya, kak!",
+        "background_rephrased": "Anak teknik yang suka ngulik gitar di kosan. Kelihatannya cuek banget, padahal aslinya perhatian.",
+        "masalah_rephrased": "Batas waktu tugas kelompok dipercepat sampai besok, sementara semua anggota tim malah menghilang."
+      },
+      {
+        "iterasi": 4,
+        "skor_total": 4.875,
+        "abs_diff": 0.5,
+        "skor_dimensi": {
+          "interesting": 5,
+          "engaging": 4,
+          "specific": 5,
+          "relevant": 5,
+          "correct": 5,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 5
+        },
+        "dialog_rephrased": "Eh kak, akhirnya datang juga! Aku pesen Green Tea ya kak, karena tadi kepalaku lagi penuh banget, dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang malah menghilang. Beneran deh, aku perlu teh buat nemenin malam nanti. Makasih ya kak!",
+        "background_rephrased": "Mahasiswa jurusan teknik yang gemar main gitar di kosan. Tipe orang yang kelihatannya cuek, padahal aslinya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dipercepat menjadi besok, sementara semua anggota tim malah menghilang."
+      },
+      {
+        "iterasi": 5,
+        "skor_total": 4.25,
+        "abs_diff": 0.125,
+        "skor_dimensi": {
+          "interesting": 4,
+          "engaging": 4,
+          "specific": 5,
+          "relevant": 5,
+          "correct": 4,
+          "semantically_appropriate": 4,
+          "understandable": 4,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Eh kak, akhirnya nyampe juga! Aku pesan Green Tea ya kak, tadi kepala lagi mumet banget, dari deadline tugas kelompok yang dimajuin jadi besok sampai anggota tim yang malah menghilang semua. Beneran, aku perlu teh buat ngecabin malam nanti. Makasih ya kak!",
+        "background_rephrased": "Anak kuliahan jurusan teknik yang suka ngegitar di tempat kos. Kelihatannya memang acuh, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dipercepat sampai besok, sementara semua anggota tim malah menghilang."
+      }
+    ]
+  },
+  {
+    "seed": "bad",
+    "threshold": 4.0,
+    "n_iterations_requested": 5,
+    "n_iterations_success": 5,
+    "reference": {
+      "skor_total": 3.25,
+      "skor_dimensi": {
+        "interesting": 2,
+        "engaging": 2,
+        "specific": 3,
+        "relevant": 5,
+        "correct": 2,
+        "semantically_appropriate": 4,
+        "understandable": 5,
+        "fluent": 3
+      },
+      "lulus": false
+    },
+    "skor_total_series": [
+      3.25,
+      3.5,
+      3.5,
+      3.5,
+      3.625,
+      3.625
+    ],
+    "metrics": [
+      {
+        "metrik": "cosine_similarity (FED vector)",
+        "mean_sim_vs_ref": 0.9904,
+        "std_sim_vs_ref": 0.0035,
+        "mean_sim_pairwise": 0.994,
+        "uncertainty": 0.0096
+      },
+      {
+        "metrik": "spearman_rho (FED vector)",
+        "mean_sim_vs_ref": 0.9407,
+        "std_sim_vs_ref": 0.0299,
+        "mean_sim_pairwise": 0.9348,
+        "uncertainty": 0.0593
+      },
+      {
+        "metrik": "kendall_tau (FED vector)",
+        "mean_sim_vs_ref": 0.981,
+        "std_sim_vs_ref": 0.0381,
+        "mean_sim_pairwise": 0.9589,
+        "uncertainty": 0.019
+      },
+      {
+        "metrik": "absolute_score_diff (total)",
+        "mean_abs_diff": 0.3,
+        "std_abs_diff": 0.0612,
+        "uncertainty": 0.075
+      }
+    ],
+    "iterations": [
+      {
+        "iterasi": 1,
+        "skor_total": 3.5,
+        "abs_diff": 0.25,
+        "skor_dimensi": {
+          "interesting": 2,
+          "engaging": 2,
+          "specific": 3,
+          "relevant": 5,
+          "correct": 2,
+          "semantically_appropriate": 4,
+          "understandable": 5,
+          "fluent": 5
+        },
+        "dialog_rephrased": "Aku mau pesan green tea, cepetan ya, lagi buru-buru.",
+        "background_rephrased": "Mahasiswa jurusan teknik yang suka main gitar di kosan. Tipe orang yang tampak masa bodoh, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dimajuin ke besok, padahal semua anggota timnya malah menghilang."
+      },
+      {
+        "iterasi": 2,
+        "skor_total": 3.5,
+        "abs_diff": 0.25,
+        "skor_dimensi": {
+          "interesting": 2,
+          "engaging": 2,
+          "specific": 3,
+          "relevant": 5,
+          "correct": 2,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Saya mau pesan green tea, tolong cepat ya, saya lagi buru-buru.",
+        "background_rephrased": "Mahasiswa jurusan teknik yang gemar bermain gitar di kosan. Kelihatannya cuek banget, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas waktu tugas kelompok dimajuin ke besok, sementara semua anggota timnya malah menghilang."
+      },
+      {
+        "iterasi": 3,
+        "skor_total": 3.5,
+        "abs_diff": 0.25,
+        "skor_dimensi": {
+          "interesting": 2,
+          "engaging": 2,
+          "specific": 3,
+          "relevant": 5,
+          "correct": 2,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Saya mau pesan green tea, tolong cepat ya, saya sedang buru-buru.",
+        "background_rephrased": "Mahasiswa jurusan teknik yang suka main gitar di kosan. Tipikal orang yang tampak cuek, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dipercepat sampai besok, sementara semua anggota tim malah menghilang."
+      },
+      {
+        "iterasi": 4,
+        "skor_total": 3.625,
+        "abs_diff": 0.375,
+        "skor_dimensi": {
+          "interesting": 2,
+          "engaging": 2,
+          "specific": 3,
+          "relevant": 5,
+          "correct": 3,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Aku mau pesan green tea, cepetan ya, aku lagi buru-buru.",
+        "background_rephrased": "Mahasiswa jurusan teknik yang suka main gitar di kosan. Kelihatannya cuek, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas waktu tugas kelompok dimajukan ke besok, sementara semua anggota timnya malah menghilang."
+      },
+      {
+        "iterasi": 5,
+        "skor_total": 3.625,
+        "abs_diff": 0.375,
+        "skor_dimensi": {
+          "interesting": 2,
+          "engaging": 2,
+          "specific": 3,
+          "relevant": 5,
+          "correct": 3,
+          "semantically_appropriate": 5,
+          "understandable": 5,
+          "fluent": 4
+        },
+        "dialog_rephrased": "Aku mau pesan green tea, cepetan ya, aku lagi buru-buru.",
+        "background_rephrased": "Mahasiswa teknik yang suka main gitar di kosan. Tipe orang yang kelihatannya masa bodoh, padahal sebenarnya perhatian.",
+        "masalah_rephrased": "Batas pengumpulan tugas kelompok dipercepat jadi besok, sementara semua anggota timnya malah menghilang."
+      }
+    ]
+  }
+]
