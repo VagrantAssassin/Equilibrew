@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      curhat-choices-broken_0: 7177442044025215792
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

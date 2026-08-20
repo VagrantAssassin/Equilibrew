@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Equilibrew.sln"
+    "dotnet.defaultSolution": "Equilibrew.slnx"
 }

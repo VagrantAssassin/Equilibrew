@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      cafe-npc-spawned_0: 5559921109419733825
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
