@@ -21,9 +21,11 @@ Endpoints:
   POST /test/critic         → Critic Agent saja (lihat CoT + 8 dimensi FED)
 """
 
+import os
 import uuid
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 
@@ -36,6 +38,28 @@ import agents.dialogue_agent as dialogue_agent
 import agents.critic_agent   as critic_agent
 
 app = FastAPI(title="Tea'n Brew Multi-Agent API", version="1.0.0")
+
+# ── CORS (wajib untuk WebGL / itch.io) ──────────────────────────────────────
+# Atur origin spesifik via env agar aman:
+#   CORS_ORIGINS="https://username.itch.io,https://mygame.vercel.app"
+# Regex default mengizinkan subdomain itch.io.
+raw_cors_origins = os.getenv("CORS_ORIGINS", "https://itch.io,https://www.itch.io")
+cors_origins = [origin.strip() for origin in raw_cors_origins.split(",") if origin.strip()]
+cors_origin_regex = os.getenv(
+    "CORS_ALLOW_ORIGIN_REGEX",
+    r"^https://([a-zA-Z0-9-]+\.)*(itch\.io|itch\.zone|hwcdn\.net)$",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_origin_regex=cors_origin_regex,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
+)
 
 # ── Request Logging Middleware ────────────────────────────────────────────────
 from fastapi import Request

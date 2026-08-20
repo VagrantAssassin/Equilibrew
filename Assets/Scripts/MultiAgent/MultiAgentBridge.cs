@@ -19,6 +19,9 @@ public class MultiAgentBridge : MonoBehaviour
 {
     public static MultiAgentBridge Instance { get; private set; }
 
+    private const string NgrokSkipWarningHeader = "ngrok-skip-browser-warning";
+    private const string NgrokSkipWarningValue = "true";
+
     [Header("Server Configuration")]
     [Tooltip("URL server Python Multi-Agent")]
     public string serverUrl = "https://unfibered-noninstructional-corrin.ngrok-free.dev";
@@ -302,7 +305,27 @@ public class MultiAgentBridge : MonoBehaviour
     {
         StartCoroutine(GetRequestRaw("/health", (result, error) =>
         {
-            callback?.Invoke(error == null, error);
+            if (error != null)
+            {
+                callback?.Invoke(false, error);
+                return;
+            }
+
+            // Pastikan ini benar-benar endpoint FastAPI, bukan interstitial page (mis. ngrok warning).
+            bool looksLikeHealthJson = !string.IsNullOrEmpty(result)
+                && result.Contains("\"status\"")
+                && result.Contains("\"ok\"");
+
+            if (!looksLikeHealthJson)
+            {
+                string preview = string.IsNullOrEmpty(result)
+                    ? "<empty>"
+                    : result.Substring(0, Mathf.Min(result.Length, 160)).Replace("\n", " ").Replace("\r", " ");
+                callback?.Invoke(false, $"Health endpoint returned non-API response: {preview}");
+                return;
+            }
+
+            callback?.Invoke(true, null);
         }));
     }
 
@@ -322,6 +345,7 @@ public class MultiAgentBridge : MonoBehaviour
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader(NgrokSkipWarningHeader, NgrokSkipWarningValue);
             request.timeout = timeoutSeconds;
 
             yield return request.SendWebRequest();
@@ -362,6 +386,7 @@ public class MultiAgentBridge : MonoBehaviour
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
+            request.SetRequestHeader(NgrokSkipWarningHeader, NgrokSkipWarningValue);
             request.timeout = timeoutSeconds;
 
             yield return request.SendWebRequest();
@@ -392,6 +417,7 @@ public class MultiAgentBridge : MonoBehaviour
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
+            request.SetRequestHeader(NgrokSkipWarningHeader, NgrokSkipWarningValue);
             request.timeout = 10;
             yield return request.SendWebRequest();
 
@@ -408,6 +434,7 @@ public class MultiAgentBridge : MonoBehaviour
 
         using (UnityWebRequest request = UnityWebRequest.Delete(url))
         {
+            request.SetRequestHeader(NgrokSkipWarningHeader, NgrokSkipWarningValue);
             request.timeout = 10;
             yield return request.SendWebRequest();
 
