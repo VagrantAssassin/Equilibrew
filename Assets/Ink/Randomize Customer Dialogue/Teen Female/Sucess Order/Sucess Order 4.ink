@@ -1,0 +1,1 @@
+Segar banget, langsung hilang deh capek aku setelah minum ini. Hebat banget, Kak!

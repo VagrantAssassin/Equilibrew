@@ -1,0 +1,1 @@
+Ehm, tehnya enak banget... Kakak pinter banget deh raciknya.

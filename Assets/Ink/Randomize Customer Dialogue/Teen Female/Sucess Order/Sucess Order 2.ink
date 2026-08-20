@@ -1,0 +1,1 @@
+Enak banget, rasa tehnya sesuai sama yang aku mau. Terima kasih, Kakak.

@@ -53,24 +53,24 @@ MonoBehaviour:
     orderStory: {fileID: 4900000, guid: 58d0fa88c310c8c4983e94c2a01511f6, type: 3}
   - recipeName: Black Tea
     orderStory: {fileID: 4900000, guid: a5190f15ab8fa374fa933216dc931030, type: 3}
-  - recipeName: Lavender  Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+  - recipeName: Lavender Tea
+    orderStory: {fileID: 4900000, guid: fdc14015b03062e40bbe89a0d0433d07, type: 3}
   - recipeName: Jasmine Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: fdc72318dc3586c429a39c8a1b99e24e, type: 3}
   - recipeName: Milk Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: 7b8a206289bf25743a7c69581e408688, type: 3}
   - recipeName: Mint Milk Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: 8c4bd0a573594ed4ebdf947210bbac10, type: 3}
   - recipeName: Matcha Latte
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: 8a28246facc568146a2c2bb9dbfeeadb, type: 3}
   - recipeName: Honey Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: beb16c9daa2503644a62ca8c3cbf31c6, type: 3}
   - recipeName: Golden Jasmine Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: 341148ce5e6922d41ab61a8eccac516c, type: 3}
   - recipeName: Apple Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
-  - recipeName: Green Apple Tea
-    orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
+    orderStory: {fileID: 4900000, guid: a449574894ac4e648bfe84afa6b4cf8d, type: 3}
+  - recipeName: Apple Green Tea
+    orderStory: {fileID: 4900000, guid: 0e7463c55a9a6b9459c843b24f752801, type: 3}
   - recipeName: Mint Tea
     orderStory: {fileID: 4900000, guid: 7b715aeb0ddece949822c4e64f4956fd, type: 3}
   preferredRecipeNames: []
@@ -103,12 +103,20 @@ MonoBehaviour:
   successStory: {fileID: 0}
   wrongStories:
   - {fileID: 4900000, guid: bed57ddb54bddd7479abca19c3c2c07d, type: 3}
+  - {fileID: 4900000, guid: 630b7315ed7d3aa449adc24b3ce6a267, type: 3}
+  - {fileID: 4900000, guid: f2b55e9df8b894f468a7a3fe7192b760, type: 3}
+  - {fileID: 4900000, guid: a4887cf1aa0fdc14dbb6c28e55af60c6, type: 3}
+  - {fileID: 4900000, guid: 77c1a9b38f29ddd44974161406610780, type: 3}
   wrongStory: {fileID: 0}
   leaveStories:
   - {fileID: 4900000, guid: ef3209296c924f944a229f577a073306, type: 3}
+  - {fileID: 4900000, guid: 6e6ab67e072ab5b4ca035a8da9b3780a, type: 3}
+  - {fileID: 4900000, guid: b94c37cd4b220e94d8507e47786f0020, type: 3}
+  - {fileID: 4900000, guid: 7e7070462a7c21d47af7489a0f5bb551, type: 3}
+  - {fileID: 4900000, guid: 828c2b5e08e158e4e82f225bd8015731, type: 3}
   leaveStory: {fileID: 0}
   minMaxFails: 2
-  maxMaxFails: 3
+  maxMaxFails: 4
   maxFails: 2
   minStartingAffinity: 35
   maxStartingAffinity: 55

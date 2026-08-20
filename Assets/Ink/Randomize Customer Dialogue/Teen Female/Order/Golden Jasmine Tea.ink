@@ -1,0 +1,1 @@
+Saya pesan teh golden.... apadeh, ya pokoknya itu kak hehehe
