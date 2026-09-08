@@ -1,0 +1,88 @@
+[
+  {
+    "label": "good",
+    "kategori_dialog": "curhat",
+    "jenis_profile": "remaja pria",
+    "nama": "Iwan",
+    "usia": "remaja",
+    "gender": "pria",
+    "ke": 1,
+    "profil": {
+      "background": "Iwan adalah siswa SMA yang tiap hari sekolah, bantu pamannya memperbaiki motor, dan sering nongkrong sampai sore. Dia santai banget, gampang mengubah rencana, serta selalu ngomong blak-blakan tanpa banyak basa-basi.",
+      "masalah_hari_ini": "Pacarnya marah dan mengajaknya putus setelah Iwan membatalkan janji menjemputnya sepulang les untuk ikut servis motor temannya, lalu cuma membalas chat dengan 'kan bisa naik ojek' tanpa sadar ucapan itu bikin keadaan makin parah.",
+      "ocean": {
+        "openness": 43,
+        "conscientiousness": 46,
+        "extraversion": 59,
+        "agreeableness": 36,
+        "neuroticism": 54
+      },
+      "max_fails": 2,
+      "reaksi_gaya": "Kalau marah, Iwan langsung ngomong ceplas-ceplos dan menyalahkan keadaan; kalau puas, dia mengangguk santai sambil bilang, 'Nah, gitu dong, kak.'"
+    },
+    "dialog_original": "Kak, pacarku lagi marah banget gara-gara kemarin aku batal jemput dia sepulang les. Waktu itu aku ikut bantu servis motor temanku, terus pas dia nanya, aku malah balas, \"kan bisa naik ojek.\" Aku kira cuma jawaban biasa, ternyata dia ngerasa aku nggak peduli sama sekali. Sekarang dia ngajak putus, dan aku takut kalau aku jelasin pun dia udah terlanjur capek sama aku.",
+    "critic_skor": 4.88,
+    "critic_lulus": true,
+    "total_attempts": 1,
+    "critic_skor_dimensi": {
+      "interesting": 5,
+      "engaging": 5,
+      "specific": 5,
+      "relevant": 5,
+      "correct": 4,
+      "semantically_appropriate": 5,
+      "understandable": 5,
+      "fluent": 5
+    },
+    "critic_catatan": [
+      "Konflik dan penyebabnya sangat spesifik sehingga dialog tidak terasa generik.",
+      "Panjang dialog sesuai dengan ekstraversi sedang dan situasi emosional yang mendorong keterbukaan."
+    ],
+    "critic_justifikasi": "",
+    "critic_saran": "",
+    "teks_dievaluasi": "Kak, pacarku lagi marah banget gara-gara kemarin aku batal jemput dia sepulang les. Waktu itu aku ikut bantu servis motor temanku, terus pas dia nanya, aku malah balas, \"kan bisa naik ojek.\" Aku kira cuma jawaban biasa, ternyata dia ngerasa aku nggak peduli sama sekali. Sekarang dia ngajak putus, dan aku takut kalau aku jelasin pun dia udah terlanjur capek sama aku."
+  },
+  {
+    "label": "bad",
+    "kategori_dialog": "curhat",
+    "jenis_profile": "orang tua wanita",
+    "nama": "Kania",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "ke": 10,
+    "profil": {
+      "background": "Setiap hari, Kania mengelola perpustakaan kecil di rumahnya dan membantu anak-anak sekitar memilih bacaan yang sesuai. Ia gemar membayangkan akhir cerita alternatif untuk setiap buku yang dibacanya, tetapi sering mencemaskan kemungkinan buruk yang bahkan belum tentu terjadi.",
+      "masalah_hari_ini": "Pagi tadi, ibunya yang sudah lanjut usia memarahinya karena Kania diam-diam menyumbangkan lemari kayu peninggalan keluarga untuk dijadikan rak buku umum, padahal ibunya masih menganggap lemari itu sebagai kenangan terakhir dari almarhum suaminya.",
+      "ocean": {
+        "openness": 88,
+        "conscientiousness": 54,
+        "extraversion": 38,
+        "agreeableness": 72,
+        "neuroticism": 84
+      },
+      "max_fails": 2,
+      "reaksi_gaya": "Saat kecewa, ia menundukkan kepala lalu menyampaikan keberatannya dengan kalimat panjang dan sangat sopan; saat puas, ia tersenyum lega, mengangguk perlahan, dan berkata, \"Terima kasih, nak, perhatian kecil seperti ini kadang menyelamatkan hati seseorang.\""
+    },
+    "dialog_original": "Pagi tadi, Ibu memarahi saya karena lemari kayu peninggalan keluarga itu saya sumbangkan diam-diam untuk dijadikan rak buku umum, kak. Saya memang bermaksud baik, tetapi rupanya bagi Ibu, lemari itu bukan sekadar perabot; itu kenangan terakhir dari almarhum suaminya. Saya takut keputusan saya membuat Ibu merasa kehilangan untuk kedua kalinya. Mudah-mudahan masih ada cara untuk menjelaskan niat saya tanpa semakin melukai hati beliau.",
+    "critic_skor": 3.75,
+    "critic_lulus": false,
+    "total_attempts": 3,
+    "critic_skor_dimensi": {
+      "interesting": 4,
+      "engaging": 4,
+      "specific": 5,
+      "relevant": 3,
+      "correct": 2,
+      "semantically_appropriate": 4,
+      "understandable": 4,
+      "fluent": 4
+    },
+    "critic_catatan": [
+      "Frasa \"almarhum suaminya\" dapat dipahami, tetapi terasa berjarak dan sedikit ambigu; \"almarhum Ayah\" akan lebih natural jika yang dimaksud adalah ayah Kania.",
+      "Pilihan jawaban juga konsisten menyapa Kania sebagai \"Kak\", sehingga semakin memperkuat ketidaksesuaian usia dan relasi dengan pemain."
+    ],
+    "critic_justifikasi": "",
+    "critic_saran": "Pendekkan curhat menjadi dua atau tiga kalimat yang lebih tertahan, gunakan sapaan \"nak\", dan sesuaikan konflik agar Kania terdengar sebagai wanita berusia tua. Jika tokoh yang marah tetap ibunya, jelaskan relasinya secara natural, misalnya dengan menyebut \"almarhum Ayah\", serta hindari sapaan \"Kak\" pada seluruh pilihan jawaban.",
+    "teks_dievaluasi": "Pagi tadi, Ibu memarahi saya karena lemari kayu peninggalan keluarga itu saya sumbangkan diam-diam untuk dijadikan rak buku umum, kak. Saya memang bermaksud baik, tetapi rupanya bagi Ibu, lemari itu bukan sekadar perabot; itu kenangan terakhir dari almarhum suaminya. Saya takut keputusan saya membuat Ibu merasa kehilangan untuk kedua kalinya. Mudah-mudahan masih ada cara untuk menjelaskan niat saya tanpa semakin melukai hati beliau."
+  }
+]

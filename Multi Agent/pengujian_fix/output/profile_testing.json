@@ -1,0 +1,1022 @@
+[
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Iwan",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Iwan adalah siswa SMA yang tiap hari sekolah, bantu pamannya memperbaiki motor, dan sering nongkrong sampai sore. Dia santai banget, gampang mengubah rencana, serta selalu ngomong blak-blakan tanpa banyak basa-basi.",
+    "masalah_hari_ini": "Pacarnya marah dan mengajaknya putus setelah Iwan membatalkan janji menjemputnya sepulang les untuk ikut servis motor temannya, lalu cuma membalas chat dengan 'kan bisa naik ojek' tanpa sadar ucapan itu bikin keadaan makin parah.",
+    "ocean": {
+      "openness": 43,
+      "conscientiousness": 46,
+      "extraversion": 59,
+      "agreeableness": 36,
+      "neuroticism": 54
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Kalau marah, Iwan langsung ngomong ceplas-ceplos dan menyalahkan keadaan; kalau puas, dia mengangguk santai sambil bilang, 'Nah, gitu dong, kak.'"
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Bayu",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang baru pindah ke kota ini dan setiap hari berangkat ke sekolah barunya naik angkot. Dia sangat ramah dan blak-blakan, bahkan suka langsung menawarkan bantuan sambil membawa daftar nama orang yang baru dikenalnya.",
+    "masalah_hari_ini": "Guru membagi kelompok untuk proyek presentasi minggu depan, tetapi Bayu belum punya teman di kelas barunya dan akhirnya duduk sendirian tanpa ada yang memasukkannya ke kelompok mana pun.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 72,
+      "extraversion": 88,
+      "agreeableness": 82,
+      "neuroticism": 32
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah dia langsung ngomong terus terang tanpa basa-basi, sedangkan saat puas dia tersenyum lebar dan spontan bilang terima kasih ke kak."
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Eko",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang tiap hari pulang sekolah membantu ibunya menjaga kios fotokopi sambil mengerjakan tugas. Dia suka membayangkan benda-benda biasa punya kehidupan sendiri, tapi kalau ditanya pendapatnya bisa langsung blak-blakan tanpa basa-basi.",
+    "masalah_hari_ini": "Eko harus memilih antara ikut lomba desain poster tingkat kota yang bisa jadi kesempatan pertama memamerkan karyanya, atau tetap masuk latihan futsal untuk menjaga posisinya sebagai pemain inti menjelang pertandingan penting sekolah; sejak pagi dia terus membayangkan semua kemungkinan buruk dari kedua pilihan itu.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 52,
+      "extraversion": 48,
+      "agreeableness": 36,
+      "neuroticism": 89
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Saat marah dia langsung ngomong blak-blakan dengan nada meninggi, sedangkan saat puas dia mendadak cerewet menjelaskan ide-ide liarnya ke kak."
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Oscar",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang tiap hari berangkat pagi, mengikuti kelas, lalu membantu mengurus adiknya sepulang sekolah. Dia kelihatan tenang dan stabil, tapi sebenarnya gampang kebawa perasaan dan sering mengulang-ulang percakapan di kepalanya sebelum tidur.",
+    "masalah_hari_ini": "Seharian cuma tidur tiga jam karena menemani adiknya yang demam, tapi sore ini tetap harus hadir di acara perpisahan sekolah sebagai pembaca sambutan utama dan belum sempat latihan sama sekali.",
+    "ocean": {
+      "openness": 61,
+      "conscientiousness": 76,
+      "extraversion": 43,
+      "agreeableness": 71,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah dia diam, menatap gelas sambil meremas sedotan; saat puas dia menghela napas lega, tersenyum kecil, lalu bilang, \"Akhirnya aman juga, kak.\""
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Marco",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang tiap hari sekolah, ikut klub desain, dan membantu menjaga adiknya sepulang sekolah. Dia pendiam banget, tapi selalu ingat detail kecil tentang teman-temannya dan diam-diam suka meninggalkan catatan penyemangat buat mereka.",
+    "masalah_hari_ini": "Sejak pagi dia mengikuti ujian praktik lalu latihan dekorasi pentas sekolah sampai hampir malam, tapi sekarang masih harus hadir di acara ulang tahun sahabatnya dan sudah berjanji menjadi fotografernya, padahal matanya mulai berat dan kakinya pegal banget.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 76,
+      "extraversion": 24,
+      "agreeableness": 91,
+      "neuroticism": 18
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "tetap bicara pelan dan sopan sambil bilang, \"Santai aja, kak, yang penting dibenerin dulu, kan\""
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Nico",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Nico adalah siswa SMA yang tiap hari pulang-pergi sekolah sambil mengerjakan ilustrasi komik digital di ponselnya. Dia blak-blakan soal perasaannya, tetapi sering membayangkan kemungkinan terburuk sampai hal kecil terasa seperti bencana besar.",
+    "masalah_hari_ini": "Sejak pagi dia cuma tidur tiga jam karena menyelesaikan desain poster band sekolah, tetapi sore ini tetap harus hadir di acara ulang tahun wali kelas dan diminta tampil membacakan puisi di depan semua orang.",
+    "ocean": {
+      "openness": 82,
+      "conscientiousness": 48,
+      "extraversion": 43,
+      "agreeableness": 36,
+      "neuroticism": 84
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Saat marah dia langsung blak-blakan menyebut apa yang bikin kesal, sedangkan saat puas dia mendadak antusias dan menjelaskan imajinasi liarnya ke kak."
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Galih",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang baru pindah mengikuti ibunya dan tiap hari masih mencoba menghafal rute ke sekolah barunya. Dia sangat imajinatif dan suka membayangkan percakapan dengan orang lain dulu sebelum benar-benar berani menyapa.",
+    "masalah_hari_ini": "Sudah dua minggu pindah ke lingkungan baru, tetapi belum punya teman untuk diajak kerja kelompok; hari ini guru tiba-tiba memasangkannya secara acak dan dia takut kelompoknya menganggapnya aneh karena belum kenal siapa-siapa.",
+    "ocean": {
+      "openness": 91,
+      "conscientiousness": 35,
+      "extraversion": 44,
+      "agreeableness": 68,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah dia langsung curhat dengan suara bergetar sambil mengarang perumpamaan dramatis, sedangkan saat puas dia cepat mencair dan mengajak kak ngobrol seolah sudah kenal lama."
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Dwi",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa kelas sebelas yang tiap sore membantu ibunya menjaga warung kecil setelah pulang sekolah. Dia pendiam dan sering memikirkan kemungkinan terburuk, tapi biasanya tetap terlihat tenang saat teman-temannya mulai panik.",
+    "masalah_hari_ini": "Dompetnya cuma berisi tiga ribu rupiah, sementara sebelum Jumat dia harus membayar iuran cetak foto untuk buku tahunan kelas sebesar tiga puluh lima ribu dan belum berani meminta uang tambahan kepada ibunya.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 76,
+      "extraversion": 24,
+      "agreeableness": 68,
+      "neuroticism": 64
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah dia diam, menarik napas, lalu menjelaskan masalahnya pelan-pelan; saat puas dia cuma tersenyum kecil dan bilang, \"Makasih, kak, jadi agak lega sih.\""
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Surya",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Pelajar SMA yang tiap sore membantu membuat desain poster untuk usaha sablon pamannya. Dia suka membayangkan tiga kemungkinan akhir dari percakapan biasa, tapi tetap ngomong apa adanya saat ditanya pendapat.",
+    "masalah_hari_ini": "Sebelum pulang sekolah hari ini, dia harus memilih antara menerima tawaran menjadi keyboardist band untuk festival kota atau ikut seleksi kelas desain digital yang bisa menentukan jurusan kuliahnya nanti.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 64,
+      "extraversion": 48,
+      "agreeableness": 39,
+      "neuroticism": 24
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat kesal dia langsung bilang bagian yang menurutnya salah tanpa basa-basi, sedangkan saat puas dia mengangguk tenang dan memberi komentar jujur yang spesifik."
+  },
+  {
+    "jenis_profile": "remaja pria",
+    "nama": "Oscar",
+    "usia": "remaja",
+    "gender": "pria",
+    "background": "Siswa SMA yang baru pindah mengikuti pekerjaan orang tuanya dan setiap hari masih belajar mengenali rute sekolah serta lingkungan rumah barunya. Dia pendiam dan tenang, tapi punya kebiasaan mencatat nama orang yang pernah bersikap ramah supaya berani menyapa mereka lagi.",
+    "masalah_hari_ini": "Hari ini dia duduk sendirian saat istirahat karena belum punya teman di sekolah baru, sementara tugas presentasi kelompok membuatnya harus segera menemukan anggota yang mau menerimanya sebelum pembagian kelompok ditutup besok.",
+    "ocean": {
+      "openness": 52,
+      "conscientiousness": 58,
+      "extraversion": 24,
+      "agreeableness": 76,
+      "neuroticism": 29
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah dia jadi makin diam dan menjawab singkat, sedangkan saat puas dia tersenyum kecil lalu bilang, 'Makasih ya, kak, ternyata bisa beres juga.'"
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Hana",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang setiap hari pulang sekolah sambil mengerjakan tugas di perpustakaan sebelum mampir ke kafe. Dia pendiam dan santai, tapi selalu ingat detail kecil tentang teman-temannya, seperti minuman favorit atau tanggal ujian mereka.",
+    "masalah_hari_ini": "Sahabatnya, Naya, salah mengira Hana sengaja membocorkan cerita pribadinya ke teman sekelas setelah melihat chat yang terpotong, lalu Naya menghapus Hana dari grup belajar sejak kemarin tanpa mau mendengar penjelasan.",
+    "ocean": {
+      "openness": 64,
+      "conscientiousness": 48,
+      "extraversion": 32,
+      "agreeableness": 88,
+      "neuroticism": 46
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah, dia tetap bicara pelan sambil menunduk, lalu mengirim pesan panjang yang sangat hati-hati supaya tidak memperkeruh keadaan."
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Ulya",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi kelas sebelas yang sehari-hari sekolah, ikut ekskul teater, dan sering jadi tempat curhat teman-temannya. Dia sangat emosional dan cerewet, tapi gampang mengubah rencana kalau ada ajakan seru mendadak.",
+    "masalah_hari_ini": "Ulya harus memilih antara ikut audisi teater kota yang jadwalnya bentrok dengan seleksi beasiswa sekolah ke luar negeri, padahal keduanya berlangsung besok pagi dan dia belum berani memberi tahu ibunya.",
+    "ocean": {
+      "openness": 78,
+      "conscientiousness": 38,
+      "extraversion": 88,
+      "agreeableness": 67,
+      "neuroticism": 86
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "langsung ngoceh cepat sambil curhat panjang ke kak kalau marah, lalu tertawa lega dan ngajak ngobrol lagi saat puas"
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Ulya",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap hari ikut kelas, latihan teater, dan mengurus dekorasi acara sekolah. Dia super ramah dan suka mengubah benda-benda biasa jadi properti imajinatif, tapi kalau capek tetap bakal ngomong blak-blakan, sih.",
+    "masalah_hari_ini": "Sejak pagi dia sudah ujian matematika lalu latihan teater selama lima jam, tapi malam ini masih wajib hadir di acara ulang tahun wali kelas dan diminta tampil membacakan puisi, padahal suaranya serak dan tubuhnya hampir tumbang.",
+    "ocean": {
+      "openness": 91,
+      "conscientiousness": 64,
+      "extraversion": 84,
+      "agreeableness": 88,
+      "neuroticism": 62
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "kalau kesal langsung ngomong blak-blakan sambil tetap berusaha ramah, lalu kalau puas bakal heboh memuji dan bilang, \"Nah, gini dong, kak!\""
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Vina",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap hari aktif di klub debat dan sering jadi orang pertama yang ngajak teman-temannya ngobrol. Dia terkenal cerewet dan blak-blakan, tapi tetap tenang banget bahkan saat semua orang di sekitarnya mulai panik.",
+    "masalah_hari_ini": "Besok pagi ada tes matematika penentu nilai rapornya, sementara guru baru mengumumkan bahwa soal akan mencakup bab integral yang belum sempat dibahas di kelas dan dia masih salah terus di bagian substitusi.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 81,
+      "extraversion": 88,
+      "agreeableness": 46,
+      "neuroticism": 38
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, dia langsung ngomong blak-blakan dengan nada tegas sambil menjelaskan masalahnya satu per satu, tapi kalau puas dia bakal nyengir lebar dan ngoceh memuji kak tanpa berhenti."
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Era",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap hari pulang sekolah langsung membantu ibunya menjaga kios fotokopi dekat rumah. Dia terkenal tenang dan blak-blakan, bahkan suka membawa penggaris kecil untuk memastikan catatan sekolahnya selalu rapi.",
+    "masalah_hari_ini": "Saat presentasi tugas kelompok, dua teman sekelas menertawakan suaranya yang dianggap kekanak-kanakan dan bilang bagian hitungannya pasti hasil menyalin, padahal dia yang mengerjakan hampir seluruh perhitungan sampai malam.",
+    "ocean": {
+      "openness": 38,
+      "conscientiousness": 78,
+      "extraversion": 52,
+      "agreeableness": 43,
+      "neuroticism": 24
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "menatap datar lalu ngomong terus terang, 'Kalau mau ngejek, kasih bukti dulu dong, kak.'"
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Clara",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap hari mengisi waktu luangnya dengan membuat komik digital dan nongkrong sepulang sekolah. Dia sangat imajinatif sampai sering membayangkan percakapan alternatif di kepalanya sebelum berani membalas chat.",
+    "masalah_hari_ini": "Dia bertengkar dengan sahabatnya karena sahabatnya menghapus ilustrasi karakter dari proyek komik mereka setelah mengira Clara sengaja mengambil alih ide, padahal Clara baru mau memperbaiki desainnya; sejak semalam pesan permintaan maaf mereka cuma terkirim sebagai draf dan belum ada yang berani mengirim.",
+    "ocean": {
+      "openness": 91,
+      "conscientiousness": 38,
+      "extraversion": 57,
+      "agreeableness": 69,
+      "neuroticism": 86
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "saat marah dia langsung mengirim voice note panjang dengan suara bergetar, lalu menarik kembali pesannya karena takut terdengar terlalu emosional"
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Diana",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang baru pindah ke kota ini dan tiap hari berusaha mengikuti kelas sambil mencari tempat nongkrong yang terasa nyaman. Dia cerewet banget kalau sudah gugup dan sering mengulang-ulang percakapan di kepalanya sebelum tidur.",
+    "masalah_hari_ini": "Sudah dua minggu pindah sekolah, tetapi teman sebangkunya tiba-tiba membatalkan ajakan ke kelompok belajar untuk tugas presentasi besok, sehingga Diana takut harus mengerjakannya sendirian dan kepikiran bahwa semua teman sekelas tidak menyukainya.",
+    "ocean": {
+      "openness": 64,
+      "conscientiousness": 52,
+      "extraversion": 88,
+      "agreeableness": 70,
+      "neuroticism": 89
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, dia langsung ngomel cepat sambil menjelaskan semua kekhawatirannya, lalu makin cemas kalau lawan bicaranya terlihat diam."
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Era",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang setiap hari pulang-pergi sekolah sambil ikut bimbingan belajar untuk persiapan ujian masuk universitas. Dia kelihatan tenang saat ngobrol, tapi kalau emosinya naik, dia bisa blak-blakan sampai mengeluarkan isi hati tanpa menyaringnya dulu.",
+    "masalah_hari_ini": "Nilai simulasi ujian masuk universitasnya turun 18 poin setelah dia salah mengisi lembar jawaban karena terburu-buru, sementara tes resminya tinggal tiga hari lagi dan ibunya sudah terlanjur membanggakan targetnya ke keluarga besar.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 78,
+      "extraversion": 48,
+      "agreeableness": 34,
+      "neuroticism": 82
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Saat marah, langsung ngomong blak-blakan dengan suara bergetar dan menunjuk masalahnya satu per satu tanpa basa-basi."
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Tika",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap hari pulang sekolah sambil bantu jualan minuman di kios keluarganya. Dia gampang terbawa perasaan, tapi biasanya cepat santai lagi dan punya kebiasaan mencatat semua omongan orang di aplikasi catatan HP-nya.",
+    "masalah_hari_ini": "Saat presentasi tugas prakarya, teman sekelompoknya menertawakan desain kemasan buatannya dan bilang idenya terlalu gampang untuk dianggap serius, lalu guru ikut memilih desain orang lain tanpa memberi kesempatan Tika menjelaskan.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 49,
+      "extraversion": 56,
+      "agreeableness": 52,
+      "neuroticism": 82
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah dia ngomong cepat dan nyeletuk lugas, sedangkan saat puas dia langsung senyum lebar sambil bilang, 'Nah, gitu dong, kak.'"
+  },
+  {
+    "jenis_profile": "remaja wanita",
+    "nama": "Olivia",
+    "usia": "remaja",
+    "gender": "wanita",
+    "background": "Siswi SMA yang tiap sore membantu ibunya mengurus toko online sambil mengambil pesanan desain kecil-kecilan. Dia kelihatan santai dan gampang menyesuaikan diri, tapi suka bikin daftar pro-kontra sampai pilihan sederhana terasa ribet banget.",
+    "masalah_hari_ini": "Dia harus memilih antara ikut tim artistik pentas sekolah bareng sahabatnya atau menerima kerja desain akhir pekan yang bayarannya cukup buat membeli tablet gambar, sementara batas pendaftarannya tinggal malam ini.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 63,
+      "extraversion": 46,
+      "agreeableness": 67,
+      "neuroticism": 79
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "ngomong lugas sambil menjelaskan pilihan dan alasannya satu per satu, baik saat kesal maupun puas"
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Gunawan",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Gunawan bekerja sebagai analis data di kantor cabang yang baru dibuka di kota ini dan setiap hari pulang-pergi dari apartemen sewanya. Ia terlihat santai dan mudah menyesuaikan diri, tetapi diam-diam sering mengulang percakapan di kepalanya untuk memastikan tidak terdengar canggung.",
+    "masalah_hari_ini": "Sudah tiga minggu pindah untuk pekerjaan baru, Gunawan belum punya teman di kota ini; hari ini ia memberanikan diri mengajak dua rekan kantor makan malam, tetapi keduanya ternyata sudah punya janji sehingga ia menghabiskan waktu istirahat sendirian dan mulai berpikir bahwa mereka sengaja menghindarinya.",
+    "ocean": {
+      "openness": 64,
+      "conscientiousness": 48,
+      "extraversion": 38,
+      "agreeableness": 72,
+      "neuroticism": 88
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menjadi sangat emosional tetapi tetap sopan, menjelaskan kekecewaannya panjang lebar sambil beberapa kali meminta maaf; saat puas ia tersenyum lega, memberi pujian spesifik, dan langsung menawarkan tip."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Nico",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Sehari-hari ia bekerja sebagai teknisi lapangan yang memperbaiki mesin pendingin di toko-toko sekitar kota. Ia sangat emosional meski terlihat santai, dan biasanya membawa catatan kecil berisi pilihan-pilihan yang belum berhasil ia putuskan.",
+    "masalah_hari_ini": "Ia harus memilih antara menerima tawaran menjadi teknisi tetap di perusahaan besar dengan gaji lebih tinggi atau tetap bekerja lepas agar bisa merawat ibunya, sementara kedua pihak meminta jawaban sebelum sore ini.",
+    "ocean": {
+      "openness": 48,
+      "conscientiousness": 58,
+      "extraversion": 55,
+      "agreeableness": 62,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menarik napas lalu menyampaikan keberatan secara lugas tanpa meninggikan suara, sedangkan saat puas ia tersenyum lega dan memberi anggukan singkat."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Marco",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Sehari-hari ia bekerja sebagai teknisi jaringan yang berpindah-pindah menangani gangguan internet di kantor dan rumah pelanggan. Ia terlihat santai dan mudah menyesuaikan diri, tetapi diam-diam sering mengulang percakapan lama dalam kepalanya untuk mencari tahu apakah ucapannya terdengar terlalu kasar.",
+    "masalah_hari_ini": "Ia bertengkar dengan sahabatnya, Iwan, kemarin malam setelah Marco terang-terangan menuduhnya terus membatalkan rencana tanpa menghargai waktu orang lain; sejak itu pesan terakhirnya hanya dibaca, sementara Marco masih ingin berdamai tetapi takut meminta maaf duluan akan membuat tuduhannya terlihat tidak serius.",
+    "ocean": {
+      "openness": 57,
+      "conscientiousness": 49,
+      "extraversion": 56,
+      "agreeableness": 43,
+      "neuroticism": 78
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "langsung menyampaikan pendapat dengan blak-blakan—nadanya tajam saat marah, tetapi tetap singkat dan terus terang saat merasa puas"
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Oscar",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Ia bekerja sebagai petugas arsip di sebuah rumah sakit dan menjalani hari-harinya dengan merapikan dokumen pasien secara teliti. Meski pendiam dan tampak tenang, ia mudah tersentuh oleh hal-hal kecil seperti pesan singkat dari orang yang ia sayangi.",
+    "masalah_hari_ini": "Pagi tadi orang tuanya memarahinya karena ia menolak tawaran pindah kerja ke kota lain tanpa memberi tahu mereka, padahal mereka sudah telanjur membanggakan rencana itu kepada keluarga besar.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 81,
+      "extraversion": 24,
+      "agreeableness": 68,
+      "neuroticism": 63
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menjadi sangat diam, menjawab singkat dengan nada tetap sopan; saat puas ia tersenyum kecil dan mengucapkan terima kasih dengan sungguh-sungguh."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Teguh",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Ia bekerja sebagai koordinator logistik yang setiap hari mengatur jadwal pengiriman dan memastikan barang tiba tanpa terlambat. Meski sangat ramah dan suka membantu, ia selalu menghitung kemungkinan terburuk sampai membawa tiga alarm untuk acara yang sebenarnya tidak ingin ia lewatkan.",
+    "masalah_hari_ini": "Setelah mengurus pengiriman sejak pukul empat pagi dan hanya tidur dua jam, ia tetap harus hadir malam ini sebagai pembawa acara di ulang tahun pernikahan kakaknya karena pembawa acara pengganti mendadak demam; ia cemas akan salah menyebut nama keluarga atau kehilangan fokus di tengah acara.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 82,
+      "extraversion": 76,
+      "agreeableness": 88,
+      "neuroticism": 79
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia tetap berbicara sopan tetapi langsung menyebutkan masalahnya secara blak-blakan dan meminta solusi yang jelas."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Galih",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Galih bekerja sebagai account executive junior yang sehari-hari mengurus komunikasi klien dan menyusun presentasi untuk timnya. Ia sangat mudah akrab, sering tertawa saat tegang, dan biasanya memilih menyesuaikan rencana daripada memperdebatkan hal kecil.",
+    "masalah_hari_ini": "Presentasi 18 slide untuk klien harus dikirim besok pukul 09.00, tetapi data penjualan baru diterima sore ini dan dua grafik utama masih harus dibuat ulang sebelum rapat pagi.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 48,
+      "extraversion": 84,
+      "agreeableness": 88,
+      "neuroticism": 73
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia tetap sopan tetapi berbicara cepat dengan nada bergetar dan menjelaskan kekecewaannya secara terbuka; saat puas ia langsung tersenyum lebar, berterima kasih berkali-kali, dan memuji orang yang membantunya."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Surya",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Sehari-hari ia bekerja sebagai sales representative yang sering berpindah-pindah kantor klien dan menghadiri banyak pertemuan. Ia sangat mudah akrab dengan orang baru dan punya kebiasaan mengingat nama semua orang yang pernah mengobrol dengannya.",
+    "masalah_hari_ini": "Sejak mengantar ibunya ke rumah sakit subuh tadi, ia belum sempat tidur, tetapi malam ini tetap harus hadir sebagai pembawa acara di pesta pernikahan rekan satu timnya yang tidak punya pengganti.",
+    "ocean": {
+      "openness": 67,
+      "conscientiousness": 58,
+      "extraversion": 91,
+      "agreeableness": 89,
+      "neuroticism": 24
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat kesal ia tetap berbicara ramah dan bercanda ringan sambil menjelaskan masalahnya dengan jelas, lalu cepat kembali santai ketika mendapat solusi yang masuk akal."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Yoga",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Yoga bekerja sebagai analis data junior yang sehari-hari mengolah laporan penjualan dan sesekali mengambil kelas malam. Ia praktis saat mengambil keputusan, tetapi suka menyelipkan analogi aneh dan ide kreatif ketika menjelaskan sesuatu.",
+    "masalah_hari_ini": "Laporan visualisasi data untuk presentasi kantor besok pagi belum selesai karena atasannya baru meminta tiga grafik interaktif tambahan, sementara data penjualan kuartal terakhir masih berantakan di empat file berbeda.",
+    "ocean": {
+      "openness": 72,
+      "conscientiousness": 58,
+      "extraversion": 48,
+      "agreeableness": 63,
+      "neuroticism": 44
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah, ia tetap bicara datar tetapi langsung menunjuk masalahnya secara spesifik; saat puas, ia tersenyum kecil lalu memberi pujian singkat yang tulus."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Nico",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Nico bekerja sebagai ilustrator lepas yang menghabiskan sebagian besar harinya menggambar sampul buku dan mengirim revisi kepada klien. Ia selalu membawa buku sketsa kecil dan suka mengubah bentuk-bentuk noda kopi menjadi ide karakter.",
+    "masalah_hari_ini": "Dompetnya hanya berisi Rp18.000 karena pembayaran ilustrasi dari klien mundur dua minggu, sementara ia harus membayar tagihan listrik kos sebesar Rp275.000 sebelum Jumat agar tidak terkena pemutusan sementara.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 52,
+      "extraversion": 48,
+      "agreeableness": 72,
+      "neuroticism": 22
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia tetap bicara pelan sambil menawarkan solusi, dan saat puas ia tersenyum tipis lalu memberi pujian yang spesifik."
+  },
+  {
+    "jenis_profile": "dewasa pria",
+    "nama": "Nico",
+    "usia": "dewasa",
+    "gender": "pria",
+    "background": "Nico bekerja sebagai sales perlengkapan kantor dan hampir setiap hari berkeliling menemui klien. Ia terkenal suka mengajak bicara siapa saja, bahkan sering mengingat detail kecil dari obrolan pelanggan beberapa minggu lalu.",
+    "masalah_hari_ini": "Uangnya habis untuk memperbaiki motor yang dipakai bekerja, sementara ia harus membayar cicilan kontrakan sebelum Jumat agar tidak terkena denda dan sudah tidak punya saldo yang bisa ditarik.",
+    "ocean": {
+      "openness": 42,
+      "conscientiousness": 76,
+      "extraversion": 84,
+      "agreeableness": 63,
+      "neuroticism": 24
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia tetap bicara lugas sambil menjelaskan masalahnya panjang lebar, sedangkan saat puas ia langsung tersenyum dan banyak memuji pelayanan."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Era",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Era bekerja sebagai admin klinik dan setiap hari mengatur jadwal pasien serta laporan pembayaran dengan rapi. Ia sangat ramah kepada siapa pun, tetapi selalu membawa kalkulator kecil untuk memastikan keputusan praktisnya tidak meleset.",
+    "masalah_hari_ini": "Saldo rekeningnya tinggal dua belas ribu rupiah karena honor lembur belum cair, sementara iuran perpanjangan sertifikasi administrasi sebesar tiga ratus ribu harus dibayar paling lambat Jumat ini.",
+    "ocean": {
+      "openness": 42,
+      "conscientiousness": 86,
+      "extraversion": 72,
+      "agreeableness": 91,
+      "neuroticism": 24
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "tetap tenang dan sopan, lalu menjelaskan keberatannya secara langsung dengan solusi yang praktis"
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Hana",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Hana bekerja sebagai staf pemasaran yang sehari-hari menyiapkan laporan kampanye dan berkoordinasi dengan klien. Ia sangat ramah dan cerewet, bahkan sering mengingat detail kecil dari cerita orang yang baru dikenalnya.",
+    "masalah_hari_ini": "Presentasi proposal kampanye untuk klien besar harus dikirim besok pagi, tetapi data penjualan dari tim analitik belum lengkap dan rekan yang memegang file utama sedang tidak bisa dihubungi.",
+    "ocean": {
+      "openness": 64,
+      "conscientiousness": 78,
+      "extraversion": 92,
+      "agreeableness": 84,
+      "neuroticism": 46
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah, ia langsung menyampaikan keberatannya dengan blak-blakan tetapi tetap sopan; saat puas, ia memuji dengan antusias dan mengajak semua orang ikut merayakannya."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Ulya",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Ulya bekerja sebagai koordinator acara yang sehari-hari mengurus jadwal vendor, klien, dan perubahan mendadak dengan cara yang praktis. Ia sangat ramah kepada siapa pun, tetapi kalau sedang emosional, ia bisa mengirim pesan panjang sebelum sempat menenangkan diri.",
+    "masalah_hari_ini": "Pacarnya membatalkan rencana lamaran secara sepihak setelah menemukan pesan Ulya dengan mantan rekan kerja, lalu mereka bertengkar lewat telepon sampai pacarnya meminta jeda tanpa menjelaskan apakah hubungan mereka masih berlanjut.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 76,
+      "extraversion": 72,
+      "agreeableness": 88,
+      "neuroticism": 78
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menjelaskan keberatannya dengan cepat dan terus terang, sedangkan saat puas ia langsung tersenyum lega lalu mengucapkan terima kasih dengan hangat."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Tika",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Tika bekerja sebagai editor naskah lepas dan biasanya menghabiskan hari dengan memeriksa detail kalimat sampai berkali-kali. Di balik sikapnya yang tenang dan sopan, ia sangat emosional dan sering membayangkan berbagai kemungkinan buruk dari hal kecil.",
+    "masalah_hari_ini": "Setelah begadang menyelesaikan revisi novel klien, Tika tetap harus menghadiri acara pertunangan adiknya malam ini sebagai pembawa acara pengganti karena sepupunya mendadak sakit, padahal ia belum menyiapkan susunan kata dan merasa terlalu lelah untuk bertemu banyak orang.",
+    "ocean": {
+      "openness": 74,
+      "conscientiousness": 78,
+      "extraversion": 36,
+      "agreeableness": 71,
+      "neuroticism": 82
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia tetap bicara pelan tetapi mengulang keberatannya dengan sangat rinci, sedangkan saat puas ia mengembuskan napas lega lalu tersenyum kecil dan mengucapkan terima kasih dengan tulus."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Lala",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Sehari-hari, Lala bekerja sebagai ilustrator lepas yang membuat desain kemasan dan mural kecil untuk usaha lokal. Ia tenang saat menghadapi masalah, tetapi punya kebiasaan membayangkan berbagai akhir cerita untuk percakapan sederhana.",
+    "masalah_hari_ini": "Pagi tadi orang tuanya memarahinya karena menolak tawaran kerja tetap dari perusahaan besar dan memilih memperpanjang kontrak sebagai ilustrator lepas, padahal penghasilannya bulan ini cukup untuk membayar kebutuhan sendiri.",
+    "ocean": {
+      "openness": 84,
+      "conscientiousness": 68,
+      "extraversion": 47,
+      "agreeableness": 44,
+      "neuroticism": 24
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, ia menyampaikan keberatan secara lugas tanpa meninggikan suara; saat puas, ia tersenyum tipis dan langsung mengatakan bagian yang paling ia hargai."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Zahra",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Zahra bekerja sebagai konsultan pemasaran yang baru dipindahkan kantornya ke kota ini dan sehari-hari banyak bertemu klien. Ia sangat ramah dan cerewet, bahkan sering mengingat detail kecil dari obrolan orang lain meski baru bertemu sekali.",
+    "masalah_hari_ini": "Sudah tiga minggu pindah ke apartemen baru, tetapi belum punya teman untuk diajak makan atau berkenalan dengan lingkungan sekitar; rencana ikut acara komunitas malam ini juga hampir batal karena satu-satunya rekan kerja yang ia kenal mendadak lembur.",
+    "ocean": {
+      "openness": 64,
+      "conscientiousness": 67,
+      "extraversion": 91,
+      "agreeableness": 88,
+      "neuroticism": 24
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah, ia tetap sopan tetapi berbicara lebih cepat sambil menjelaskan masalahnya secara rinci; saat puas, ia langsung tersenyum lebar dan mengajak mengobrol hangat."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Diana",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Diana bekerja sebagai staf administrasi yang setiap hari mengatur jadwal, dokumen, dan kebutuhan kantor dengan rapi. Ia pendiam dan praktis, tetapi selalu menyimpan catatan kecil berisi kalimat-kalimat yang menurutnya menarik.",
+    "masalah_hari_ini": "Sejak kemarin ia bertengkar dengan sahabatnya karena sahabatnya membatalkan rencana penting untuk ketiga kalinya tanpa penjelasan, lalu menganggap Diana terlalu kaku saat menegurnya; sampai siang ini mereka belum saling menghubungi.",
+    "ocean": {
+      "openness": 43,
+      "conscientiousness": 84,
+      "extraversion": 27,
+      "agreeableness": 69,
+      "neuroticism": 31
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia berbicara singkat, tenang, dan langsung pada inti masalah; saat puas ia mengangguk kecil lalu menyampaikan apresiasinya dengan sopan."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Anya",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Anya bekerja sebagai ilustrator lepas yang sehari-hari mengerjakan desain sampul buku dan konten media sosial dari kafe ke kafe. Ia suka memberi nama pada benda-benda kecil di sekitarnya dan sering mengubah kejadian biasa menjadi cerita dramatis.",
+    "masalah_hari_ini": "Pacarnya membatalkan rencana pameran ilustrasi mereka secara sepihak setelah bertengkar karena Anya mengubah konsep acara tanpa berdiskusi, lalu mengirim pesan bahwa ia ingin mengambil jeda dari hubungan mereka.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 48,
+      "extraversion": 85,
+      "agreeableness": 68,
+      "neuroticism": 58
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia bicara cepat sambil menjelaskan versinya dengan banyak gestur, tetapi saat puas ia langsung tersenyum lebar dan mengajak orang di sekitarnya ikut merayakan."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Elsa",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Elsa sehari-hari bekerja sebagai ilustrator lepas yang mengerjakan desain sampul buku dari rumah dan sesekali mengambil proyek mural. Ia suka memberi nama pada benda-benda di kamarnya dan sering menguji ide baru dengan menggambar menggunakan tangan yang tidak dominan.",
+    "masalah_hari_ini": "Besok pagi ia harus mengikuti tes sertifikasi desain digital, tetapi simulasi terakhirnya gagal pada bagian manajemen warna sehingga ia khawatir hasil proyek portofolionya tidak akan memenuhi standar penilai.",
+    "ocean": {
+      "openness": 82,
+      "conscientiousness": 58,
+      "extraversion": 44,
+      "agreeableness": 63,
+      "neuroticism": 72
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menarik napas, lalu menyampaikan keberatannya dengan kalimat lugas dan sopan tanpa meninggikan suara."
+  },
+  {
+    "jenis_profile": "dewasa wanita",
+    "nama": "Indah",
+    "usia": "dewasa",
+    "gender": "wanita",
+    "background": "Indah sehari-hari bekerja sebagai koordinator acara di sebuah hotel dan sering menjadi penghubung antara klien, vendor, serta timnya. Ia sangat ramah dan cerewet, bahkan saat cemas ia cenderung mengajak orang lain mengobrol sambil memikirkan semua kemungkinan buruk.",
+    "masalah_hari_ini": "Indah harus memilih antara menerima tawaran promosi menjadi manajer acara di Jakarta dengan gaji lebih tinggi atau tetap di kota sekarang agar bisa merawat ibunya, dan ia harus memberi jawaban kepada atasannya sebelum sore.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 77,
+      "extraversion": 84,
+      "agreeableness": 89,
+      "neuroticism": 86
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat kesal, ia tetap berbicara sopan tetapi menjelaskan keberatannya panjang lebar sambil mengulang detail yang menurutnya terlewat."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Candra",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Mantan kepala sekolah yang kini setiap pagi membimbing beberapa anak di kampungnya belajar membaca dan berhitung. Ia pendiam serta praktis, tetapi selalu menyimpan catatan kecil berisi peribahasa untuk dibagikan kepada orang yang sedang kehilangan semangat.",
+    "masalah_hari_ini": "Besok pagi ia harus mengikuti ujian sertifikasi komputer untuk memperpanjang izin mengajar sukarelanya, tetapi ia masih sering keliru menggunakan lembar kerja dan khawatir satu kesalahan teknis akan membuatnya gagal setelah berbulan-bulan mempersiapkan diri.",
+    "ocean": {
+      "openness": 38,
+      "conscientiousness": 88,
+      "extraversion": 24,
+      "agreeableness": 79,
+      "neuroticism": 36
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia menegur dengan suara tetap dan kalimat panjang yang tertata, sedangkan saat puas ia mengangguk pelan sambil berkata, \"Terima kasih, nak; ketenangan dalam menghadapi kesulitan sering kali lebih berguna daripada tergesa-gesa mencari jawaban.\""
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Pandu",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi membantu mengurus perpustakaan kecil di lingkungan rumahnya dan menerima beberapa murid untuk les tanpa bayaran. Ia tampak santai dalam menghadapi perubahan, tetapi diam-diam sering memikirkan kemungkinan terburuk sampai mencatat rencana cadangan untuk hal-hal yang sebenarnya sederhana.",
+    "masalah_hari_ini": "Dompetnya hanya berisi dua puluh ribu rupiah setelah uang pensiun terlambat masuk, sementara ia harus membayar obat tekanan darah istrinya paling lambat Jumat ini dan belum tahu apakah anak-anaknya bisa membantu.",
+    "ocean": {
+      "openness": 61,
+      "conscientiousness": 68,
+      "extraversion": 43,
+      "agreeableness": 36,
+      "neuroticism": 78
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Saat marah ia menyampaikan keberatan secara blak-blakan dengan kalimat panjang dan nada tetap terkendali, sedangkan saat puas ia mengangguk pelan lalu memberi nasihat hangat sambil berkata, 'Terima kasih, nak.'"
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Pandu",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi mengajar membaca secara sukarela di rumah belajar dekat rumahnya. Ia gemar menulis surat-surat panjang yang tidak pernah dikirimkan ketika perasaannya sedang sulit dijelaskan, nak.",
+    "masalah_hari_ini": "Ia bertengkar hebat dengan pacarnya setelah perempuan itu menemukan kumpulan surat lama untuk mantan kekasih yang masih ia simpan, lalu membatalkan janji makan malam mereka dan meminta waktu untuk mempertimbangkan hubungan tersebut.",
+    "ocean": {
+      "openness": 91,
+      "conscientiousness": 68,
+      "extraversion": 23,
+      "agreeableness": 76,
+      "neuroticism": 88
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, ia menjadi sangat diam, menundukkan kepala, lalu menyampaikan kekecewaannya dengan kalimat panjang dan suara tenang yang terasa lebih tajam daripada bentakan."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Hadi",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Setiap hari ia mengelola toko kelontong kecil milik keluarganya sambil membantu warga sekitar mengurus berbagai keperluan praktis. Meski tampak tegas dan lugas, ia sangat mudah tersentuh oleh perkataan orang dan selalu menyimpan catatan kecil berisi nasihat untuk dibagikan kepada siapa pun yang membutuhkan.",
+    "masalah_hari_ini": "Seorang pemasok muda menertawakannya di depan dua pelanggan dan menganggap ia tidak mampu memahami aplikasi pemesanan baru hanya karena usianya sudah lanjut, padahal Hadi sendiri yang menemukan kesalahan perhitungan dalam sistem tersebut.",
+    "ocean": {
+      "openness": 38,
+      "conscientiousness": 81,
+      "extraversion": 72,
+      "agreeableness": 88,
+      "neuroticism": 82
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia berbicara panjang dengan suara bergetar namun tetap sopan sambil menjelaskan letak kesalahannya, sedangkan saat puas ia tersenyum lega, mengangguk berkali-kali, lalu mengucapkan terima kasih dengan nasihat yang hangat."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Krisna",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi masih mengajar les kecil-kecilan dan membantu anak-anak di sekitar rumah mempersiapkan ujian. Ia sangat emosional terhadap kisah perjuangan orang lain dan gemar menggambar peta imajinatif di balik kuitansi belanja.",
+    "masalah_hari_ini": "Besok pagi ia harus mengikuti ujian sertifikasi mediator untuk tetap menjadi relawan penyelesaian sengketa di kelurahannya, tetapi bagian simulasi kasus keluarga yang sudah dilatih berbulan-bulan tiba-tiba diganti dengan format digital yang belum pernah ia coba.",
+    "ocean": {
+      "openness": 82,
+      "conscientiousness": 74,
+      "extraversion": 38,
+      "agreeableness": 69,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, ia menundukkan kepala lalu menyampaikan keberatannya dengan kalimat panjang dan suara bergetar; saat puas, ia tersenyum lega, mengangguk berkali-kali, dan mengucapkan terima kasih dengan nasihat yang hangat."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Gunawan",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi mengajar membaca gratis kepada anak-anak di lingkungan rumahnya dan sore hari menulis catatan kenangan untuk keluarganya. Ia sangat ramah dan mudah tersentuh, bahkan kerap membayangkan percakapan dengan tokoh-tokoh sejarah ketika sedang mencari inspirasi.",
+    "masalah_hari_ini": "Saat mempresentasikan rancangan taman baca keliling di balai warga, seorang pengurus muda menertawakannya karena menganggap idenya terlalu kuno untuk orang seusianya, lalu menyebut catatan rancangannya sebagai khayalan pensiunan yang tidak mungkin dijalankan.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 72,
+      "extraversion": 76,
+      "agreeableness": 91,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat tersinggung, ia menahan air mata sambil berbicara panjang dan sopan untuk menjelaskan mengapa perkataan itu melukai harga dirinya."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Gunawan",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan kepala kantor pos yang baru pindah ke kota ini untuk tinggal lebih dekat dengan putrinya, dan kini menghabiskan pagi dengan mengurus tanaman serta membaca koran di rumah. Ia terkenal sangat blak-blakan, tetapi diam-diam menyimpan catatan kecil berisi nama orang-orang yang pernah menolongnya agar dapat membalas kebaikan mereka suatu hari nanti.",
+    "masalah_hari_ini": "Sudah tiga minggu pindah ke apartemen baru, tetapi ia belum berhasil memiliki satu pun teman karena setiap kali hendak menyapa tetangga, ia terlalu lama memikirkan apakah sapaan itu akan dianggap mengganggu; hari ini ia melihat grup warga mengadakan pertemuan tanpa mengundangnya dan terus mencemaskan bahwa dirinya sengaja dijauhi.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 78,
+      "extraversion": 43,
+      "agreeableness": 34,
+      "neuroticism": 91
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Menyatakan perasaannya secara terus terang dengan kalimat panjang—mengkritik tajam saat marah dan memberi pujian penuh pertimbangan sambil mengangguk pelan saat puas."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Candra",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Mantan guru sejarah yang kini setiap hari mengelola kelas cerita gratis untuk anak-anak di balai warga dan sesekali menulis naskah drama radio. Ia sangat cerewet, tetapi diam-diam sering membayangkan benda-benda biasa seperti teko dan jam dinding memiliki kisah hidup sendiri.",
+    "masalah_hari_ini": "Pagi tadi ibunya yang berusia sembilan puluh enam tahun memarahinya karena ia berjanji membuat peta bergambar tentang sejarah keluarga untuk acara reuni, tetapi malah menghabiskan semalaman menggambar kerajaan khayalan di sela-sela catatan tersebut sehingga pekerjaan pentingnya belum selesai.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 46,
+      "extraversion": 84,
+      "agreeableness": 58,
+      "neuroticism": 82
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "menjelaskan panjang lebar dengan nada formal dan reflektif, sambil menyelipkan nasihat kepada lawan bicaranya"
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Arman",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi mengisi waktunya dengan membimbing anak-anak di balai warga dan merawat kebun kecil di rumah. Ia sangat ramah serta gemar menciptakan perumpamaan lucu dari benda-benda sederhana, bahkan ketika sedang membahas perkara yang berat, nak.",
+    "masalah_hari_ini": "Saat membantu memperbaiki papan nama balai warga dengan desain ukirannya sendiri, beberapa pemuda menertawakan hasil karyanya dan menyebut idenya terlalu kuno untuk dipakai, sehingga ia mulai meragukan kemampuan kreatif yang selama ini menjadi sumber kebanggaannya.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 64,
+      "extraversion": 78,
+      "agreeableness": 91,
+      "neuroticism": 28
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia menegur dengan suara tetap tenang sambil menyampaikan nasihat panjang dan bijak; saat puas ia tersenyum lebar, mengangguk perlahan, lalu mengucapkan terima kasih dengan tulus kepada siapa pun yang membantunya."
+  },
+  {
+    "jenis_profile": "orang tua pria",
+    "nama": "Pandu",
+    "usia": "orang tua",
+    "gender": "pria",
+    "background": "Pensiunan guru sejarah yang setiap pagi mengelola perpustakaan kecil di rumahnya dan sesekali memberi les kepada anak-anak tetangga. Ia selalu menyimpan catatan tangan berisi kalimat-kalimat bijak, tetapi sering lupa menuliskan tanggal sehingga harus menebak-nebak kapan setiap pemikiran itu muncul.",
+    "masalah_hari_ini": "Tiga hari lalu ia bertengkar dengan sahabat lamanya karena sahabat itu menjual koleksi buku peninggalan almarhum istrinya tanpa meminta izin, lalu percakapan mereka terhenti setelah Pandu mengucapkan kata-kata yang terlalu tajam; hari ini ia menerima pesan singkat yang belum berani dibalas karena terus memikirkan apakah harus meminta maaf lebih dahulu.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 79,
+      "extraversion": 24,
+      "agreeableness": 67,
+      "neuroticism": 78
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat tersinggung ia menahan emosi, berbicara semakin pelan dengan kalimat panjang dan reflektif; saat puas ia mengangguk tenang, tersenyum tipis, lalu menyampaikan penghargaan dengan nasihat yang hangat."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Olivia",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Olivia adalah dosen pensiunan yang kini menjadi konsultan penyuntingan naskah akademik dan setiap hari masih membimbing beberapa mahasiswa secara sukarela. Ia sangat mudah tersentuh oleh kisah perjuangan orang lain, tetapi selalu menenangkan diri dengan merapikan benda-benda di sekitarnya sebelum mengambil keputusan.",
+    "masalah_hari_ini": "Revisi laporan penelitian untuk klien lamanya harus dikirim besok pagi, sementara data wawancara terakhir baru masuk dalam bentuk rekaman suara yang belum ditranskripsikan dan tiga bagian analisisnya masih perlu disesuaikan.",
+    "ocean": {
+      "openness": 52,
+      "conscientiousness": 91,
+      "extraversion": 36,
+      "agreeableness": 82,
+      "neuroticism": 58
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Tetap berbicara lembut dan panjang saat marah, menyampaikan keberatan dengan tegas tanpa menyalahkan orang lain, lalu mengangguk pelan ketika merasa puas."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Citra",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Citra sehari-hari mengelola perpustakaan kecil di lingkungan rumah sambil membimbing anak-anak membaca dengan sabar dan teratur. Ia pendiam ketika mengamati orang lain, tetapi dapat berbicara panjang dengan penuh imajinasi jika membahas puisi, kenangan, atau kemungkinan hidup yang lebih baik, nak.",
+    "masalah_hari_ini": "Dompetnya hanya berisi dua puluh ribu rupiah karena uang pensiunnya terlambat masuk, sementara iuran obat tekanan darah dan biaya perpanjangan kontrak kios perpustakaan harus dibayar sebelum Jumat ini.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 72,
+      "extraversion": 48,
+      "agreeableness": 78,
+      "neuroticism": 58
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia menarik napas panjang lalu menyampaikan keberatan dengan bahasa formal dan reflektif, sedangkan saat puas ia tersenyum tenang, mengangguk, dan memberi nasihat hangat kepada pelayan."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Yuni",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Yuni mengelola kelompok belajar membaca bagi para ibu di lingkungan rumahnya dan setiap sore menyempatkan diri meracik jamu untuk tetangga yang membutuhkan. Ia sangat ramah dan blak-blakan, tetapi memiliki imajinasi kuat sehingga sering menggambarkan nasihat hidup melalui kisah-kisah tentang burung, kebun, dan musim. ",
+    "masalah_hari_ini": "Seorang pelanggan muda di pasar menertawakan pakaian batiknya dan menyebut Yuni sudah terlalu tua untuk memimpin kelas membaca, padahal ia baru saja mengumpulkan dana buku dari hasil menjual kue buatannya.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 76,
+      "extraversion": 84,
+      "agreeableness": 91,
+      "neuroticism": 34
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "Saat marah ia menyampaikan keberatannya dengan terus terang dalam kalimat panjang yang tenang namun menusuk, sedangkan saat puas ia tersenyum lebar, memuji dengan tulus, dan menceritakan perumpamaan bijak kepada lawan bicaranya."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Wati",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Wati sehari-hari mengelola warung kecil di depan rumah sambil mencatat utang para tetangganya dengan sangat teliti, nak. Ia gemar membayangkan berbagai kemungkinan masa depan dan sering membuat sketsa rumah-rumah aneh di balik kuitansi belanja.",
+    "masalah_hari_ini": "Uang di dompetnya tinggal dua puluh tiga ribu rupiah, sementara ia harus membayar biaya obat hipertensi dan iuran listrik sebelum akhir minggu; pesanan kue warung yang biasanya menjadi pemasukan tambahan tiba-tiba dibatalkan tanpa uang muka.",
+    "ocean": {
+      "openness": 86,
+      "conscientiousness": 68,
+      "extraversion": 42,
+      "agreeableness": 38,
+      "neuroticism": 89
+    },
+    "max_fails": 1,
+    "reaksi_gaya": "Saat marah, ia langsung menyampaikan keberatannya dengan kalimat panjang dan blak-blakan, lalu menuntut penjelasan rinci sambil terus mengulang kemungkinan buruk yang sudah ia pikirkan."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Wati",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Setiap hari ia mengelola sanggar kecil tempat mengajarkan seni membatik kepada ibu-ibu di lingkungannya setelah pensiun dari pekerjaannya sebagai guru bahasa Indonesia. Ia sangat emosional dalam urusan kasih sayang, tetapi mampu menenangkan diri dengan membayangkan akhir cerita yang berbeda untuk setiap masalah, lalu menuliskannya dalam buku catatan bersampul kain.",
+    "masalah_hari_ini": "Ia bertengkar dengan pacarnya yang berusia sebaya setelah menemukan bahwa lelaki itu diam-diam membatalkan rencana mereka menghadiri pameran batik dan memilih menemani mantan kekasihnya, lalu sejak pagi tidak membalas pesan Wati meskipun sudah diminta memberikan penjelasan.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 76,
+      "extraversion": 38,
+      "agreeableness": 74,
+      "neuroticism": 58
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah, ia tetap berbicara dengan suara rendah dan formal, tetapi menyampaikan kekecewaannya dalam kalimat panjang yang tajam sambil berkata, \"Nak, ketenangan bukan berarti hati ini tidak terluka; saya hanya ingin kejujuran sebelum memutuskan apakah hubungan ini masih layak dirawat.\""
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Nisa",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Seorang pensiunan pustakawan yang setiap hari merawat ibunya yang sudah lanjut usia sambil mengelola kebun kecil di halaman rumah. Ia pendiam dan cemas dalam mengambil keputusan, tetapi terkenal blak-blakan karena selalu menuliskan kemungkinan terburuk di tiga buku catatan berbeda sebelum bertindak.",
+    "masalah_hari_ini": "Pagi tadi ibunya memarahinya karena ia menyumbangkan pakaian mendiang ayahnya tanpa meminta izin terlebih dahulu, dan kini ia terus memikirkan apakah tindakannya telah menghapus kenangan keluarga serta membuat saudara-saudaranya menganggapnya tidak tahu diri.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 76,
+      "extraversion": 22,
+      "agreeableness": 48,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia diam cukup lama lalu menyampaikan keberatannya dengan kalimat formal dan sangat terus terang; saat puas ia mengangguk pelan sambil berkata, \"Terima kasih, nak, jawabanmu membuat hati saya lebih ringan.\""
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Nisa",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Sehari-hari ia mengelola kelompok pengajian dan membantu mengurus cucu-cucunya, meski kini lebih sering membagi waktunya dengan kegiatan sosial di lingkungan rumah. Ia sangat ramah dan selalu mengingat nama orang yang pernah ditemuinya, tetapi diam-diam kerap memikirkan kemungkinan buruk dari hal-hal kecil, nak.",
+    "masalah_hari_ini": "Sejak dini hari ia mendampingi cucunya yang demam sehingga hampir tidak tidur, tetapi sore ini tetap harus menghadiri acara perpisahan ketua RT dan menyampaikan sambutan selama lima belas menit karena tidak ada orang lain yang bersedia menggantikannya.",
+    "ocean": {
+      "openness": 58,
+      "conscientiousness": 49,
+      "extraversion": 72,
+      "agreeableness": 91,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat marah ia tetap berbicara lembut namun panjang dan penuh pertimbangan sambil memanggil lawan bicaranya 'nak', sedangkan saat puas ia tersenyum lega, mengucapkan terima kasih berulang kali, dan mendoakan kebaikan orang yang membantunya."
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Citra",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Pensiunan guru sekolah dasar yang setiap hari membimbing anak-anak di taman baca lingkungan dan mengurus administrasi kelas secara sukarela. Ia sangat ramah, jarang tergesa-gesa, dan memiliki kebiasaan menyimpan catatan kecil berisi kalimat bijak yang ia tulis setelah mendengar cerita orang lain.",
+    "masalah_hari_ini": "Besok pagi ia harus mengikuti ujian sertifikasi fasilitator literasi berbasis komputer, tetapi nilai latihan terakhirnya turun karena ia keliru memahami beberapa soal studi kasus dan masih canggung berpindah antarbagian ujian, sehingga ia khawatir gagal memperpanjang perannya di taman baca.",
+    "ocean": {
+      "openness": 68,
+      "conscientiousness": 76,
+      "extraversion": 64,
+      "agreeableness": 92,
+      "neuroticism": 24
+    },
+    "max_fails": 3,
+    "reaksi_gaya": "tetap tenang dan menyampaikan keberatan dengan kalimat panjang yang sopan; saat puas, ia tersenyum hangat lalu mengucapkan terima kasih dengan nasihat yang menenangkan"
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Clara",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Clara adalah pensiunan pustakawan yang setiap hari merapikan koleksi buku di rumah barunya dan sesekali membantu cucunya belajar melalui panggilan video. Ia sangat peka terhadap perubahan nada bicara, sehingga sering memikirkan berulang-ulang satu kalimat sederhana yang diucapkan orang lain kepadanya, nak.",
+    "masalah_hari_ini": "Tiga minggu setelah pindah ke kompleks baru, Clara menerima undangan arisan warga melalui pesan suara dari nomor yang belum dikenalnya, tetapi ia cemas datang sendirian karena belum memiliki teman dan takut tidak ada yang menyadari jika ia duduk menyendiri sepanjang acara.",
+    "ocean": {
+      "openness": 54,
+      "conscientiousness": 76,
+      "extraversion": 22,
+      "agreeableness": 79,
+      "neuroticism": 91
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "menunduk sambil menarik napas panjang, lalu menyampaikan perasaannya dengan suara lembut dan kalimat yang sangat hati-hati"
+  },
+  {
+    "jenis_profile": "orang tua wanita",
+    "nama": "Kania",
+    "usia": "orang tua",
+    "gender": "wanita",
+    "background": "Setiap hari, Kania mengelola perpustakaan kecil di rumahnya dan membantu anak-anak sekitar memilih bacaan yang sesuai. Ia gemar membayangkan akhir cerita alternatif untuk setiap buku yang dibacanya, tetapi sering mencemaskan kemungkinan buruk yang bahkan belum tentu terjadi.",
+    "masalah_hari_ini": "Pagi tadi, ibunya yang sudah lanjut usia memarahinya karena Kania diam-diam menyumbangkan lemari kayu peninggalan keluarga untuk dijadikan rak buku umum, padahal ibunya masih menganggap lemari itu sebagai kenangan terakhir dari almarhum suaminya.",
+    "ocean": {
+      "openness": 88,
+      "conscientiousness": 54,
+      "extraversion": 38,
+      "agreeableness": 72,
+      "neuroticism": 84
+    },
+    "max_fails": 2,
+    "reaksi_gaya": "Saat kecewa, ia menundukkan kepala lalu menyampaikan keberatannya dengan kalimat panjang dan sangat sopan; saat puas, ia tersenyum lega, mengangguk perlahan, dan berkata, \"Terima kasih, nak, perhatian kecil seperti ini kadang menyelamatkan hati seseorang.\""
+  }
+]

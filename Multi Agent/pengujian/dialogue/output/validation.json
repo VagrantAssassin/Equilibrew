@@ -1,0 +1,884 @@
+[
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_pria",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "remaja_wanita",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_pria",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "dewasa_wanita",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_pria",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan_salah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "marah",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "berhasil",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "curhat",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "reaksi",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "closing",
+    "rep": 1,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan_salah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "marah",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "berhasil",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "curhat",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "reaksi",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "closing",
+    "rep": 2,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "pesanan_salah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "marah",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "berhasil",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "curhat",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "reaksi",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  },
+  {
+    "profil": "orang tua_wanita",
+    "state": "closing",
+    "rep": 3,
+    "valid": true,
+    "issues": []
+  }
+]

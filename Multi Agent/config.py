@@ -101,4 +101,10 @@ MENU_MINUMAN = [
     "Black Tea",
     "Mint Tea",
     "Green Tea",
+    "Matcha Latte",
+    "Milk Tea",
+    "Mint Milk Tea",
+    "Apple Tea",
+    "Lavender Tea",
+    "Jasmine Tea",
 ]
